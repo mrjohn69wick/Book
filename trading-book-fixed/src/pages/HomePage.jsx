@@ -37,6 +37,7 @@ const HomePage = () => {
   return (
     <div className="home-page">
       <section className="hero">
+        <p className="hero-overline">لمبتكرها زياد عقيلان</p>
         <h1 className="hero-title">كتاب مدرسة قياسات الفوضى التراكمية</h1>
         <p className="hero-subtitle">
           رحلة تفاعلية شاملة لفهم وتطبيق قوانين المدرسة مع نظام تطبيق عملي على الشارت
@@ -105,6 +106,10 @@ const HomePage = () => {
           </div>
         </div>
       </section>
+
+      <footer className="home-footer">
+        Created By ( Ibrahim H. Al-Sayed & Hegazy H. Al-Sayed )
+      </footer>
     </div>
   );
 };

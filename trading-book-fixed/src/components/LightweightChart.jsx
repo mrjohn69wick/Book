@@ -84,7 +84,7 @@ const LightweightChart = ({ height = 500, showControls = true }) => {
   const normalizeKey = (value) =>
     String(value ?? '')
       .toLowerCase()
-      .replace(/[^a-z0-9]/g, '');
+      .replace(/[^\p{L}\p{N}]/gu, '');
 
   const getField = (row, names) => {
     if (!row || typeof row !== 'object') return null;
@@ -103,15 +103,48 @@ const LightweightChart = ({ height = 500, showControls = true }) => {
     return null;
   };
 
+  const normalizeDateTimeString = (value) => {
+    if (typeof value !== 'string') return value;
+    const trimmed = value.trim();
+    if (!trimmed) return trimmed;
+    const sanitized = trimmed.replace(/\./g, '-');
+    if (sanitized.includes(' ') && !sanitized.includes('T')) {
+      return sanitized.replace(' ', 'T');
+    }
+    return sanitized;
+  };
+
+  const parseDateValue = (value) => {
+    if (value === null || value === undefined) return null;
+    if (typeof value !== 'string') return value;
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    const normalized = normalizeDateTimeString(trimmed);
+    const parts = normalized.split('-');
+    if (parts.length === 3) {
+      const [first, second, third] = parts;
+      if (first.length === 4) {
+        return normalized;
+      }
+      if (third.length === 4) {
+        return `${third}-${second}-${first}`;
+      }
+    }
+    return normalized;
+  };
+
   const parseTime = (row) => {
-    const dateValue = getField(row, ['date', 'day']);
-    const timeValue = getField(row, ['time', 'hour']);
+    const dateValue = getField(row, ['date', 'day', 'التاريخ', 'تاريخ']);
+    const timeValue = getField(row, ['time', 'hour', 'الوقت', 'ساعة', 'الزمن']);
     const dateTimeValue = getField(row, [
       'datetime',
       'date_time',
       'date time',
       'timestamp',
       'time stamp',
+      'date_time_utc',
+      'datetimeutc',
+      'datetimeutc',
       'date_time_utc',
     ]);
 
@@ -126,7 +159,7 @@ const LightweightChart = ({ height = 500, showControls = true }) => {
       if (Number.isFinite(Number(dateTimeValue))) {
         return parseEpochSeconds(dateTimeValue);
       }
-      const epochMs = Date.parse(dateTimeValue);
+      const epochMs = Date.parse(normalizeDateTimeString(String(dateTimeValue)));
       return Number.isNaN(epochMs) ? null : Math.floor(epochMs / 1000);
     }
 
@@ -135,12 +168,15 @@ const LightweightChart = ({ height = 500, showControls = true }) => {
     }
 
     if (dateValue && timeValue) {
-      const epoch = Date.parse(`${dateValue}T${timeValue}Z`);
+      const normalizedDate = parseDateValue(dateValue);
+      const normalizedTime = String(timeValue).trim();
+      const epoch = Date.parse(`${normalizedDate}T${normalizedTime}Z`);
       return Number.isNaN(epoch) ? null : Math.floor(epoch / 1000);
     }
 
     if (dateValue) {
-      const epoch = Date.parse(`${dateValue}T00:00:00Z`);
+      const normalizedDate = parseDateValue(dateValue);
+      const epoch = Date.parse(`${normalizedDate}T00:00:00Z`);
       return Number.isNaN(epoch) ? null : Math.floor(epoch / 1000);
     }
 
@@ -169,11 +205,28 @@ const LightweightChart = ({ height = 500, showControls = true }) => {
     rows
       .map((row) => {
         const time = parseTime(row);
-        const open = parseNumber(getField(row, ['open', 'o', 'openprice', 'open_price']));
-        const high = parseNumber(getField(row, ['high', 'h', 'highprice', 'high_price']));
-        const low = parseNumber(getField(row, ['low', 'l', 'lowprice', 'low_price']));
+        const open = parseNumber(
+          getField(row, ['open', 'o', 'openprice', 'open_price', 'افتتاح', 'فتح'])
+        );
+        const high = parseNumber(
+          getField(row, ['high', 'h', 'highprice', 'high_price', 'اعلى', 'أعلى', 'مرتفع'])
+        );
+        const low = parseNumber(
+          getField(row, ['low', 'l', 'lowprice', 'low_price', 'منخفض', 'ادنى', 'أدنى'])
+        );
         const close = parseNumber(
-          getField(row, ['close', 'c', 'closeprice', 'close_price', 'last', 'lastprice'])
+          getField(row, [
+            'close',
+            'c',
+            'closeprice',
+            'close_price',
+            'last',
+            'lastprice',
+            'closeprice',
+            'اغلاق',
+            'إغلاق',
+            'آخر',
+          ])
         );
 
         if (!time || [open, high, low, close].some((value) => Number.isNaN(value))) {
