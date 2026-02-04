@@ -11,3 +11,10 @@
 - **Node version mismatch for Vite**, risking build failures on older Node versions.  
   - **Responsible file**: `.github/workflows/static.yml` (setup-node step).  
   - **Fix**: Use Node `22.x` as required for modern Vite engines.
+
+- **pnpm not found during setup-node caching**, because pnpm was referenced for caching before Corepack installed it.  
+  - **Responsible file**: `.github/workflows/static.yml` (setup-node caching config).  
+  - **Fix**: Install pnpm via Corepack first, then resolve the store path and use `actions/cache@v4` with a lockfile-based key.
+
+## Pages URL
+- https://mrjohn69wick.github.io/Book/

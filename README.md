@@ -2,7 +2,8 @@
 
 ## Live site
 
-Visit the book at: https://mrjohn69wick.github.io/Book/
+- Book #1 (Fixed): https://mrjohn69wick.github.io/Book/
+- Book #2 (Production): https://mrjohn69wick.github.io/Book/trading-book-PRODUCTION-READY/
 
 ## Local development
 
@@ -16,6 +17,9 @@ pnpm run dev
 
 The site is built from `trading-book-fixed/` and deployed to GitHub Pages via the
 `.github/workflows/static.yml` workflow on pushes to `main` (or manual runs).
+
+Book #1 is the Vite build output from `trading-book-fixed/`.
+Book #2 is already static content served from `trading-book-PRODUCTION-READY/` and is copied into the Pages artifact.
 
 ## Notes
 
