@@ -6,6 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>كتاب مدرسة قياسات الفوضى التراكمية التفاعلي</title>
     <meta name="description" content="رحلة تفاعلية شاملة لفهم وتطبيق قوانين المدرسة مع نظام تطبيق عملي على الشارت" />
+    <script>
+      (function () {
+        const redirect = sessionStorage.getItem('redirect');
+        if (redirect) {
+          sessionStorage.removeItem('redirect');
+          history.replaceState(null, '', redirect);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
