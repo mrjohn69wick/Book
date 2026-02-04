@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { createChart } from 'lightweight-charts';
+import { CandlestickSeries, createChart } from 'lightweight-charts';
 import Papa from 'papaparse';
 import './LightweightChart.css';
 
@@ -39,7 +39,7 @@ const LightweightChart = ({ height = 500, showControls = true }) => {
       },
     });
 
-    const candlestickSeries = chart.addCandlestickSeries({
+    const candlestickSeries = chart.addSeries(CandlestickSeries, {
       upColor: '#10b981',
       downColor: '#ef4444',
       borderVisible: false,
@@ -81,31 +81,153 @@ const LightweightChart = ({ height = 500, showControls = true }) => {
     }
   }, [data]);
 
+  const normalizeKey = (value) =>
+    String(value ?? '')
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}]/gu, '');
+
+  const getField = (row, names) => {
+    if (!row || typeof row !== 'object') return null;
+    const normalizedMap = Object.keys(row).reduce((acc, key) => {
+      acc[normalizeKey(key)] = row[key];
+      return acc;
+    }, {});
+
+    for (const name of names) {
+      const value = normalizedMap[normalizeKey(name)];
+      if (value !== undefined && value !== null && value !== '') {
+        return value;
+      }
+    }
+
+    return null;
+  };
+
+  const normalizeDateTimeString = (value) => {
+    if (typeof value !== 'string') return value;
+    const trimmed = value.trim();
+    if (!trimmed) return trimmed;
+    const sanitized = trimmed.replace(/\./g, '-');
+    if (sanitized.includes(' ') && !sanitized.includes('T')) {
+      return sanitized.replace(' ', 'T');
+    }
+    return sanitized;
+  };
+
+  const parseDateValue = (value) => {
+    if (value === null || value === undefined) return null;
+    if (typeof value !== 'string') return value;
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    const normalized = normalizeDateTimeString(trimmed);
+    const parts = normalized.split('-');
+    if (parts.length === 3) {
+      const [first, second, third] = parts;
+      if (first.length === 4) {
+        return normalized;
+      }
+      if (third.length === 4) {
+        return `${third}-${second}-${first}`;
+      }
+    }
+    return normalized;
+  };
+
   const parseTime = (row) => {
-    const dateValue = row.Date || row.date;
-    const timeValue = row.Time || row.time;
+    const dateValue = getField(row, ['date', 'day', 'التاريخ', 'تاريخ']);
+    const timeValue = getField(row, ['time', 'hour', 'الوقت', 'ساعة', 'الزمن']);
+    const dateTimeValue = getField(row, [
+      'datetime',
+      'date_time',
+      'date time',
+      'timestamp',
+      'time stamp',
+      'date_time_utc',
+      'datetimeutc',
+      'datetimeutc',
+      'date_time_utc',
+    ]);
+
+    const parseEpochSeconds = (value) => {
+      const numeric = typeof value === 'number' ? value : Number(value);
+      if (Number.isNaN(numeric)) return null;
+      const epochMs = numeric > 1e12 ? numeric : numeric * 1000;
+      return Math.floor(epochMs / 1000);
+    };
+
+    if (dateTimeValue) {
+      if (Number.isFinite(Number(dateTimeValue))) {
+        return parseEpochSeconds(dateTimeValue);
+      }
+      const epochMs = Date.parse(normalizeDateTimeString(String(dateTimeValue)));
+      return Number.isNaN(epochMs) ? null : Math.floor(epochMs / 1000);
+    }
+
+    if (Number.isFinite(Number(dateValue))) {
+      return parseEpochSeconds(dateValue);
+    }
 
     if (dateValue && timeValue) {
-      const epoch = Date.parse(`${dateValue}T${timeValue}Z`);
+      const normalizedDate = parseDateValue(dateValue);
+      const normalizedTime = String(timeValue).trim();
+      const epoch = Date.parse(`${normalizedDate}T${normalizedTime}Z`);
       return Number.isNaN(epoch) ? null : Math.floor(epoch / 1000);
     }
 
     if (dateValue) {
-      const epoch = Date.parse(`${dateValue}T00:00:00Z`);
+      const normalizedDate = parseDateValue(dateValue);
+      const epoch = Date.parse(`${normalizedDate}T00:00:00Z`);
       return Number.isNaN(epoch) ? null : Math.floor(epoch / 1000);
     }
 
+    if (timeValue) {
+      return parseEpochSeconds(timeValue);
+    }
+
     return null;
+  };
+
+  const parseNumber = (value) => {
+    if (value === null || value === undefined || value === '') return NaN;
+    if (typeof value === 'number') return value;
+    const normalized = String(value).trim();
+    if (!normalized) return NaN;
+    if (normalized.includes(',') && normalized.includes('.')) {
+      return Number(normalized.replace(/,/g, ''));
+    }
+    if (normalized.includes(',') && !normalized.includes('.')) {
+      return Number(normalized.replace(/,/g, '.'));
+    }
+    return Number(normalized);
   };
 
   const buildChartData = (rows) =>
     rows
       .map((row) => {
         const time = parseTime(row);
-        const open = parseFloat(row.Open ?? row.open);
-        const high = parseFloat(row.High ?? row.high);
-        const low = parseFloat(row.Low ?? row.low);
-        const close = parseFloat(row.Close ?? row.close);
+        const open = parseNumber(
+          getField(row, ['open', 'o', 'openprice', 'open_price', 'افتتاح', 'فتح'])
+        );
+        const high = parseNumber(
+          getField(row, ['high', 'h', 'highprice', 'high_price', 'اعلى', 'أعلى', 'مرتفع'])
+        );
+        const low = parseNumber(
+          getField(row, ['low', 'l', 'lowprice', 'low_price', 'منخفض', 'ادنى', 'أدنى'])
+        );
+        const close = parseNumber(
+          getField(row, [
+            'close',
+            'c',
+            'closeprice',
+            'close_price',
+            'last',
+            'lastprice',
+            'closeprice',
+            'اغلاق',
+            'إغلاق',
+            'آخر',
+          ])
+        );
 
         if (!time || [open, high, low, close].some((value) => Number.isNaN(value))) {
           return null;
@@ -125,7 +247,7 @@ const LightweightChart = ({ height = 500, showControls = true }) => {
     setIsLoading(true);
     setErrorMessage('');
     try {
-      const response = await fetch(`${import.meta.env.BASE_URL}sample-data.csv`);
+      const response = await fetch('./sample-data.csv');
       if (!response.ok) {
         throw new Error('Failed to load sample data');
       }
