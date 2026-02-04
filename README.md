@@ -8,8 +8,8 @@ Visit the book at: https://mrjohn69wick.github.io/Book/
 
 ```bash
 cd trading-book-fixed
-npm install
-npm run dev
+pnpm install --frozen-lockfile
+pnpm run dev
 ```
 
 ## Deployment
