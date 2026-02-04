@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { Router, useHashLocation } from 'wouter'
+import { Router } from 'wouter'
+import useHashLocation from 'wouter/use-hash-location'
 import './index.css'
 import App from './App.jsx'
 
