@@ -125,7 +125,7 @@ const LightweightChart = ({ height = 500, showControls = true }) => {
     setIsLoading(true);
     setErrorMessage('');
     try {
-      const response = await fetch(`${import.meta.env.BASE_URL}sample-data.csv`);
+      const response = await fetch('./sample-data.csv');
       if (!response.ok) {
         throw new Error('Failed to load sample data');
       }

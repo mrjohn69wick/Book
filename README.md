@@ -22,6 +22,23 @@ Book #1 is the Vite build output from `trading-book-fixed/`.
 Book #2 is already static content served from `trading-book-PRODUCTION-READY/` and is copied into the Pages artifact.
 The production-ready book relies on relative paths (e.g., `./sample-data.csv`) so it can be hosted under `/Book/trading-book-PRODUCTION-READY/` on GitHub Pages.
 
+### Routes
+
+The interactive book uses hash routing (`useHashLocation`) so deep links work on GitHub Pages. Available routes include:
+
+- `/` (Home)
+- `/learn`
+- `/laws`
+- `/glossary`
+- `/training`
+- `/chart`
+- `/mt5`
+- `/search`
+- `/settings`
+- Catch-all 404
+
+Both deployments include a `404.html` redirect to map unknown paths back into the SPA.
+
 ## Notes
 
 - MT5 WebTerminal and TradingView widgets require an active internet connection.
