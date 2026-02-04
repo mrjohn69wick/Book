@@ -56,12 +56,21 @@ jobs:
         working-directory: trading-book-fixed
         run: pnpm run build
 
+      - name: Debug paths
+        run: |
+          pwd
+          ls -la
+          ls -la trading-book-fixed
+          ls -la trading-book-fixed/dist || true
+          ls -la trading-book-PRODUCTION-READY || true
+
       - name: Assemble Pages site (both books)
         run: |
           rm -rf _site
           mkdir -p _site
           cp -a trading-book-fixed/dist/. _site/
           cp -a trading-book-PRODUCTION-READY _site/trading-book-PRODUCTION-READY
+          touch _site/.nojekyll
           test -f _site/index.html
           test -f _site/trading-book-PRODUCTION-READY/index.html
 
