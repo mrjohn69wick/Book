@@ -1,26 +1,17 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Redirecting…</title>
-    <script>
-      (function () {
-        const path = window.location.pathname;
-        const search = window.location.search;
-        const hash = window.location.hash;
-        const fullPath = `${path}${search}${hash}`;
-        const prodPrefix = '/Book/trading-book-PRODUCTION-READY/';
-
-        if (fullPath.startsWith(prodPrefix)) {
-          const encodedPath = encodeURIComponent(fullPath.slice(prodPrefix.length - 1));
-          window.location.replace(`/Book/trading-book-PRODUCTION-READY/?p=${encodedPath}`);
-          return;
-        }
-
-        window.location.replace('/Book/trading-book-PRODUCTION-READY/');
-      })();
-    </script>
-  </head>
-  <body></body>
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function() {
+      var path = window.location.pathname.replace(/^\/Book\/trading-book-PRODUCTION-READY/, "");
+      // Strip leading slash if present
+      if (path && path[0] === "/") path = path.slice(1);
+      // Redirect to index.html with encoded path
+      var url = "/Book/trading-book-PRODUCTION-READY/?p=" + encodeURIComponent(path + window.location.search + window.location.hash);
+      window.location.replace(url);
+    })();
+  </script>
+</head>
+<body></body>
 </html>
