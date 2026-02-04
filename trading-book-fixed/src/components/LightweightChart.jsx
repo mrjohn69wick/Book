@@ -81,9 +81,42 @@ const LightweightChart = ({ height = 500, showControls = true }) => {
     }
   }, [data]);
 
+  const getField = (row, names) => {
+    if (!row || typeof row !== 'object') return null;
+    const lowerCaseMap = Object.keys(row).reduce((acc, key) => {
+      acc[key.toLowerCase()] = row[key];
+      return acc;
+    }, {});
+
+    for (const name of names) {
+      const value = lowerCaseMap[name.toLowerCase()];
+      if (value !== undefined && value !== null && value !== '') {
+        return value;
+      }
+    }
+
+    return null;
+  };
+
   const parseTime = (row) => {
-    const dateValue = row.Date || row.date;
-    const timeValue = row.Time || row.time;
+    const dateValue = getField(row, ['date', 'day']);
+    const timeValue = getField(row, ['time', 'hour']);
+    const dateTimeValue = getField(row, ['datetime', 'date_time', 'date time', 'timestamp']);
+
+    const parseEpochSeconds = (value) => {
+      const numeric = typeof value === 'number' ? value : Number(value);
+      if (Number.isNaN(numeric)) return null;
+      const epochMs = numeric > 1e12 ? numeric : numeric * 1000;
+      return Math.floor(epochMs / 1000);
+    };
+
+    if (dateTimeValue) {
+      if (Number.isFinite(Number(dateTimeValue))) {
+        return parseEpochSeconds(dateTimeValue);
+      }
+      const epochMs = Date.parse(dateTimeValue);
+      return Number.isNaN(epochMs) ? null : Math.floor(epochMs / 1000);
+    }
 
     if (dateValue && timeValue) {
       const epoch = Date.parse(`${dateValue}T${timeValue}Z`);
@@ -95,6 +128,10 @@ const LightweightChart = ({ height = 500, showControls = true }) => {
       return Number.isNaN(epoch) ? null : Math.floor(epoch / 1000);
     }
 
+    if (timeValue) {
+      return parseEpochSeconds(timeValue);
+    }
+
     return null;
   };
 
@@ -102,10 +139,10 @@ const LightweightChart = ({ height = 500, showControls = true }) => {
     rows
       .map((row) => {
         const time = parseTime(row);
-        const open = parseFloat(row.Open ?? row.open);
-        const high = parseFloat(row.High ?? row.high);
-        const low = parseFloat(row.Low ?? row.low);
-        const close = parseFloat(row.Close ?? row.close);
+        const open = parseFloat(getField(row, ['open', 'o']));
+        const high = parseFloat(getField(row, ['high', 'h']));
+        const low = parseFloat(getField(row, ['low', 'l']));
+        const close = parseFloat(getField(row, ['close', 'c']));
 
         if (!time || [open, high, low, close].some((value) => Number.isNaN(value))) {
           return null;
