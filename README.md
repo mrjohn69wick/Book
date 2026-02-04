@@ -20,8 +20,9 @@ The site is built from `trading-book-fixed/` and deployed to GitHub Pages via th
 
 Book #1 is the Vite build output from `trading-book-fixed/`.
 Book #2 is already static content served from `trading-book-PRODUCTION-READY/` and is copied into the Pages artifact.
+The production-ready book relies on relative paths (e.g., `./sample-data.csv`) so it can be hosted under `/Book/trading-book-PRODUCTION-READY/` on GitHub Pages.
 
 ## Notes
 
 - MT5 WebTerminal and TradingView widgets require an active internet connection.
-- The chart sample data is bundled locally in `public/sample-data.csv`.
+- The chart sample data is bundled locally in `public/sample-data.csv`, and a copy is placed in `trading-book-PRODUCTION-READY/sample-data.csv` for the production-ready build.

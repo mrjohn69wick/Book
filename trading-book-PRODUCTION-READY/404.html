@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function() {
+      var path = window.location.pathname.replace(/^\/Book\/trading-book-PRODUCTION-READY/, "");
+      // Strip leading slash if present
+      if (path && path[0] === "/") path = path.slice(1);
+      // Redirect to index.html with encoded path
+      var url = "/Book/trading-book-PRODUCTION-READY/?p=" + encodeURIComponent(path + window.location.search + window.location.hash);
+      window.location.replace(url);
+    })();
+  </script>
+</head>
+<body></body>
+</html>
