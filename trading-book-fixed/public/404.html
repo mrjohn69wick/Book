@@ -13,8 +13,8 @@
         const prodPrefix = '/Book/trading-book-PRODUCTION-READY/';
 
         if (fullPath.startsWith(prodPrefix)) {
-          const encodedPath = encodeURIComponent(fullPath.slice(prodPrefix.length - 1));
-          window.location.replace(`/Book/trading-book-PRODUCTION-READY/?p=${encodedPath}`);
+          const hashPath = fullPath.slice(prodPrefix.length - 1);
+          window.location.replace(`/Book/trading-book-PRODUCTION-READY/#${hashPath}`);
           return;
         }
 
