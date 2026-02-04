@@ -17,9 +17,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: trading-book-fixed
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -52,17 +49,9 @@ jobs:
         working-directory: trading-book-fixed
         run: pnpm install --frozen-lockfile
 
-      - name: Build
+      - name: Build Book #1
         working-directory: trading-book-fixed
         run: pnpm run build
-
-      - name: Debug paths
-        run: |
-          pwd
-          ls -la
-          ls -la trading-book-fixed
-          ls -la trading-book-fixed/dist || true
-          ls -la trading-book-PRODUCTION-READY || true
 
       - name: Assemble Pages site (both books)
         run: |
@@ -81,6 +70,9 @@ jobs:
 
   deploy:
     needs: build
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
