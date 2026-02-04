@@ -24,19 +24,48 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
+          node-version: "22.x"
+
+      - name: Enable Corepack + Install pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9 --activate
+          pnpm --version
+
+      - name: Resolve pnpm store path
+        id: pnpm-store
+        working-directory: trading-book-fixed
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-store.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('trading-book-fixed/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
 
       - name: Install deps
-        run: npm ci
+        working-directory: trading-book-fixed
+        run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: npm run build
+        working-directory: trading-book-fixed
+        run: pnpm run build
+
+      - name: Assemble Pages site (both books)
+        run: |
+          rm -rf _site
+          mkdir -p _site
+          cp -a trading-book-fixed/dist/. _site/
+          cp -a trading-book-PRODUCTION-READY _site/trading-book-PRODUCTION-READY
+          test -f _site/index.html
+          test -f _site/trading-book-PRODUCTION-READY/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: _site
 
   deploy:
     needs: build

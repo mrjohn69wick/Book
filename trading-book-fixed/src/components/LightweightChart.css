@@ -70,3 +70,13 @@
   color: var(--secondary-text);
   font-size: 0.875rem;
 }
+
+.chart-error {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fecaca;
+  font-size: 0.9rem;
+}

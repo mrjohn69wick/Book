@@ -225,6 +225,14 @@
   color: var(--accent-color);
 }
 
+.mt5-fallback-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 16px;
+}
+
 @media (max-width: 768px) {
   .url-input-group {
     flex-direction: column;
