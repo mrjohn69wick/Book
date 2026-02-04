@@ -2,6 +2,7 @@ import { Link } from 'wouter';
 import './HomePage.css';
 
 const HomePage = () => {
+  const prodUrl = `${import.meta.env.BASE_URL}trading-book-PRODUCTION-READY/`;
   const features = [
     {
       title: 'التعلم خطوة بخطوة',
@@ -47,6 +48,14 @@ const HomePage = () => {
           <Link href="/laws">
             <a className="btn btn-secondary">استعرض القوانين</a>
           </Link>
+          <a
+            className="btn btn-secondary"
+            href={prodUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open Production Book
+          </a>
         </div>
       </section>
 

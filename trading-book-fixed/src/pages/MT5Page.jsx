@@ -6,6 +6,9 @@ const MT5Page = () => {
   const [customUrl, setCustomUrl] = useState('');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [iframeReady, setIframeReady] = useState(false);
+  const [iframeTimedOut, setIframeTimedOut] = useState(false);
+  const [iframeKey, setIframeKey] = useState(0);
 
   useEffect(() => {
     // Load saved URL from localStorage
@@ -28,6 +31,22 @@ const MT5Page = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (!isOnline) {
+      setIframeReady(false);
+      setIframeTimedOut(false);
+      return;
+    }
+
+    setIframeReady(false);
+    setIframeTimedOut(false);
+    const timeoutId = window.setTimeout(() => {
+      setIframeTimedOut(true);
+    }, 8000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [mt5Url, isOnline, iframeKey]);
+
   const handleUrlChange = () => {
     if (customUrl.trim()) {
       setMt5Url(customUrl.trim());
@@ -44,6 +63,10 @@ const MT5Page = () => {
 
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
+  };
+
+  const handleReload = () => {
+    setIframeKey((prev) => prev + 1);
   };
 
   return (
@@ -119,13 +142,31 @@ const MT5Page = () => {
             >
               {isFullscreen ? '✕' : '⛶'}
             </button>
-            <iframe
-              src={mt5Url}
-              className="mt5-iframe"
-              title="MT5 WebTerminal"
-              allow="fullscreen"
-              sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals"
-            />
+            {iframeTimedOut && !iframeReady ? (
+              <div className="offline-message">
+                <div className="offline-icon">🛡️</div>
+                <h2>تعذر تضمين MT5 داخل الصفحة</h2>
+                <p>قد يكون التضمين محجوباً بسياسة الأمان في المتصفح.</p>
+                <div className="mt5-fallback-actions">
+                  <button className="btn-apply" onClick={() => window.open(mt5Url, '_blank', 'noopener,noreferrer')}>
+                    فتح MT5 في نافذة جديدة
+                  </button>
+                  <button className="btn-reset" onClick={handleReload}>
+                    إعادة المحاولة
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <iframe
+                key={iframeKey}
+                src={mt5Url}
+                className="mt5-iframe"
+                title="MT5 WebTerminal"
+                allow="fullscreen"
+                sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals"
+                onLoad={() => setIframeReady(true)}
+              />
+            )}
           </>
         )}
       </div>
