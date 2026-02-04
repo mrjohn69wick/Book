@@ -1,4 +1,4 @@
-import { Route, Switch, Router, useHashLocation } from 'wouter';
+import { Route, Switch } from 'wouter';
 import { useState, useEffect } from 'react';
 import './App.css';
 
@@ -31,26 +31,24 @@ function App() {
   }, []);
 
   return (
-    <Router hook={useHashLocation}>
-      <div className="app" dir="rtl">
-        <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
-        <main className={`main-content ${sidebarOpen ? 'sidebar-open' : ''}`}>
-          <ProgressBar completed={progress.completed} total={progress.total} />
-          <Switch>
-            <Route path="/" component={HomePage} />
-            <Route path="/learn" component={LearnPage} />
-            <Route path="/laws" component={LawsPage} />
-            <Route path="/glossary" component={GlossaryPage} />
-            <Route path="/training" component={TrainingPage} />
-            <Route path="/search" component={SearchPage} />
-            <Route path="/chart" component={ChartPage} />
-            <Route path="/mt5" component={MT5Page} />
-            <Route path="/settings" component={SettingsPage} />
-            <Route component={NotFoundPage} />
-          </Switch>
-        </main>
-      </div>
-    </Router>
+    <div className="app" dir="rtl">
+      <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+      <main className={`main-content ${sidebarOpen ? 'sidebar-open' : ''}`}>
+        <ProgressBar completed={progress.completed} total={progress.total} />
+        <Switch>
+          <Route path="/" component={HomePage} />
+          <Route path="/learn" component={LearnPage} />
+          <Route path="/laws" component={LawsPage} />
+          <Route path="/glossary" component={GlossaryPage} />
+          <Route path="/training" component={TrainingPage} />
+          <Route path="/search" component={SearchPage} />
+          <Route path="/chart" component={ChartPage} />
+          <Route path="/mt5" component={MT5Page} />
+          <Route path="/settings" component={SettingsPage} />
+          <Route component={NotFoundPage} />
+        </Switch>
+      </main>
+    </div>
   );
 }
 
