@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting…</title>
+    <script>
+      (function () {
+        const path = window.location.pathname;
+        const search = window.location.search;
+        const hash = window.location.hash;
+        const fullPath = `${path}${search}${hash}`;
+        const prodPrefix = '/Book/trading-book-PRODUCTION-READY/';
+
+        if (fullPath.startsWith(prodPrefix)) {
+          const encodedPath = encodeURIComponent(fullPath.slice(prodPrefix.length - 1));
+          window.location.replace(`/Book/trading-book-PRODUCTION-READY/?p=${encodedPath}`);
+          return;
+        }
+
+        window.location.replace('/Book/trading-book-PRODUCTION-READY/');
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
