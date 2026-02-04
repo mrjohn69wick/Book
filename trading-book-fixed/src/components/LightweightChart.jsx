@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { createChart } from 'lightweight-charts';
+import { CandlestickSeries, createChart } from 'lightweight-charts';
 import Papa from 'papaparse';
 import './LightweightChart.css';
 
@@ -39,7 +39,7 @@ const LightweightChart = ({ height = 500, showControls = true }) => {
       },
     });
 
-    const candlestickSeries = chart.addCandlestickSeries({
+    const candlestickSeries = chart.addSeries(CandlestickSeries, {
       upColor: '#10b981',
       downColor: '#ef4444',
       borderVisible: false,
@@ -125,7 +125,7 @@ const LightweightChart = ({ height = 500, showControls = true }) => {
     setIsLoading(true);
     setErrorMessage('');
     try {
-      const response = await fetch(`${import.meta.env.BASE_URL}sample-data.csv`);
+      const response = await fetch('./sample-data.csv');
       if (!response.ok) {
         throw new Error('Failed to load sample data');
       }
