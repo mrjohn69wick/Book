@@ -27,6 +27,20 @@ body {
   overflow-x: hidden;
 }
 
+body.theme-light {
+  --primary-bg: #f8fafc;
+  --secondary-bg: #ffffff;
+  --accent-bg: #e2e8f0;
+  --primary-text: #0f172a;
+  --secondary-text: #475569;
+  --accent-color: #4f46e5;
+  --accent-hover: #4338ca;
+  --success-color: #059669;
+  --warning-color: #d97706;
+  --error-color: #dc2626;
+  --border-color: #cbd5f5;
+}
+
 .app {
   display: flex;
   min-height: 100vh;

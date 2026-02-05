@@ -3,6 +3,43 @@
   margin: 0 auto;
 }
 
+.intro {
+  margin-bottom: 40px;
+}
+
+.intro-content {
+  background: var(--secondary-bg);
+  border-radius: 16px;
+  padding: 32px 28px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.intro-eyebrow {
+  font-size: 0.95rem;
+  color: var(--secondary-text);
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+.intro-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--primary-text);
+}
+
+.intro-text {
+  font-size: 1.05rem;
+  color: var(--secondary-text);
+  line-height: 1.9;
+  margin-bottom: 12px;
+}
+
+.intro-text:last-child {
+  margin-bottom: 0;
+}
+
 .hero {
   text-align: center;
   padding: 60px 20px;

@@ -13,20 +13,24 @@ import ChartPage from './pages/ChartPage';
 import MT5Page from './pages/MT5Page';
 import SettingsPage from './pages/SettingsPage';
 import NotFoundPage from './pages/NotFoundPage';
+import { laws } from './data/laws';
 
 // Import components
 import Sidebar from './components/Sidebar';
 import ProgressBar from './components/ProgressBar';
 
 function App() {
-  const [progress, setProgress] = useState({ completed: 0, total: 29 });
+  const [progress, setProgress] = useState({ completed: 0, total: laws.length });
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   // Load progress from localStorage
   useEffect(() => {
     const savedProgress = localStorage.getItem('trading-book-progress');
     if (savedProgress) {
-      setProgress(JSON.parse(savedProgress));
+      const parsedProgress = JSON.parse(savedProgress);
+      setProgress({ ...parsedProgress, total: laws.length });
+    } else {
+      setProgress((prev) => ({ ...prev, total: laws.length }));
     }
   }, []);
 

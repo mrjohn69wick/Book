@@ -50,12 +50,14 @@ const LearnPage = () => {
   };
 
   const isCompleted = completedLaws.includes(currentLaw.id);
+  const sectionLabel = getSectionLabel(currentLaw.category);
 
   return (
     <div className="learn-page">
       <div className="learn-header">
         <h1 className="page-title">التعلم خطوة بخطوة</h1>
         <p className="page-subtitle">تعلم القوانين بالترتيب مع التطبيق العملي على الشارت</p>
+        <div className="learn-section-label">{sectionLabel}</div>
         <div className="learn-progress">
           <span className="progress-text">القانون {currentLawIndex + 1} من {laws.length}</span>
           <span className="progress-percent">{progress}%</span>
@@ -176,9 +178,24 @@ function getCategoryColor(category) {
   const colors = {
     'مدرسة': '#6366f1',
     'مؤشر': '#10b981',
+    'كوني': '#f97316',
+    'ذكاء اصطناعي': '#22c55e',
+    'مشترك': '#a855f7',
     'تطبيق': '#f59e0b'
   };
   return colors[category] || '#6366f1';
+}
+
+function getSectionLabel(category) {
+  const labels = {
+    'مدرسة': '📗 قوانين المدرسة',
+    'مؤشر': '📘 قوانين المؤشر',
+    'كوني': '🪐 قوانين النظام الكوني',
+    'ذكاء اصطناعي': '🤖 قوانين الذكاء الاصطناعي',
+    'مشترك': '🔗 القوانين المشتركة',
+    'تطبيق': '🧩 قوانين التطبيق'
+  };
+  return labels[category] || '📚 القوانين';
 }
 
 export default LearnPage;
