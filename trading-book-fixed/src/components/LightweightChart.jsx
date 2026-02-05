@@ -1,12 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
-import { CandlestickSeries, createChart } from 'lightweight-charts';
+import { CandlestickSeries, LineStyle, createChart } from 'lightweight-charts';
 import Papa from 'papaparse';
 import './LightweightChart.css';
 
-const LightweightChart = ({ height = 500, showControls = true }) => {
+const LightweightChart = ({
+  height = 500,
+  showControls = true,
+  showEquilibrium = false,
+  showKeyLevels = false,
+  showZones = false
+}) => {
   const chartContainerRef = useRef(null);
   const chartRef = useRef(null);
   const candlestickSeriesRef = useRef(null);
+  const equilibriumLineRef = useRef(null);
+  const keyLevelLinesRef = useRef([]);
+  const zoneLinesRef = useRef([]);
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -80,6 +89,82 @@ const LightweightChart = ({ height = 500, showControls = true }) => {
       chartRef.current.timeScale().fitContent();
     }
   }, [data]);
+
+  useEffect(() => {
+    if (!candlestickSeriesRef.current || data.length === 0) {
+      return;
+    }
+
+    const series = candlestickSeriesRef.current;
+    const lows = data.map((point) => point.low);
+    const highs = data.map((point) => point.high);
+    const minPrice = Math.min(...lows);
+    const maxPrice = Math.max(...highs);
+
+    const getLevel = (ratio) => minPrice + (maxPrice - minPrice) * ratio;
+
+    if (equilibriumLineRef.current) {
+      series.removePriceLine(equilibriumLineRef.current);
+      equilibriumLineRef.current = null;
+    }
+
+    keyLevelLinesRef.current.forEach((line) => series.removePriceLine(line));
+    keyLevelLinesRef.current = [];
+
+    zoneLinesRef.current.forEach((line) => series.removePriceLine(line));
+    zoneLinesRef.current = [];
+
+    if (showEquilibrium) {
+      equilibriumLineRef.current = series.createPriceLine({
+        price: getLevel(0.236),
+        color: '#f97316',
+        lineWidth: 2,
+        lineStyle: LineStyle.Dashed,
+        axisLabelVisible: true,
+        title: '0.236 الاتزان'
+      });
+    }
+
+    if (showKeyLevels) {
+      const keyRatios = [0.382, 0.5, 0.618, 0.786];
+      keyLevelLinesRef.current = keyRatios.map((ratio) =>
+        series.createPriceLine({
+          price: getLevel(ratio),
+          color: '#60a5fa',
+          lineWidth: 1,
+          lineStyle: LineStyle.Dotted,
+          axisLabelVisible: true,
+          title: ratio.toString()
+        })
+      );
+    }
+
+    if (showZones) {
+      const safeRatios = [0.236, 0.786];
+      const optimalRatios = [0.382, 0.618];
+      const safeLines = safeRatios.map((ratio) =>
+        series.createPriceLine({
+          price: getLevel(ratio),
+          color: '#facc15',
+          lineWidth: 2,
+          lineStyle: LineStyle.Dashed,
+          axisLabelVisible: true,
+          title: ratio === 0.236 ? 'حد الآمن' : 'حد الآمن الأعلى'
+        })
+      );
+      const optimalLines = optimalRatios.map((ratio) =>
+        series.createPriceLine({
+          price: getLevel(ratio),
+          color: '#22c55e',
+          lineWidth: 2,
+          lineStyle: LineStyle.Solid,
+          axisLabelVisible: true,
+          title: ratio === 0.382 ? 'المنطقة المثلى' : ''
+        })
+      );
+      zoneLinesRef.current = [...safeLines, ...optimalLines];
+    }
+  }, [data, showEquilibrium, showKeyLevels, showZones]);
 
   const normalizeKey = (value) =>
     String(value ?? '')

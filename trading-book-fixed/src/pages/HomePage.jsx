@@ -1,8 +1,12 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'wouter';
+import { laws } from '../data/laws';
 import './HomePage.css';
 
 const HomePage = () => {
   const prodUrl = `${import.meta.env.BASE_URL}trading-book-PRODUCTION-READY/`;
+  const [completedCount, setCompletedCount] = useState(0);
+  const totalLaws = laws.length;
   const features = [
     {
       title: 'التعلم خطوة بخطوة',
@@ -34,8 +38,29 @@ const HomePage = () => {
     }
   ];
 
+  useEffect(() => {
+    const saved = localStorage.getItem('completed-laws');
+    if (saved) {
+      setCompletedCount(JSON.parse(saved).length);
+    }
+  }, []);
+
   return (
     <div className="home-page">
+      <section className="intro">
+        <div className="intro-content">
+          <p className="intro-eyebrow">مرحبًا بك في النسخة التفاعلية</p>
+          <h2 className="intro-title">مقدمة سريعة عن الكتاب</h2>
+          <p className="intro-text">
+            هذا التطبيق يقدّم قوانين مدرسة قياسات الفوضى التراكمية بصيغة تفاعلية تساعدك على
+            القراءة المنظمة، متابعة التقدم، والتطبيق العملي على الشارت.
+          </p>
+          <p className="intro-text">
+            ملاحظة: تم إدراج القوانين كاملة حتى القانون 48، وتشمل أقسام المدرسة والمؤشر والنظام
+            الكوني والذكاء الاصطناعي والقوانين المشتركة.
+          </p>
+        </div>
+      </section>
       <section className="hero">
         <p className="hero-overline">لمبتكرها زياد عقيلان</p>
         <h1 className="hero-title">كتاب مدرسة قياسات الفوضى التراكمية</h1>
@@ -79,8 +104,8 @@ const HomePage = () => {
       <section className="stats">
         <div className="stats-grid">
           <div className="stat-card">
-            <div className="stat-number">29</div>
-            <div className="stat-label">قانون</div>
+            <div className="stat-number">{totalLaws}</div>
+            <div className="stat-label">قوانين</div>
           </div>
           <div className="stat-card">
             <div className="stat-number">3</div>
@@ -97,7 +122,7 @@ const HomePage = () => {
         <div className="about-content">
           <h2 className="section-title">تقدمك في الكتاب</h2>
           <p className="about-text">
-            أكملت 0 من 30 قانون
+            أكملت {completedCount} من {totalLaws} قانون
           </p>
           <div className="about-actions">
             <Link href="/learn">
@@ -108,7 +133,8 @@ const HomePage = () => {
       </section>
 
       <footer className="home-footer">
-        Created By ( Ibrahim H. Al-Sayed & Hegazy H. Al-Sayed )
+        Created By ( Ibrahim H. Al-Sayed & Hegazy H. Al-Sayed ) | Content © 2025 زياد عقيلان
+        – Interactive version v1.0
       </footer>
     </div>
   );

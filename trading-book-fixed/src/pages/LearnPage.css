@@ -18,6 +18,19 @@
   border: 1px solid var(--border-color);
 }
 
+.learn-section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent-color);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
 .progress-text {
   font-size: 1rem;
   font-weight: 600;
@@ -70,6 +83,7 @@
   margin-bottom: 24px;
   color: var(--primary-text);
   line-height: 1.4;
+  word-break: break-word;
 }
 
 .law-section {
@@ -87,6 +101,7 @@
   font-size: 1rem;
   color: var(--secondary-text);
   line-height: 1.8;
+  word-break: break-word;
 }
 
 .section-content.example {

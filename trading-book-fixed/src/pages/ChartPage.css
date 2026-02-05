@@ -30,6 +30,51 @@
   min-height: 600px;
 }
 
+.overlay-controls {
+  background: var(--secondary-bg);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.overlay-header h3 {
+  margin-bottom: 8px;
+  font-size: 1.125rem;
+  color: var(--primary-text);
+}
+
+.overlay-header p {
+  color: var(--secondary-text);
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+}
+
+.overlay-options {
+  display: grid;
+  gap: 12px;
+}
+
+.overlay-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  color: var(--primary-text);
+}
+
+.overlay-option input {
+  accent-color: var(--accent-color);
+  width: 18px;
+  height: 18px;
+}
+
+.overlay-note {
+  margin-top: 16px;
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+}
+
 .chart-sidebar {
   display: flex;
   flex-direction: column;
