@@ -59,6 +59,19 @@ const ChartPage = () => {
     }
   };
 
+  const cycleAllLaws = () => {
+    let index = 0;
+    const timer = setInterval(() => {
+      const law = laws[index];
+      if (!law) {
+        clearInterval(timer);
+        return;
+      }
+      handleApplyLaw(law);
+      index += 1;
+    }, 120);
+  };
+
   const hasRecipeOverlays = Boolean(appliedLaw?.chartRecipe?.overlays?.length);
   const showConditions = Boolean(appliedLaw && !needsInputs && !hasRecipeOverlays);
 
@@ -108,6 +121,40 @@ const ChartPage = () => {
               هذه الخطوط إرشادية للتعلم وليست توصية تداول مباشرة.
             </p>
           </div>
+          <MarketPanel />
+          <div className="quick-laws" style={{ marginBottom: '1rem' }}>
+            <h3 className="panel-title">📚 جميع القوانين</h3>
+            <div className="laws-list">
+              <label className="overlay-option" style={{ width: '100%' }}>
+                <select
+                  value={selectedLawId}
+                  onChange={(event) => setSelectedLawId(event.target.value)}
+                  style={{ width: '100%' }}
+                >
+                  {laws.map((law) => (
+                    <option key={law.id} value={law.id}>
+                      {law.id} — {law.title}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button
+                className="law-button"
+                style={{ '--law-color': getCategoryColor(getLawById(selectedLawId)?.category) }}
+                onClick={() => {
+                  const law = getLawById(selectedLawId);
+                  if (law) {
+                    handleApplyLaw(law);
+                  }
+                }}
+              >
+                تطبيق القانون المحدد
+              </button>
+              <button className="law-button" style={{ '--law-color': '#0ea5e9' }} onClick={cycleAllLaws}>
+                تجربة جميع القوانين
+              </button>
+            </div>
+          </div>
           {isChartDisabled ? (
             <div className="chart-error" role="alert">
               تم تعطيل الشارت مؤقتًا. أزل المفتاح من التخزين المحلي لإعادة التفعيل.
@@ -119,7 +166,6 @@ const ChartPage = () => {
               barsCount={bars.length}
               lastBarTime={bars[bars.length - 1]?.time}
             >
-              <MarketPanel />
               <LightweightChart
                 height={600}
                 showControls={true}
@@ -223,37 +269,6 @@ const ChartPage = () => {
                   <span className="law-name-short">{law.name}</span>
                 </button>
               ))}
-            </div>
-          </div>
-
-          <div className="quick-laws">
-            <h3 className="panel-title">📚 جميع القوانين</h3>
-            <div className="laws-list">
-              <label className="overlay-option" style={{ width: '100%' }}>
-                <select
-                  value={selectedLawId}
-                  onChange={(event) => setSelectedLawId(event.target.value)}
-                  style={{ width: '100%' }}
-                >
-                  {laws.map((law) => (
-                    <option key={law.id} value={law.id}>
-                      {law.id} — {law.title}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <button
-                className="law-button"
-                style={{ '--law-color': getCategoryColor(getLawById(selectedLawId)?.category) }}
-                onClick={() => {
-                  const law = getLawById(selectedLawId);
-                  if (law) {
-                    handleApplyLaw(law);
-                  }
-                }}
-              >
-                تطبيق القانون المحدد
-              </button>
             </div>
           </div>
 

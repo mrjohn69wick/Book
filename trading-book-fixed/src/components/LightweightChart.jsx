@@ -28,6 +28,7 @@ const LightweightChart = ({
   const clickHandlerRef = useRef(null);
   const markersRef = useRef(null);
   const zoneLayerRef = useRef(null);
+  const overlayRegistryRef = useRef({ priceLines: [], markers: [], zoneBands: [] });
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -58,9 +59,13 @@ const LightweightChart = ({
 
     overlaysRef.current.priceLines = [];
     overlaysRef.current.markers = [];
+    overlayRegistryRef.current.priceLines = [];
+    overlayRegistryRef.current.markers = [];
     tutorialMarkersRef.current = {};
-    if (zoneLayerRef.current) {
-      zoneLayerRef.current.innerHTML = '';
+    if (zoneLayerRef.current && overlayRegistryRef.current.zoneBands.length) {
+      overlayRegistryRef.current.zoneBands.forEach((band) => {
+        band.style.display = 'none';
+      });
     }
     if (markersRef.current) {
       markersRef.current.setMarkers([]);
@@ -89,7 +94,7 @@ const LightweightChart = ({
     const toY = candlestickSeriesRef.current.priceToCoordinate(toPrice);
     if (!Number.isFinite(fromY) || !Number.isFinite(toY)) return;
 
-    const band = document.createElement('div');
+    const band = overlayRegistryRef.current.zoneBands.find((item) => item.style.display === 'none') || document.createElement('div');
     const top = Math.min(fromY, toY);
     const heightPx = Math.max(2, Math.abs(toY - fromY));
     band.style.position = 'absolute';
@@ -115,7 +120,11 @@ const LightweightChart = ({
       band.appendChild(tag);
     }
 
-    layer.appendChild(band);
+    if (!band.parentNode) {
+      layer.appendChild(band);
+      overlayRegistryRef.current.zoneBands.push(band);
+    }
+    band.style.display = 'block';
   };
 
   const addPriceLine = (price, options = {}) => {
@@ -148,6 +157,7 @@ const LightweightChart = ({
     });
 
     overlaysRef.current.priceLines.push(line);
+    overlayRegistryRef.current.priceLines.push(line);
     return line;
   };
 
@@ -175,6 +185,7 @@ const LightweightChart = ({
     };
 
     overlaysRef.current.markers.push(marker);
+    overlayRegistryRef.current.markers.push(marker);
     if (markersRef.current) {
       markersRef.current.setMarkers(overlaysRef.current.markers);
     }
@@ -652,6 +663,13 @@ const LightweightChart = ({
 
   useEffect(() => {
     if (!candlestickSeriesRef.current || !latestBar) {
+      return;
+    }
+    const lastDataTime = data[data.length - 1]?.time;
+    if (!Number.isFinite(lastDataTime) || !Number.isFinite(latestBar.time)) {
+      return;
+    }
+    if (latestBar.time < lastDataTime) {
       return;
     }
     const isValidLatest = [latestBar.time, latestBar.open, latestBar.high, latestBar.low, latestBar.close]

@@ -36,11 +36,11 @@ export const instruments = [
   { id: 'AUD/USD', label: 'AUD/USD', group: 'forex', provider: 'twelvedata' },
   { id: 'BTCUSDT', label: 'BTCUSDT', group: 'crypto', provider: 'binance' },
   { id: 'ETHUSDT', label: 'ETHUSDT', group: 'crypto', provider: 'binance' },
-  { id: 'SOLUSDT', label: 'SOLUSDT', group: 'crypto', provider: 'binance' },
-  { id: 'US500', label: 'US500', group: 'indices', provider: 'twelvedata' },
-  { id: 'US100', label: 'US100', group: 'indices', provider: 'twelvedata' },
-  { id: 'US30', label: 'US30', group: 'indices', provider: 'twelvedata' },
-  { id: 'GER40', label: 'GER40', group: 'indices', provider: 'twelvedata' },
+  { id: 'BNBUSDT', label: 'BNBUSDT', group: 'crypto', provider: 'binance' },
+  { id: 'US500', label: 'US500 (S&P 500)', group: 'indices', provider: 'twelvedata' },
+  { id: 'US100', label: 'US100 (Nasdaq 100)', group: 'indices', provider: 'twelvedata' },
+  { id: 'US30', label: 'US30 (Dow Jones)', group: 'indices', provider: 'twelvedata' },
+  { id: 'GER40', label: 'GER40 (DAX)', group: 'indices', provider: 'twelvedata' },
   { id: 'UK100', label: 'UK100', group: 'indices', provider: 'twelvedata' },
 ];
 

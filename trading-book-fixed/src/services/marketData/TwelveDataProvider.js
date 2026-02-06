@@ -1,7 +1,9 @@
 const BASE_URL = 'https://api.twelvedata.com/time_series';
 const SEARCH_URL = 'https://api.twelvedata.com/symbol_search';
+const PROXY_BASE = import.meta.env.VITE_TWELVE_PROXY_BASE;
 
 const memoryCache = new Map();
+const symbolResolutionCache = new Map();
 const MAX_OUTPUT = 5000;
 const CACHE_PREFIX = 'tb:md:twelvedata:';
 const CACHE_TTL_MS = 30 * 1000;
@@ -70,7 +72,8 @@ const fetchWithBackoff = async (url, retries = 3) => {
 };
 
 const fetchSeries = async ({ symbol, interval, outputsize, apiKey }) => {
-  const url = new URL(BASE_URL);
+  const endpoint = PROXY_BASE ? `${PROXY_BASE.replace(/\/$/, '')}/time_series` : BASE_URL;
+  const url = new URL(endpoint);
   url.searchParams.set('symbol', symbol);
   url.searchParams.set('interval', interval);
   url.searchParams.set('outputsize', String(Math.min(outputsize, MAX_OUTPUT)));
@@ -96,8 +99,16 @@ const fetchSeries = async ({ symbol, interval, outputsize, apiKey }) => {
   };
 };
 
+const symbolAlias = {
+  US500: ['SPX', 'S&P 500', 'US500'],
+  US100: ['NDX', 'NASDAQ 100', 'US100'],
+  US30: ['DJI', 'DOW JONES', 'US30'],
+  GER40: ['DAX', 'GER40', 'DE40'],
+};
+
 const searchSymbol = async ({ keyword, apiKey }) => {
-  const url = new URL(SEARCH_URL);
+  const endpoint = PROXY_BASE ? `${PROXY_BASE.replace(/\/$/, '')}/symbol_search` : SEARCH_URL;
+  const url = new URL(endpoint);
   url.searchParams.set('symbol', keyword);
   url.searchParams.set('apikey', apiKey);
   const response = await fetchWithBackoff(url.toString(), 1);
@@ -122,14 +133,32 @@ export const createTwelveDataProvider = () => ({
       return { bars: cached.bars, provider: 'twelvedata', fromCache: true };
     }
 
+    const resolvedFromCache = symbolResolutionCache.get(symbol);
+    const requestedSymbol = resolvedFromCache || symbol;
+
     try {
-      const result = await fetchSeries({ symbol, interval, outputsize: limit, apiKey });
+      const result = await fetchSeries({ symbol: requestedSymbol, interval, outputsize: limit, apiKey });
       setCache(cacheKey, { bars: result.bars, timestamp: Date.now() });
-      return { ...result, provider: 'twelvedata' };
+      return {
+        ...result,
+        provider: 'twelvedata',
+        resolvedSymbol: requestedSymbol !== symbol ? requestedSymbol : undefined,
+      };
     } catch (error) {
-      const discovered = await searchSymbol({ keyword: symbol, apiKey });
-      const match = discovered.find((item) => item.symbol);
+      const queries = symbolAlias[symbol] || [symbol];
+      const discoveredSets = await Promise.all(queries.map((keyword) => searchSymbol({ keyword, apiKey })));
+      const discovered = discoveredSets.flat();
+      const normalized = symbol.toLowerCase();
+      const match = discovered.find((item) => {
+        const text = `${item.symbol || ''} ${item.instrument_name || ''} ${item.exchange || ''}`.toLowerCase();
+        if (normalized === 'us500') return text.includes('spx') || text.includes('s&p 500');
+        if (normalized === 'us100') return text.includes('ndx') || text.includes('nasdaq 100');
+        if (normalized === 'us30') return text.includes('dji') || text.includes('dow');
+        if (normalized === 'ger40') return text.includes('dax') || text.includes('ger40') || text.includes('de40');
+        return item.symbol;
+      }) || discovered.find((item) => item.symbol);
       if (match?.symbol && match.symbol !== symbol) {
+        symbolResolutionCache.set(symbol, match.symbol);
         const result = await fetchSeries({ symbol: match.symbol, interval, outputsize: limit, apiKey });
         setCache(cacheKey, { bars: result.bars, timestamp: Date.now() });
         return { ...result, provider: 'twelvedata', resolvedSymbol: match.symbol, discovered };

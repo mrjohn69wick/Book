@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './SimplePage.css';
 import { keys, safeGetJSON, safeSetJSON } from '../utils/storage';
 import { createMarketDataService } from '../services/marketData';
+import { DEFAULT_TWELVE_DATA_KEY } from '../config/defaults';
 
 const marketDataService = createMarketDataService();
 
@@ -18,8 +19,8 @@ const SettingsPage = () => {
   }, []);
 
   useEffect(() => {
-    const savedKey = safeGetJSON(keys.twelveDataKey, '');
-    setApiKey(savedKey || '');
+    const savedKey = safeGetJSON(keys.twelveDataKey, DEFAULT_TWELVE_DATA_KEY);
+    setApiKey(savedKey || DEFAULT_TWELVE_DATA_KEY);
   }, []);
 
   const handleThemeChange = (event) => {
@@ -67,6 +68,9 @@ const SettingsPage = () => {
       <div className="settings-card">
         <h2 className="settings-title">مفتاح Twelve Data</h2>
         <p className="settings-description">أضف مفتاح API لتفعيل البيانات الحية.</p>
+        <p className="settings-description" style={{ marginTop: '0.25rem', color: '#fbbf24' }}>
+          هذا المفتاح عام داخل موقع ثابت؛ يمكنك استبداله بمفتاحك الخاص.
+        </p>
         <input
           type="password"
           value={apiKey}
