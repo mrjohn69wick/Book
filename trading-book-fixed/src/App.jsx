@@ -17,7 +17,8 @@ import { laws } from './data/laws';
 import { AppliedLawProvider } from './context/AppliedLawContext';
 import { MarketDataProvider } from './context/MarketDataContext';
 import ErrorBoundary from './components/ErrorBoundary';
-import { ensureStorageVersion, keys, safeGetJSON } from './utils/storage';
+import { ensureStorageVersion, keys, safeGetJSON, safeSetJSON } from './utils/storage';
+import { DEFAULT_TWELVE_DATA_KEY } from './config/defaults';
 
 // Import components
 import Sidebar from './components/Sidebar';
@@ -29,6 +30,11 @@ function App() {
 
   useEffect(() => {
     ensureStorageVersion();
+    const existingKey = safeGetJSON(keys.twelveDataKey, '');
+    if (!existingKey) {
+      safeSetJSON(keys.twelveDataKey, DEFAULT_TWELVE_DATA_KEY);
+      window.dispatchEvent(new Event('tb-storage'));
+    }
   }, []);
 
   // Load progress from localStorage
