@@ -19,7 +19,7 @@ const MarketPanel = () => {
     loadCandles,
   } = useMarketData();
 
-  const apiKey = safeGetJSON(keys.twelveDataKey, '');
+  const [apiKey, setApiKey] = useState('');
   const defaultLimit = defaultLimits[timeframeId] || 1500;
   const [limit, setLimit] = useState('');
 
@@ -27,6 +27,25 @@ const MarketPanel = () => {
     const storedLimit = safeGetJSON(keys.marketLimit, '');
     setLimit(storedLimit ? String(storedLimit) : '');
   }, [timeframeId]);
+
+  useEffect(() => {
+    const syncKey = () => {
+      const storedKey = safeGetJSON(keys.twelveDataKey, '');
+      setApiKey(storedKey || '');
+    };
+    syncKey();
+    const handleStorage = (event) => {
+      if (!event || event.key === keys.twelveDataKey) {
+        syncKey();
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener('tb-storage', syncKey);
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('tb-storage', syncKey);
+    };
+  }, []);
 
   const limitNumber = Number(limit);
   const resolvedLimit = Number.isFinite(limitNumber) && limitNumber > 0 ? limitNumber : defaultLimit;

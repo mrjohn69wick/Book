@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { CandlestickSeries, LineStyle, createChart } from 'lightweight-charts';
+import { CandlestickSeries, LineStyle, createChart, createSeriesMarkers } from 'lightweight-charts';
 import Papa from 'papaparse';
 import './LightweightChart.css';
 import { resolveRecipeValue } from '../data/parseRecipe';
@@ -26,6 +26,7 @@ const LightweightChart = ({
   const overlaysRef = useRef({ priceLines: [], markers: [] });
   const tutorialMarkersRef = useRef({});
   const clickHandlerRef = useRef(null);
+  const markersRef = useRef(null);
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -57,7 +58,9 @@ const LightweightChart = ({
     overlaysRef.current.priceLines = [];
     overlaysRef.current.markers = [];
     tutorialMarkersRef.current = {};
-    candlestickSeriesRef.current.setMarkers([]);
+    if (markersRef.current) {
+      markersRef.current.setMarkers([]);
+    }
   };
 
   const addPriceLine = (price, options = {}) => {
@@ -117,7 +120,9 @@ const LightweightChart = ({
     };
 
     overlaysRef.current.markers.push(marker);
-    candlestickSeriesRef.current.setMarkers(overlaysRef.current.markers);
+    if (markersRef.current) {
+      markersRef.current.setMarkers(overlaysRef.current.markers);
+    }
     return marker;
   };
 
@@ -137,7 +142,9 @@ const LightweightChart = ({
       delete tutorialMarkersRef.current[stepIndex];
     }
 
-    candlestickSeriesRef.current.setMarkers(overlaysRef.current.markers);
+    if (markersRef.current) {
+      markersRef.current.setMarkers(overlaysRef.current.markers);
+    }
   };
 
   const getMarkerStyleForInput = (inputName) => {
@@ -224,6 +231,15 @@ const LightweightChart = ({
 
   const applyLawRecipe = (law) => {
     if (!law?.chartRecipe) {
+      const lastBar = data[data.length - 1];
+      if (lastBar) {
+        addMarker(lastBar.time, lastBar.close, {
+          shape: 'circle',
+          color: '#9ca3af',
+          text: law.id
+        });
+        return true;
+      }
       return false;
     }
 
@@ -486,6 +502,7 @@ const LightweightChart = ({
 
       chartRef.current = chart;
       candlestickSeriesRef.current = candlestickSeries;
+      markersRef.current = createSeriesMarkers(candlestickSeries, []);
 
       if (hasValidBars(dataRef.current)) {
         candlestickSeries.setData(dataRef.current);
@@ -527,6 +544,7 @@ const LightweightChart = ({
         chartRef.current.remove();
         chartRef.current = null;
         candlestickSeriesRef.current = null;
+        markersRef.current = null;
       }
     };
   }, [height]);

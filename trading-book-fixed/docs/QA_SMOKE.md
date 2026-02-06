@@ -8,10 +8,12 @@
 - Verify progress label shows `0 / <total>` after clearing storage.
 - Mark one law complete and confirm the count/percent updates.
 - Confirm no NaN/Infinity appears in the progress UI.
+- Save a Twelve Data key in Settings; return to Learn and confirm live load is enabled without reload.
 
 ## Chart Initialization
 - Hard refresh `/chart` 10 times (no chart crashes).
 - Resize the window; the chart stays responsive.
+- Click "Apply on chart" for multiple laws and confirm each shows a marker/overlay.
 
 ## Live Data (with Twelve Data key)
 - Open Settings → save a valid API key.

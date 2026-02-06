@@ -11,7 +11,7 @@ class ErrorBoundary extends React.Component {
   componentDidCatch(error, info) {
     this.setState({ error, info });
     console.error('[ErrorBoundary]', error, info);
-    sessionStorage.setItem('last-crash', JSON.stringify({
+    sessionStorage.setItem('tb:last-crash', JSON.stringify({
       message: error?.message,
       stack: error?.stack,
       componentStack: info?.componentStack,
@@ -31,7 +31,7 @@ class ErrorBoundary extends React.Component {
     const { error, info } = this.state;
     let lastCrash = null;
     try {
-      const raw = sessionStorage.getItem('last-crash');
+      const raw = sessionStorage.getItem('tb:last-crash');
       lastCrash = raw ? JSON.parse(raw) : null;
     } catch {
       lastCrash = null;

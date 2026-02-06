@@ -47,11 +47,13 @@ const Sidebar = ({ isOpen, onToggle }) => {
 
         <nav className="sidebar-nav">
           {menuItems.map((item) => (
-            <Link key={item.path} href={item.path}>
-              <a className={`nav-item ${location === item.path ? 'active' : ''}`}>
-                <span className="nav-icon">{item.icon}</span>
-                <span className="nav-label">{item.label}</span>
-              </a>
+            <Link
+              key={item.path}
+              href={item.path}
+              className={`nav-item ${location === item.path ? 'active' : ''}`}
+            >
+              <span className="nav-icon">{item.icon}</span>
+              <span className="nav-label">{item.label}</span>
             </Link>
           ))}
         </nav>
@@ -63,8 +65,8 @@ const Sidebar = ({ isOpen, onToggle }) => {
               <ul className="section-list">
                 {section.items.map((item, itemIdx) => (
                   <li key={itemIdx}>
-                    <Link href={item.path}>
-                      <a className="section-link">{item.label}</a>
+                    <Link href={item.path} className="section-link">
+                      {item.label}
                     </Link>
                   </li>
                 ))}

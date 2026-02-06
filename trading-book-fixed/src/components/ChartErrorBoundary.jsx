@@ -13,6 +13,7 @@ class ChartErrorBoundary extends React.Component {
     const payload = {
       message: error?.message,
       stack: error?.stack,
+      componentStack: info?.componentStack,
       ts: Date.now(),
       symbol: this.props?.symbol,
       timeframe: this.props?.timeframe,

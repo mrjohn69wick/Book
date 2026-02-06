@@ -29,6 +29,7 @@ const SettingsPage = () => {
 
   const handleSaveKey = async () => {
     safeSetJSON(keys.twelveDataKey, apiKey.trim());
+    window.dispatchEvent(new Event('tb-storage'));
     if (!apiKey.trim()) {
       setApiStatus('يرجى إدخال المفتاح.');
       return;

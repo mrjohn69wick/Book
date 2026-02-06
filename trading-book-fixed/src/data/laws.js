@@ -1,5 +1,5 @@
 // قوانين مدرسة قياسات الفوضى التراكمية
-export const laws = [
+const rawLaws = [
   {
     id: 'LAW_001',
     number: 1,
@@ -1157,6 +1157,20 @@ export const laws = [
     tutorialSteps: []
   }
 ];
+
+const fallbackRecipe = { inputs: [], overlays: [] };
+
+export const laws = rawLaws.map((law) => {
+  if (law.chartRecipe || (Array.isArray(law.tutorialSteps) && law.tutorialSteps.length)) {
+    return law;
+  }
+
+  return {
+    ...law,
+    chartRecipe: fallbackRecipe,
+    tutorialSteps: Array.isArray(law.tutorialSteps) ? law.tutorialSteps : []
+  };
+});
 
 export const getLawById = (id) => laws.find(law => law.id === id);
 export const getLawByNumber = (number) => laws.find(law => law.number === number);
