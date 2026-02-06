@@ -16,6 +16,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import { laws } from './data/laws';
 import { AppliedLawProvider } from './context/AppliedLawContext';
 import ErrorBoundary from './components/ErrorBoundary';
+import { ensureStorageVersion, keys, safeGetJSON } from './utils/storage';
 
 // Import components
 import Sidebar from './components/Sidebar';
@@ -25,30 +26,23 @@ function App() {
   const [progress, setProgress] = useState({ completed: 0, total: laws.length });
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  const safeParse = (key, fallback) => {
-    try {
-      const value = localStorage.getItem(key);
-      return value ? JSON.parse(value) : fallback;
-    } catch {
-      localStorage.removeItem(key);
-      return fallback;
-    }
-  };
+  useEffect(() => {
+    ensureStorageVersion();
+  }, []);
 
   // Load progress from localStorage
   useEffect(() => {
-    const parsedProgress = safeParse('trading-book-progress', {
-      completed: 0,
-      total: laws.length
-    });
-    setProgress({ ...parsedProgress, total: laws.length });
+    const completedIds = safeGetJSON(keys.completedLawIds, []);
+    const uniqueIds = Array.isArray(completedIds) ? Array.from(new Set(completedIds)) : [];
+    const completedCount = Math.min(uniqueIds.length, laws.length);
+    setProgress({ completed: completedCount, total: laws.length });
   }, []);
 
   return (
     <AppliedLawProvider>
-      <ErrorBoundary>
-        <div className="app" dir="rtl">
-          <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+      <div className="app" dir="rtl">
+        <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+        <ErrorBoundary>
           <main className={`main-content ${sidebarOpen ? 'sidebar-open' : ''}`}>
             <ProgressBar completed={progress.completed} total={progress.total} />
             <Switch>
@@ -67,8 +61,8 @@ function App() {
               <Route component={NotFoundPage} />
             </Switch>
           </main>
-        </div>
-      </ErrorBoundary>
+        </ErrorBoundary>
+      </div>
     </AppliedLawProvider>
   );
 }

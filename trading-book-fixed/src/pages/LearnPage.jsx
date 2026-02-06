@@ -4,6 +4,7 @@ import { laws, getLawById } from '../data/laws';
 import LightweightChart from '../components/LightweightChart';
 import './LearnPage.css';
 import { useAppliedLaw } from '../context/AppliedLawContext';
+import { keys, safeGetJSON, safeSetJSON } from '../utils/storage';
 
 const LearnPage = ({ lawId }) => {
   const initialIndex = lawId
@@ -17,22 +18,14 @@ const LearnPage = ({ lawId }) => {
   const [, navigate] = useLocation();
 
   const currentLaw = laws[currentLawIndex];
-  const progress = Math.round(((currentLawIndex + 1) / laws.length) * 100);
+  const totalLaws = laws.length;
+  const completedCount = Math.min(completedLaws.length, totalLaws);
+  const progress = totalLaws > 0 ? Math.round((completedCount / totalLaws) * 100) : 0;
   const appliedLaw = appliedLawId ? getLawById(appliedLawId) : null;
-
-  const safeParse = (key, fallback) => {
-    try {
-      const value = localStorage.getItem(key);
-      return value ? JSON.parse(value) : fallback;
-    } catch {
-      localStorage.removeItem(key);
-      return fallback;
-    }
-  };
 
   useEffect(() => {
     // Load completed laws from localStorage
-    setCompletedLaws(safeParse('completed-laws', []));
+    setCompletedLaws(safeGetJSON(keys.completedLawIds, []));
   }, []);
 
   useEffect(() => {
@@ -58,13 +51,13 @@ const LearnPage = ({ lawId }) => {
 
   const handleMarkComplete = () => {
     if (!completedLaws.includes(currentLaw.id)) {
-      const updated = [...completedLaws, currentLaw.id];
+      const updated = Array.from(new Set([...completedLaws, currentLaw.id]));
       setCompletedLaws(updated);
-      localStorage.setItem('completed-laws', JSON.stringify(updated));
-      localStorage.setItem('trading-book-progress', JSON.stringify({
+      safeSetJSON(keys.completedLawIds, updated);
+      safeSetJSON(keys.progress, {
         completed: updated.length,
         total: laws.length
-      }));
+      });
     }
   };
 
@@ -86,7 +79,7 @@ const LearnPage = ({ lawId }) => {
         <p className="page-subtitle">تعلم القوانين بالترتيب مع التطبيق العملي على الشارت</p>
         <div className="learn-section-label">{sectionLabel}</div>
         <div className="learn-progress">
-          <span className="progress-text">القانون {currentLawIndex + 1} من {laws.length}</span>
+          <span className="progress-text">{completedCount} / {totalLaws}</span>
           <span className="progress-percent">{progress}%</span>
         </div>
       </div>

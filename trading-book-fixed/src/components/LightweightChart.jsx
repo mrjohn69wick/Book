@@ -196,6 +196,27 @@ const LightweightChart = ({
     };
   };
 
+  const hasValidBars = (bars) => Array.isArray(bars) && bars.length > 1;
+
+  const computeMinMax = (bars) => {
+    let min = Infinity;
+    let max = -Infinity;
+
+    bars.forEach((bar) => {
+      if (!Number.isFinite(bar.low) || !Number.isFinite(bar.high)) {
+        return;
+      }
+      if (bar.low < min) min = bar.low;
+      if (bar.high > max) max = bar.high;
+    });
+
+    if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) {
+      return null;
+    }
+
+    return { min, max };
+  };
+
   const applyLawRecipe = (law) => {
     if (!law?.chartRecipe) {
       return false;
@@ -473,22 +494,29 @@ const LightweightChart = ({
 
   // Update chart data
   useEffect(() => {
-    if (candlestickSeriesRef.current && data.length > 0) {
+    if (!candlestickSeriesRef.current || !hasValidBars(data)) {
+      return;
+    }
+    try {
       candlestickSeriesRef.current.setData(data);
       chartRef.current.timeScale().fitContent();
+    } catch (error) {
+      console.error('Error setting chart data:', error);
+      setErrorMessage('تعذر عرض البيانات الحالية. يرجى التحقق من الملف.');
     }
   }, [data]);
 
   useEffect(() => {
-    if (!candlestickSeriesRef.current || data.length === 0) {
+    if (!candlestickSeriesRef.current || !hasValidBars(data)) {
       return;
     }
 
     const series = candlestickSeriesRef.current;
-    const lows = data.map((point) => point.low);
-    const highs = data.map((point) => point.high);
-    const minPrice = Math.min(...lows);
-    const maxPrice = Math.max(...highs);
+    const range = computeMinMax(data);
+    if (!range) {
+      return;
+    }
+    const { min: minPrice, max: maxPrice } = range;
 
     const getLevel = (ratio) => minPrice + (maxPrice - minPrice) * ratio;
 
@@ -721,7 +749,7 @@ const LightweightChart = ({
     setIsLoading(true);
     setErrorMessage('');
     try {
-      const response = await fetch('./sample-data.csv');
+      const response = await fetch(`${import.meta.env.BASE_URL}sample-data.csv`);
       if (!response.ok) {
         throw new Error('Failed to load sample data');
       }
