@@ -16,7 +16,10 @@ export const laws = [
       'الالتزام بالوقف حتى مع قوة الترجيح.'
     ],
     example: 'حتى لو كانت الإشارة «لا شك»، تُطبّق الوقف/عكس الوقف وتُراجع البيئة عند ضرب الوقف بدل الإصرار على الحتمية.',
-    sources: ['ID: 79020 | 15.01.2026']
+    sources: ['ID: 79020 | 15.01.2026'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_002',
@@ -34,7 +37,10 @@ export const laws = [
       'تحسين الالتزام بتسلسل القوانين.'
     ],
     example: 'في «التداخل» (المذكور أنه دائمًا مشكوك) لا تُعامل الحركة كفرصة كسر مؤكدة بل تنتظر بيئة أو ناقل واضح.',
-    sources: ['ID: 53608 | 25.10.2024', 'ID: 79020 | 15.01.2026']
+    sources: ['ID: 53608 | 25.10.2024', 'ID: 79020 | 15.01.2026'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_003',
@@ -52,7 +58,37 @@ export const laws = [
       'إدارة احتمالات متوازنة بدل الانحياز.'
     ],
     example: 'مثال أحدث: التأكيد أن المدرسة لم «تكسر» الاحتمالات لكنها تجعلها 33/33/33.',
-    sources: ['ID: 78794 | 09.01.2026', 'ID: 78079 | 11.12.2025']
+    sources: ['ID: 78794 | 09.01.2026', 'ID: 78079 | 11.12.2025'],
+    chartRecipeSources: 'نص الوقف وعكس الوقف وارد في مصادر القانون أعلاه.',
+    chartRecipe: {
+      inputs: ['entryPrice', 'stopPrice', 'direction'],
+      overlays: [
+        {
+          type: 'marker',
+          value: 'input(entryPrice)',
+          label: 'دخول',
+          direction: 'input(direction)'
+        },
+        {
+          type: 'priceLine',
+          value: 'input(stopPrice)',
+          label: 'وقف/عكس',
+          color: '#d32f2f'
+        },
+        {
+          type: 'marker',
+          value: 'input(stopPrice)',
+          label: 'عكس',
+          color: '#d32f2f',
+          shape: 'arrow'
+        }
+      ]
+    },
+    tutorialSteps: [
+      { text: 'اختر نقطة دخول افتراضية على الشارت.', assigns: 'entryPrice' },
+      { text: 'حدد مستوى الوقف أعلى/أسفل الدخول حسب الاتجاه.', assigns: 'stopPrice' },
+      { text: 'راقب أن ضرب الوقف يعني عكس الاتجاه وفق القانون.' }
+    ]
   },
   {
     id: 'LAW_004',
@@ -70,7 +106,10 @@ export const laws = [
       'تقليل الدخول في مناطق غير قابلة للقياس.'
     ],
     example: 'إذا حُددت الحالة كخادش، تُعامل كتحذير من خلل وأن الأهداف غير قابلة للتوقع بسهولة.',
-    sources: ['ID: 77130 | 28.10.2025', 'ID: 77135 | 28.10.2025']
+    sources: ['ID: 77130 | 28.10.2025', 'ID: 77135 | 28.10.2025'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_005',
@@ -88,7 +127,20 @@ export const laws = [
       'اتساق أكبر مع قوانين المدرسة.'
     ],
     example: 'ربط الاتزان بـ 0.236 والبحث عنه باعتباره محور فهم الأبعاد.',
-    sources: ['ID: 73276 | 11.08.2025', 'ID: 73352 | 11.08.2025']
+    sources: ['ID: 73276 | 11.08.2025', 'ID: 73352 | 11.08.2025'],
+    chartRecipeSources: 'الربط بين الاتزان و0.236 مذكور في المثال النصي.',
+    chartRecipe: {
+      inputs: ['rangeLow', 'rangeHigh'],
+      overlays: [
+        {
+          type: 'priceLine',
+          value: 'ratio(0.236)',
+          label: 'اتزان 0.236',
+          color: '#2e7d32'
+        }
+      ]
+    },
+    tutorialSteps: []
   },
   {
     id: 'LAW_006',
@@ -107,7 +159,10 @@ export const laws = [
       'تقليل الدخول العاطفي في بيئات غير واضحة.'
     ],
     example: 'بعد «تداخل» (مشكوك) تتوقع ظهور «تجاذب» وفق القاعدة المذكورة.',
-    sources: ['ID: 71505 | 21.03.2025', 'ID: 68580 | 17.02.2025']
+    sources: ['ID: 71505 | 21.03.2025', 'ID: 68580 | 17.02.2025'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_007',
@@ -125,7 +180,10 @@ export const laws = [
       'قراءة أكثر اتساقًا للبيئة عبر شروط الزاوية.'
     ],
     example: 'ذكر أن «ناقل حاصل أكده ناقل أثناء التكوين» يعني أن المتداول يرى منطقة عودة الأمل بعد أن تقطعت به الأسباب.',
-    sources: ['ID: 68748 | 18.02.2025', 'ID: 66975 | 05.02.2025', 'ID: 50024 | 13.10.2024']
+    sources: ['ID: 68748 | 18.02.2025', 'ID: 66975 | 05.02.2025', 'ID: 50024 | 13.10.2024'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_008',
@@ -144,7 +202,10 @@ export const laws = [
       'تحسين قراءة التسلسل البيئي بعد التداخل.'
     ],
     example: 'إذا رأيت حركة جانبية بدون كسر دعم/مقاومة، اعتبرها تداخل ولا تدخل على فكرة كسر.',
-    sources: ['ID: 47602 | 03.10.2024', 'ID: 68193 | 14.02.2025', 'ID: 68727 | 18.02.2025']
+    sources: ['ID: 47602 | 03.10.2024', 'ID: 68193 | 14.02.2025', 'ID: 68727 | 18.02.2025'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_009',
@@ -163,7 +224,10 @@ export const laws = [
       'تحسين موثوقية تحديد النواقل والبيئات.'
     ],
     example: 'رسائل متعددة تصف أفضل التحليل أنه على الوحدة الزمنية الثابتة وتربطها بواقع التداول.',
-    sources: ['ID: 66868 | 05.02.2025', 'ID: 66904 | 05.02.2025', 'ID: 67765 | 11.02.2025']
+    sources: ['ID: 66868 | 05.02.2025', 'ID: 66904 | 05.02.2025', 'ID: 67765 | 11.02.2025'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_010',
@@ -182,7 +246,26 @@ export const laws = [
       'تحديد أهداف أولية واضحة.'
     ],
     example: 'بعد ظهور خصائص الانحراف المزدوج، إن ظهرت إشارات تمحور فالأولوية لتوقع يوم انعكاس.',
-    sources: ['ID: 63537 | 28.12.2024', 'ID: 67088 | 06.02.2025', 'ID: 67655 | 11.02.2025']
+    sources: ['ID: 63537 | 28.12.2024', 'ID: 67088 | 06.02.2025', 'ID: 67655 | 11.02.2025'],
+    chartRecipeSources: '0.236 مرجع التمحور والهدف الأول 0.382 وفق نص القانون.',
+    chartRecipe: {
+      inputs: ['rangeLow', 'rangeHigh'],
+      overlays: [
+        {
+          type: 'priceLine',
+          value: 'ratio(0.236)',
+          label: 'تمحور 0.236',
+          color: '#1565c0'
+        },
+        {
+          type: 'priceLine',
+          value: 'ratio(0.382)',
+          label: 'هدف 0.382',
+          color: '#2e7d32'
+        }
+      ]
+    },
+    tutorialSteps: []
   },
   {
     id: 'LAW_011',
@@ -200,7 +283,10 @@ export const laws = [
       'تقليل التشوش الناتج عن فرضية التسارع/التباطؤ.'
     ],
     example: 'مثال قديم: ربط التباطؤ بتجاوز 1.236 في سياق محدد، ثم الاستغناء عنه بعد ضبط الوحدة الثابتة.',
-    sources: ['ID: 65527 | 15.09.2024', 'ID: 58470 | 25.08.2024', 'ID: 66894 | 05.02.2025']
+    sources: ['ID: 65527 | 15.09.2024', 'ID: 58470 | 25.08.2024', 'ID: 66894 | 05.02.2025'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_012',
@@ -218,7 +304,10 @@ export const laws = [
       'تقليل اللبس بين القطع الناقص الخلفي وبقية البيئات.'
     ],
     example: 'إذا كانت وحدة ما طولها ضعف سابقتها ثم استمرت للزيادة، هذا قد يُقرأ ضمن مسار تشكل قطع ناقص خلفي.',
-    sources: ['ID: 59916 | 25.11.2024', 'ID: 64437 | 04.01.2025', 'ID: 57164 | 11.11.2024']
+    sources: ['ID: 59916 | 25.11.2024', 'ID: 64437 | 04.01.2025', 'ID: 57164 | 11.11.2024'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_013',
@@ -237,7 +326,10 @@ export const laws = [
       'تقليل الالتباس بين رأس الحربة وبقية البيئات.'
     ],
     example: 'بعد نهاية اليوم يمكن رسم رأس حربة للتوقع (ورد ذكر رسم بعد انتهاء اليوم).',
-    sources: ['ID: 39530 | 19.07.2024', 'ID: 59446 | 23.11.2024', 'ID: 59018 | 22.11.2024']
+    sources: ['ID: 39530 | 19.07.2024', 'ID: 59446 | 23.11.2024', 'ID: 59018 | 22.11.2024'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_014',
@@ -255,7 +347,10 @@ export const laws = [
       'تصفية قرارات ناقل أثناء التكوين وفق الشرط المذكور.'
     ],
     example: 'إذا كسر السعر دعمًا ثم عاد قبل 1.236 فهذا يوصف كـ «انزلاق فاشل».',
-    sources: ['ID: 59050 | 27.08.2024', 'ID: 47594 | 03.10.2024', 'ID: 57591 | 12.11.2024']
+    sources: ['ID: 59050 | 27.08.2024', 'ID: 47594 | 03.10.2024', 'ID: 57591 | 12.11.2024'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_015',
@@ -273,7 +368,10 @@ export const laws = [
       'تجنب تصنيف انحراف مزدوج بزاوية غير صحيحة.'
     ],
     example: 'ربط ظهور زاوية واضحة بعد نهاية الوحدة لإعلان ناقل حاصل لا شك فيه.',
-    sources: ['ID: 57530 | 09.08.2024', 'ID: 45717 | 26.09.2024', 'ID: 50024 | 13.10.2024']
+    sources: ['ID: 57530 | 09.08.2024', 'ID: 45717 | 26.09.2024', 'ID: 50024 | 13.10.2024'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_016',
@@ -291,7 +389,10 @@ export const laws = [
       'تقليل الاعتماد على لمسة واحدة كمعلومة حاسمة.'
     ],
     example: 'إذا لامس السعر نسبة 0.382 مرتين خلال فترات مختلفة تُعتبر ملامسًا، أما لمس سريع متتالٍ فلا.',
-    sources: ['ID: 58834 | 27.08.2024']
+    sources: ['ID: 58834 | 27.08.2024'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_017',
@@ -309,7 +410,10 @@ export const laws = [
       'تجنب التعرض لمخالفات حقوقية.'
     ],
     example: 'التحذير بأن نسخ المؤشر وتوزيعه يُعد انتهاكًا للملكية الفكرية.',
-    sources: ['ID: 79040 | 18.01.2026', 'ID: 78988 | 15.01.2026']
+    sources: ['ID: 79040 | 18.01.2026', 'ID: 78988 | 15.01.2026'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_018',
@@ -327,7 +431,10 @@ export const laws = [
       'تجنب الالتباس بين الوحدات الزمنية الثابتة.'
     ],
     example: 'اختيار فريم 1m أو 5m وفق احتياج السكالبنج.',
-    sources: ['ID: 79028 | 15.01.2026']
+    sources: ['ID: 79028 | 15.01.2026'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_019',
@@ -345,7 +452,10 @@ export const laws = [
       'تجنّب الالتباس بسبب تغير الشروط بمرور الوقت.'
     ],
     example: 'تطبيق النموذج القديم كان يتم عبر صدقة محلية بنية شراء المؤشر، ثم تحوّل إلى 200$ مع دورة.',
-    sources: ['ID: 55027 | 19.07.2024', 'ID: 55917 | 22.07.2024', 'ID: 78980 | 15.01.2026']
+    sources: ['ID: 55027 | 19.07.2024', 'ID: 55917 | 22.07.2024', 'ID: 78980 | 15.01.2026'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_020',
@@ -362,7 +472,10 @@ export const laws = [
       'تجنّب الاعتماد على نسخة سابقة بعد إعلان الانتهاء من التعديلات.'
     ],
     example: 'اعتبار ما بعد هذا التاريخ هو النسخة المستقرة حتى يظهر تحديث أحدث.',
-    sources: ['ID: 78979 | 15.01.2026']
+    sources: ['ID: 78979 | 15.01.2026'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_021',
@@ -380,7 +493,10 @@ export const laws = [
       'اختصار بصري سريع لحالة الإغلاق.'
     ],
     example: 'قاعدة الألوان (أبيض/أصفر) حسب الإغلاق تحت/فوق 0.50.',
-    sources: ['ID: 57574 | 09.08.2024', 'ID: 67489 | 19.09.2024', 'ID: 67490 | 19.09.2024']
+    sources: ['ID: 57574 | 09.08.2024', 'ID: 67489 | 19.09.2024', 'ID: 67490 | 19.09.2024'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_022',
@@ -396,7 +512,10 @@ export const laws = [
       'تحديد مناطق الجذب بصريًا عبر المربعات الرمادية.'
     ],
     example: 'إذا اقترب السعر من مربع رمادي تُعتبر منطقة مرشحة للجذب وفق التسمية.',
-    sources: ['ID: 78889 | 13.01.2026']
+    sources: ['ID: 78889 | 13.01.2026'],
+    chartRecipeSources: 'المصدر يذكر المربعات الرمادية كمناطق جذب دون تحديد خوارزمية الرسم.',
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: ['حدد المربعات الرمادية يدويًا على الشارت إذا كانت ظاهرة في المؤشر.']
   },
   {
     id: 'LAW_023',
@@ -414,7 +533,10 @@ export const laws = [
       'تحسين وضوح القراءة القياسية.'
     ],
     example: 'إذا رأيت مستويات R0 وR1 وR2 فلا تنتظر R3 ضمن نفس التمثيل القياسي.',
-    sources: ['ID: 78851 | 11.01.2026']
+    sources: ['ID: 78851 | 11.01.2026'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_024',
@@ -432,7 +554,10 @@ export const laws = [
       'التزام بسيناريو الوقف وعكسه.'
     ],
     example: 'صفقة بيع + هدف + وقف؛ إذا ضرب الوقف تنتقل لتطبيق عكس الوقف بدل الانهيار النفسي.',
-    sources: ['ID: 77838 | 26.11.2025', 'ID: 78794 | 09.01.2026']
+    sources: ['ID: 77838 | 26.11.2025', 'ID: 78794 | 09.01.2026'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_025',
@@ -450,7 +575,10 @@ export const laws = [
       'تقليل الاعتماد على اللون وحده بسبب احتمال خطأ عرضي.'
     ],
     example: 'رؤية مربع أبيض = إغلاق تحت 0.50؛ مربع أصفر = إغلاق فوق 0.50.',
-    sources: ['ID: 77215 | 30.10.2025', 'ID: 77216 | 30.10.2025', 'ID: 77214 | 30.10.2025']
+    sources: ['ID: 77215 | 30.10.2025', 'ID: 77216 | 30.10.2025', 'ID: 77214 | 30.10.2025'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_026',
@@ -468,7 +596,10 @@ export const laws = [
       'تقليل التعارض الناتج عن خلط الأدوات.'
     ],
     example: 'منع الجمع بين المؤشر وبين أدوات رسم/مؤشرات إضافية كمرجعية قرار.',
-    sources: ['ID: 77179 | 28.10.2025']
+    sources: ['ID: 77179 | 28.10.2025'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_027',
@@ -484,7 +615,10 @@ export const laws = [
       'تحديد موضع البيع بالنسبة للمربع القياسي.'
     ],
     example: 'إذا كان السعر تحت المربع/حده السفلي، يُعامل ذلك كإشارة بيع وفق العبارة.',
-    sources: ['ID: 76736 | 17.10.2025']
+    sources: ['ID: 76736 | 17.10.2025'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_028',
@@ -502,7 +636,10 @@ export const laws = [
       'تجنب إصدار أحكام مستقبلية دون أدوات المدرسة.'
     ],
     example: 'الحكم على حركة أنها اندفاع/انزلاق/وقف بدون المؤشر يوصف بأنه تقليدي/غير دقيق وفق النص.',
-    sources: ['ID: 49660 | 12.10.2024', 'ID: 70549 | 14.03.2025', 'ID: 59910 | 31.08.2024']
+    sources: ['ID: 49660 | 12.10.2024', 'ID: 70549 | 14.03.2025', 'ID: 59910 | 31.08.2024'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_029',
@@ -520,7 +657,10 @@ export const laws = [
       'الربط بين المربعات وسلوك الإغلاق.'
     ],
     example: 'توصيف التجاذب عبر «إغلاقين سلبيين» مع الاعتماد على قراءة مربعات الإغلاق.',
-    sources: ['ID: 77220 | 30.10.2025']
+    sources: ['ID: 77220 | 30.10.2025'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_030',
@@ -536,7 +676,26 @@ export const laws = [
       'ربط القياس الأساسي بعلاقة النسب المحورية في النظام.'
     ],
     example: 'التعامل مع 0.236 كنسبة أساسية و4.236 كنسبة مقابلة لبناء المناطق.',
-    sources: ['DOC: الدليل | ص1–ص2']
+    sources: ['DOC: الدليل | ص1–ص2'],
+    chartRecipeSources: 'المصدر يعرّف 0.236 و4.236 كنسب أساس ومقابل.',
+    chartRecipe: {
+      inputs: ['rangeLow', 'rangeHigh'],
+      overlays: [
+        {
+          type: 'priceLine',
+          value: 'ratio(0.236)',
+          label: 'الأساس 0.236',
+          color: '#1565c0'
+        },
+        {
+          type: 'priceLine',
+          value: 'ratio(4.236)',
+          label: 'المقابل 4.236',
+          color: '#6a1b9a'
+        }
+      ]
+    },
+    tutorialSteps: []
   },
   {
     id: 'LAW_031',
@@ -553,7 +712,24 @@ export const laws = [
       'تسهيل استخدام فلاتر النظام الكوني.'
     ],
     example: 'تطبيق القائمة عند اختيار أقرب نسبة أو تقييم قوة المستوى.',
-    sources: ['DOC: الدليل | ص1']
+    sources: ['DOC: الدليل | ص1'],
+    chartRecipeSources: 'قائمة النسب الأساسية كما وردت في الدليل.',
+    chartRecipe: {
+      inputs: ['rangeLow', 'rangeHigh'],
+      overlays: [
+        { type: 'priceLine', value: 'ratio(0.236)', label: '0.236' },
+        { type: 'priceLine', value: 'ratio(0.382)', label: '0.382' },
+        { type: 'priceLine', value: 'ratio(0.500)', label: '0.500' },
+        { type: 'priceLine', value: 'ratio(0.618)', label: '0.618' },
+        { type: 'priceLine', value: 'ratio(0.786)', label: '0.786' },
+        { type: 'priceLine', value: 'ratio(1.000)', label: '1.000' },
+        { type: 'priceLine', value: 'ratio(1.272)', label: '1.272' },
+        { type: 'priceLine', value: 'ratio(1.618)', label: '1.618' },
+        { type: 'priceLine', value: 'ratio(2.618)', label: '2.618' },
+        { type: 'priceLine', value: 'ratio(4.236)', label: '4.236' }
+      ]
+    },
+    tutorialSteps: []
   },
   {
     id: 'LAW_032',
@@ -571,7 +747,26 @@ export const laws = [
       'تصفية الصفقات قبل الدخول.'
     ],
     example: 'عند وصول النسبة إلى 4.236، تُصنف الحالة منطقة حمراء ويُمنع الدخول.',
-    sources: ['DOC: الدليل | ص1–ص2، ص5–ص6، ص11']
+    sources: ['DOC: الدليل | ص1–ص2، ص5–ص6، ص11'],
+    chartRecipeSources: 'الحدان 0.236 و4.236 معرفان كمنطقة حمراء في الدليل.',
+    chartRecipe: {
+      inputs: ['rangeLow', 'rangeHigh'],
+      overlays: [
+        {
+          type: 'priceLine',
+          value: 'ratio(0.236)',
+          label: 'حد المنطقة الحمراء السفلي',
+          color: '#d32f2f'
+        },
+        {
+          type: 'priceLine',
+          value: 'ratio(4.236)',
+          label: 'حد المنطقة الحمراء العلوي',
+          color: '#d32f2f'
+        }
+      ]
+    },
+    tutorialSteps: []
   },
   {
     id: 'LAW_033',
@@ -589,7 +784,52 @@ export const laws = [
       'تقليل المخاطرة في المناطق الأقل جودة.'
     ],
     example: 'إذا كانت النسبة 0.55 فهي ضمن المنطقة المثلى (الخضراء).',
-    sources: ['DOC: الدليل | ص5، ص8، ص11']
+    sources: ['DOC: الدليل | ص5، ص8، ص11'],
+    chartRecipeSources: 'حدود المنطقة الآمنة/المثلى كما وردت في الدليل.',
+    chartRecipe: {
+      inputs: ['rangeLow', 'rangeHigh'],
+      overlays: [
+        {
+          type: 'zone',
+          from: 'ratio(0.236)',
+          to: 'ratio(0.786)',
+          label: 'المنطقة الآمنة',
+          color: 'rgba(255, 193, 7, 0.2)'
+        },
+        {
+          type: 'zone',
+          from: 'ratio(0.382)',
+          to: 'ratio(0.618)',
+          label: 'المنطقة المثلى',
+          color: 'rgba(76, 175, 80, 0.2)'
+        },
+        {
+          type: 'priceLine',
+          value: 'ratio(0.236)',
+          label: 'حد الآمن السفلي',
+          color: '#f9a825'
+        },
+        {
+          type: 'priceLine',
+          value: 'ratio(0.786)',
+          label: 'حد الآمن العلوي',
+          color: '#f9a825'
+        },
+        {
+          type: 'priceLine',
+          value: 'ratio(0.382)',
+          label: 'حد المثلى السفلي',
+          color: '#2e7d32'
+        },
+        {
+          type: 'priceLine',
+          value: 'ratio(0.618)',
+          label: 'حد المثلى العلوي',
+          color: '#2e7d32'
+        }
+      ]
+    },
+    tutorialSteps: []
   },
   {
     id: 'LAW_034',
@@ -607,7 +847,10 @@ export const laws = [
       'إزالة العشوائية عند تقييم النسبة الأقرب.'
     ],
     example: 'إذا كانت المسافة 1% تُصنف القوة «قوي جدًا» وفق القاعدة.',
-    sources: ['DOC: الدليل | ص4']
+    sources: ['DOC: الدليل | ص4'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_035',
@@ -625,7 +868,10 @@ export const laws = [
       'تحسين جودة الدخول مقارنة بالحدس.'
     ],
     example: 'ارتداد السعر من 0.618 مع حجم أعلى من المتوسط وRSI بين 30–70 يعطي إشارة شراء قوية.',
-    sources: ['DOC: الدليل | ص3']
+    sources: ['DOC: الدليل | ص3'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_036',
@@ -643,7 +889,10 @@ export const laws = [
       'الخروج المبكر عند إشارات الخطر.'
     ],
     example: 'الاقتراب من 4.236 مع مؤشرات خطر يؤدي إلى بيع فوري.',
-    sources: ['DOC: الدليل | ص3']
+    sources: ['DOC: الدليل | ص3'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_037',
@@ -661,7 +910,10 @@ export const laws = [
       'خفض التردد بين قرارات متناقضة.'
     ],
     example: 'إذا كانت النسبة ضمن 0.382–0.618، تشير المصفوفة إلى قرار شراء قوي مع ثقة مرتفعة.',
-    sources: ['DOC: الدليل | ص6–ص8']
+    sources: ['DOC: الدليل | ص6–ص8'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_038',
@@ -679,7 +931,10 @@ export const laws = [
       'تفسير أفضل لمخرجات الطبقة الذكية.'
     ],
     example: 'تصنيف المناطق يتم عبر Gradient Boosting بينما القرار النهائي يعتمد على شبكة عصبية.',
-    sources: ['DOC: التقرير | ص1']
+    sources: ['DOC: التقرير | ص1'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_039',
@@ -697,7 +952,10 @@ export const laws = [
       'تقليل التحيّز لطبقة واحدة.'
     ],
     example: 'إذا كانت طبقة AI قوية لكن السياق السوقي ضعيف، يخفض الدمج حدة القرار.',
-    sources: ['DOC: التقرير | ص1']
+    sources: ['DOC: التقرير | ص1'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_040',
@@ -715,7 +973,10 @@ export const laws = [
       'تقليل التعرّض لمناطق الخطر.'
     ],
     example: 'حتى مع إشارة AI، يتم إيقاف القرار إذا كانت المنطقة حمراء.',
-    sources: ['DOC: التقرير | ص2']
+    sources: ['DOC: التقرير | ص2'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_041',
@@ -733,7 +994,10 @@ export const laws = [
       'تحسين انضباط النظام.'
     ],
     example: 'عند تصنيف المنطقة خطرة، تُلغى إشارة الدخول حتى لو كانت مؤشرات أخرى إيجابية.',
-    sources: ['DOC: التقرير | ص4']
+    sources: ['DOC: التقرير | ص4'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_042',
@@ -751,7 +1015,10 @@ export const laws = [
       'تقليل الدخول في حالات الثقة الضعيفة.'
     ],
     example: 'إذا كانت الثقة 88% يتم التنفيذ الفوري وفق القاعدة.',
-    sources: ['DOC: التقرير | ص4']
+    sources: ['DOC: التقرير | ص4'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_043',
@@ -769,7 +1036,10 @@ export const laws = [
       'رفع المخاطرة تدريجيًا فقط عند ثقة عالية.'
     ],
     example: 'عند ثقة جيدة تُحدد المخاطرة بـ 0.09% من رأس المال.',
-    sources: ['DOC: التقرير | ص3–ص5']
+    sources: ['DOC: التقرير | ص3–ص5'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_044',
@@ -787,7 +1057,10 @@ export const laws = [
       'تحسين جودة القرار عبر الدمج بين الخبرة والنظام.'
     ],
     example: 'حتى مع توصية النظام، يجب مراجعة السياق قبل التنفيذ.',
-    sources: ['DOC: التقرير | ص6']
+    sources: ['DOC: التقرير | ص6'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_045',
@@ -805,7 +1078,10 @@ export const laws = [
       'تفسير سبب عدم وجود يقين مطلق.'
     ],
     example: 'ربط البعد الثامن بالحتمية يشرح لماذا «لا شك» ليست جبريّة.',
-    sources: ['ID: 60187 | 27.11.2024', 'ID: 79020 | 15.01.2026']
+    sources: ['ID: 60187 | 27.11.2024', 'ID: 79020 | 15.01.2026'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_046',
@@ -823,7 +1099,20 @@ export const laws = [
       'تسريع التشخيص عند حدوث خلل.'
     ],
     example: 'اعتبار 0.236 «فصل الخطاب» في الفهم التشخيصي.',
-    sources: ['ID: 73352 | 11.08.2025', 'ID: 78251 | 21.12.2025', 'ID: 70549 | 14.03.2025']
+    sources: ['ID: 73352 | 11.08.2025', 'ID: 78251 | 21.12.2025', 'ID: 70549 | 14.03.2025'],
+    chartRecipeSources: 'تعريف الاتزان = 0.236 ورد نصًا في المصادر.',
+    chartRecipe: {
+      inputs: ['rangeLow', 'rangeHigh'],
+      overlays: [
+        {
+          type: 'priceLine',
+          value: 'ratio(0.236)',
+          label: 'اتزان 0.236',
+          color: '#2e7d32'
+        }
+      ]
+    },
+    tutorialSteps: []
   },
   {
     id: 'LAW_047',
@@ -841,7 +1130,10 @@ export const laws = [
       'توحيد لغة القياس عند تقدير الأهداف.'
     ],
     example: 'استخدام 4.236 كمرادف للـ 100 ضمن لغة القياس.',
-    sources: ['ID: 78241 | 21.12.2025', 'ID: 78245 | 21.12.2025']
+    sources: ['ID: 78241 | 21.12.2025', 'ID: 78245 | 21.12.2025'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   },
   {
     id: 'LAW_048',
@@ -859,7 +1151,10 @@ export const laws = [
       'تحسين فهم الطالب لمصدر النسب.'
     ],
     example: 'ربط القياسات بفيبوناتشي لتسهيل فهم الخلفية للمتعلم.',
-    sources: ['ID: 77434 | 31.10.2025', 'ID: 60187 | 27.11.2024']
+    sources: ['ID: 77434 | 31.10.2025', 'ID: 60187 | 27.11.2024'],
+    chartRecipeSources: "انظر مصادر القانون أعلاه.",
+    chartRecipe: { inputs: [], overlays: [] },
+    tutorialSteps: []
   }
 ];
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'wouter';
 import { laws, getLawsByCategory } from '../data/laws';
 import './LawsPage.css';
 
@@ -87,7 +88,9 @@ const LawsPage = () => {
               </div>
               <h3 className="law-card-title">{law.title}</h3>
               <p className="law-card-summary">{law.summary}</p>
-              <button className="btn-view">عرض التفاصيل</button>
+              <Link href={`/learn/${law.id}`}>
+                <a className="btn-view">عرض التفاصيل</a>
+              </Link>
             </div>
           );
         })}
