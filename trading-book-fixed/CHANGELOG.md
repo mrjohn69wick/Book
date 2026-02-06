@@ -9,3 +9,7 @@
 - Added per-law hidden state persistence and non-destructive show/hide behavior.
 - Upgraded unknown-law fallback to draw full neutral geometry (HL + fib grid + zone band) instead of marker-only output.
 - Added generated law mapping file and chart coverage report for UNKNOWN_MAPPING tracking.
+
+- Added deterministic non-browser validation script (`validate:laws`) for all law draw plans.
+- Added hardened Playwright config + retry wrapper (`e2e:stable`) with automatic fallback on container Chromium crashes.
+- Added indicator model module for reusable unit segmentation and fib-plan generation.

@@ -239,3 +239,13 @@ VITE_TWELVE_PROXY_BASE=https://<your-worker-domain>
 - `docs/chart-coverage-report.md`
 
 - دليل التطوير التقني للرسم: `docs/indicator-port-dev.md`
+
+
+## Deterministic Law Rendering Validation
+
+- بدون متصفح (authoritative):
+  - `pnpm run validate:laws`
+- E2E hardened for containers (retries + fallback):
+  - `pnpm run e2e:stable`
+
+ملاحظة: إذا فشل Chromium في الحاوية (SIGSEGV/TargetClosedError)، يتم الرجوع تلقائيًا إلى التحقق غير المعتمد على المتصفح.
