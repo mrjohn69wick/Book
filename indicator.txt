@@ -1,0 +1,1000 @@
+//@version=5
+indicator(
+     title="Custom TF Separators + HL + Fibonacci + Single/Merged Extend + Auto-HTF-Right (with Arrows)",
+     shorttitle="Hosam2",
+     overlay=true,
+     max_lines_count=500,
+     max_boxes_count=500,
+     max_labels_count=500,
+     max_polylines_count=100)
+
+// =====================[ Groups ]=====================
+groupGeneral     = "General Settings"
+groupHI          = "HTF Fibo (Right)"
+groupSeparators  = "Separators"
+groupHL          = "High-Low & Labels"
+groupFib         = "Fibonacci"
+groupArrows      = "Arrows"
+groupFibColor    = "Fib Colors & Width"
+groupFibToggle   = "Fib Level Toggles"
+groupExtra       = "Extra Levels (Global Fib Grid)"
+groupHLX         = "Highlights (Prev-Unit Breaks)"
+groupFibFill     = "Fib Fill Bands (0.236?0.382)"   // <-- ????
+
+// =====================[ Inputs ]=====================
+showArrows       = input.bool(false, title="Show Direction Arrows", group=groupArrows)
+
+selectedIdx      = input.int(0, title="Select Single Range to Extend (0 = show all)", minval=0, step=1, group=groupHL)
+
+mergeRanges      = input.bool(false, title="Merge Selected Ranges", group=groupHL)
+extendMerge      = input.bool(false, title="Extend Merged Range (hide ranges AFTER)", group=groupHL)
+mergedStart      = input.int(0, title="Merge Start Range #", minval=0, group=groupHL)
+mergedEnd        = input.int(1, title="Merge End Range #",   minval=0, group=groupHL)
+
+showDebugFib     = input.bool(false, "????? ?????? ??????", group=groupExtra)
+useManualBlockSize = input.bool(false, "Use Manual Block Size?", group=groupExtra)
+manualBlockSize    = input.float(100.0, "Manual Block Size (e.g. 1 / 10 / 100 / 1000 ...)", step=1.0, minval=0.0001, group=groupExtra)
+numBlocksUp        = input.int(2, "Number of Blocks ABOVE price", minval=0, maxval=10, group=groupExtra)
+numBlocksDown      = input.int(2, "Number of Blocks BELOW price", minval=0, maxval=10, group=groupExtra)
+
+showSeparators   = input.bool(true,  title="Show Time Separators", group=groupSeparators)
+useCustomTF      = input.bool(false, title="Use Custom Timeframe for Separators", group=groupSeparators)
+tfSeparator      = input.timeframe("D", title="Custom Timeframe for Separators", group=groupSeparators)
+tzSel            = input.string("UTC+0", title="Timezone for separators",
+                 options=["UTC-12","UTC-11","UTC-10","UTC-9","UTC-8","UTC-7","UTC-6","UTC-5","UTC-4","UTC-3","UTC-2","UTC-1","UTC+0","UTC+1","UTC+2","UTC+3","UTC+4","UTC+5","UTC+6","UTC+7","UTC+8","UTC+9","UTC+10","UTC+11","UTC+12","UTC+13","UTC+14"],
+                 group=groupSeparators)
+
+showHL           = input.bool(true,  title="Show High/Low Lines", group=groupHL)
+showLabels       = input.bool(true,  title="Show Range Labels",   group=groupHL)
+hlLineStyle      = input.string("Solid", options=["Solid","Dotted","Dashed"], title="HL Line Style", group=groupHL)
+hlLineWidth      = input.int(2, minval=1, maxval=5, title="HL Line Width", group=groupHL)
+hlColorUp        = input.color(color.rgb(18,3,224), title="HL Color (Default)", group=groupHL)
+maxLabelLookback = input.int(3000, "Max bars back for labels", minval=100, group=groupHL)
+
+maxRangesToDraw  = input.int(100, "Maximum ranges to draw (last N)", minval=5, maxval=500, group=groupHL)
+
+showFibLevels    = input.bool(true,  title="Show Fibonacci Levels", group=groupFib)
+showExtraFibs    = input.bool(false, title="Show Extra Fibonacci Levels (.118, .882, …)", group=groupFib)
+numGroups        = input.int(5, minval=1, maxval=5, title="Number of Fibonacci Groups", group=groupFib)
+
+// ????? ????? ?????
+fibColorMain       = input.color(color.rgb(0, 0, 255),  title="Fib Main Color (0,100,200…)", group=groupFibColor)
+fibColorSecondary  = input.color(color.rgb(64,224,208), title="Fib Secondary Color (50,150…)", group=groupFibColor)
+fibColorTertiary   = input.color(color.rgb(255,215,0),  title="Fib Tertiary Color (38.2,61.8…)", group=groupFibColor)
+fibColorQuaternary = input.color(color.rgb(255, 0,255), title="Fib Quaternary Color (23.6,76.4…)", group=groupFibColor)
+fibWidthMain       = input.int(1, minval=1, maxval=5,   title="Fib Main Width",  group=groupFibColor)
+fibWidthOthers     = input.int(1, minval=1, maxval=5,   title="Fib Other Width", group=groupFibColor)
+
+showFib_0          = input.bool(true,  title="Show 0% & 100% (Main)", group=groupFibToggle)
+showFib_236        = input.bool(true,  title="Show 23.6% & 76.4%",    group=groupFibToggle)
+showFib_382        = input.bool(true,  title="Show 38.2% & 61.8%",    group=groupFibToggle)
+showFib_5          = input.bool(true,  title="Show 50% & 150%",       group=groupFibToggle)
+showFib_other      = input.bool(true,  title="Show Other Levels",     group=groupFibToggle)
+customRatiosStr    = input.string("", title="Custom Fibonacci Ratios (comma-separated)", group=groupFib)
+
+// ====== HTF right display ======
+showAutoHTFFib   = input.bool(true, title="Auto Higher TF Fib (Right, last completed unit)", group=groupHI)
+rightPadBars     = input.int(50,  minval=0, title="Right Start Offset (bars)", group=groupHI)
+rightWidthBars   = input.int(300, minval=5, title="Right Width (bars)",        group=groupHI)
+useManualRightTF = input.bool(false, title="Pick TF manually for right Fib", group=groupHI)
+rightFibTF       = input.timeframe("60", title="Right Fib Timeframe (m/h/D/W/M)", group=groupHI)
+
+// ===== Highlights =====
+enablePrevBreakHL = input.bool(false, "(?????? ?????)", group=groupHLX)
+hlOpacity         = input.int(80,    "Highlight Opacity (0-100)", minval=0, maxval=100, group=groupHLX)
+hlBullColor       = input.color(color.new(color.lime,  0), "Bullish HL Color", group=groupHLX)
+hlBearColor       = input.color(color.new(color.red,   0), "Bearish HL Color", group=groupHLX)
+hlBorderWidth     = input.int(1, "Highlight Border Width", minval=0, maxval=3, group=groupHLX)
+maxHLToDraw       = input.int(100, "Max highlighted pairs to keep (oldest reused)", minval=1, maxval=250, group=groupHLX)
+
+// Inside (No-Break)
+enablePrevInsideHL = input.bool(false, "( ????? )", group=groupHLX)
+insideOpacity      = input.int(70, "Inside Highlight Opacity (0-100)", minval=0, maxval=100, group=groupHLX)
+insideColor        = input.color(color.new(color.orange, 0), "Inside HL Color", group=groupHLX)
+insideBorderWidth  = input.int(1, "Inside Highlight Border Width", minval=0, maxval=3, group=groupHLX)
+maxInsideHLToDraw  = input.int(100, "Max inside pairs to keep (oldest reused)", minval=1, maxval=250, group=groupHLX)
+
+// Inside-Short (No-Break + length < 50% prev)
+enablePrevInsideShortHL = input.bool(false, "(??? ???? ?????)", group=groupHLX)
+
+// BOTH-SIDES
+enablePrev0100BothHL = input.bool(false, "( ????? )", group=groupHLX)
+break0100Opacity     = input.int(80, "Both-Sides Highlight Opacity (0-100)", minval=0, maxval=100, group=groupHLX)
+break0100Color       = input.color(color.new(#dde938, 0), "Both-Sides HL Color", group=groupHLX)
+break0100BorderWidth = input.int(1, "Both-Sides HL Border Width", minval=0, maxval=3, group=groupHLX)
+maxBreakHLToDraw     = input.int(100, "Max BOTH-SIDES highlights kept", minval=1, maxval=250, group=groupHLX)
+
+// WEAK 100/0 (no 123.6) & length < 50% prev
+enablePrevWeak123HL  = input.bool(false, "(????? )", group=groupHLX)
+weakOpacity          = input.int(75, "WEAK Highlight Opacity (0-100)", minval=0, maxval=100, group=groupHLX)
+weakBullColor        = input.color(color.new(color.teal, 0), "WEAK Bullish Color", group=groupHLX)
+weakBearColor        = input.color(color.new(color.maroon, 0), "WEAK Bearish Color", group=groupHLX)
+weakBorderWidth      = input.int(1, "WEAK Highlight Border Width", minval=0, maxval=3, group=groupHLX)
+maxWeakHLToDraw      = input.int(100, "Max WEAK highlights kept", minval=1, maxval=250, group=groupHLX)
+
+// === NEW: Back Inside-Short (both-sides props + prev < 50% of current)
+enablePrevBackInsideShortHL = input.bool(false, "(??? ???? ????)", group=groupHLX)  // <-- ????
+
+// =====[ ???? ???? ????????? ]=====
+showHLXTextLabels = input.bool(true, "Show HLX Text Labels", group=groupHLX)
+hlxTextSizeOpt    = input.string("Small", "HLX Text Size", options=["Tiny","Small","Normal","Large"], group=groupHLX)
+hlxTextYOffsetPct = input.float(0.12, "HLX Text Y-Offset (of unit range)", minval=0.02, maxval=0.5, step=0.01, group=groupHLX)
+
+// =====================[ Debug gating ]=====================
+__canDrawUnits              = not showDebugFib
+__showHL                    = showHL           and __canDrawUnits
+__showLabels                = showLabels       and __canDrawUnits
+__showArrows               = showArrows       and __canDrawUnits
+__showSeparators            = showSeparators   and __canDrawUnits
+__showFibLevels             = showFibLevels    and __canDrawUnits
+__showAutoHTFFib            = showAutoHTFFib   and __canDrawUnits
+__enablePrevBreakHL         = enablePrevBreakHL            and __canDrawUnits
+__enablePrevInsideHL        = enablePrevInsideHL           and __canDrawUnits
+__enablePrevInsideShortHL   = enablePrevInsideShortHL      and __canDrawUnits
+__enablePrev0100BothHL      = enablePrev0100BothHL         and __canDrawUnits
+__enablePrevWeak123HL       = enablePrevWeak123HL          and __canDrawUnits
+__enablePrevBackInsideShortHL = enablePrevBackInsideShortHL and __canDrawUnits   // <-- ????
+
+// =====================[ Adjusted time ]=====================
+tzOffset = int(str.tonumber(str.replace(tzSel, "UTC", "")))
+adjTime  = time + tzOffset * 3600 * 1000
+adjHour  = hour(adjTime)
+adjMin   = minute(adjTime)
+
+// =====================[ Helpers ]=====================
+f_drawSeparator(cond, style, col) =>
+    cond ? line.new(bar_index, low, bar_index, high, width=1, extend=extend.both, style=style, color=col) : na
+
+// Pools
+var linesHighPool = array.new_line()
+var linesLowPool  = array.new_line()
+var labelsPool    = array.new_label()
+var boxesPool     = array.new_box()
+// Label pool ???? ????? HLX
+var labelsHLXPool = array.new_label()
+
+getOrReuseLine(pool) =>
+    line ln = na
+    if array.size(pool) < 500
+        ln := line.new(na, na, na, na)
+        array.push(pool, ln)
+        ln
+    else
+        ln := array.shift(pool)
+        array.push(pool, ln)
+        ln
+
+getOrReuseLabel(pool) =>
+    label lb = na
+    if array.size(pool) < 500
+        lb := label.new(na, na, "", xloc=xloc.bar_index, style=label.style_none, textcolor=color.yellow, size=size.small)
+        array.push(pool, lb)
+        lb
+    else
+        lb := array.shift(pool)
+        array.push(pool, lb)
+        lb
+
+getOrReuseBox(_pool) =>
+    box b = na
+    if array.size(_pool) < 500
+        b := box.new(na, na, na, na)
+        array.push(_pool, b)
+        b
+    else
+        b := array.shift(_pool)
+        array.push(_pool, b)
+        b
+
+f_isExtra(val) =>
+    val == 0.118 or val == 0.882 or val == 1.118 or val == 1.44 or val == 1.882 or val == 2.118 or val == 2.44  or val == 2.882 or val == 3.118 or val == 3.44  or val == 3.882 or val == 4.118 or val == 4.44
+
+// ===== prev-unit derived levels =====
+f_prev_levels(_prevLow, _prevHigh) =>
+    _rng = _prevHigh - _prevLow
+    _lvl0   = _prevLow
+    _lvl100 = _prevHigh
+    _lvl123_up = _prevHigh + _rng * 0.236
+    _lvl123_dn = _prevLow  - _rng * 0.236
+    [_lvl0, _lvl100, _lvl123_up, _lvl123_dn, _rng]
+
+// =====================[ FILL options NEW ]=====================
+enableF134Fill       = input.bool(false, "Fill band 123.6%?138.2% (±1 only)", group=groupFibFill)
+fill134Color         = input.color(color.rgb(121, 7, 102), "Single band color (purple)", group=groupFibFill)
+enableFMultiBands    = input.bool(false, "Fill bands (±) 1..N groups: 0.236?0.382", group=groupFibFill)
+fillGroupsCount      = input.int(4, "How many groups (1..4)", minval=1, maxval=4, group=groupFibFill)
+
+var int maxFutureBarsForFill = 480
+
+f_fillBand(_s, _e, _top, _bot, _col, _extendRight) =>
+    b = getOrReuseBox(boxesPool)
+    box.set_left(b,  _s)
+    _r = _extendRight ? bar_index + maxFutureBarsForFill : _e
+    box.set_right(b, _r)
+    box.set_top(b,   math.max(_top, _bot))
+    box.set_bottom(b, math.min(_top, _bot))
+    box.set_bgcolor(b, color.new(_col, 0))     // opacity = 0
+    box.set_border_width(b, 0)
+    box.set_border_color(b, color.new(_col, 100))
+
+f_fillBandForGroup(_s, _e, _lP, _diff, g, _col, _extendRight) =>
+    _upBot = _lP + _diff * (g + 0.236)
+    _upTop = _lP + _diff * (g + 0.382)
+    f_fillBand(_s, _e, _upTop, _upBot, _col, _extendRight)
+    _gBase = g - 1.0
+    _dnTop = _lP + _diff * -( _gBase + 0.236)
+    _dnBot = _lP + _diff * -( _gBase + 0.382)
+    f_fillBand(_s, _e, _dnTop, _dnBot, _col, _extendRight)
+
+// =====================[ State vars ]=====================
+var int   lastStartBar   = na
+var float lastHigh       = na
+var float lastLow        = na
+var int   lastIdx        = na
+var float sepHigh        = na
+var float sepLow         = na
+var int   sepStart       = na
+var int   rangeCount     = 0
+var int   lastUnitSpan   = na
+
+var float firstOpen = na
+var float lastClose = na
+
+var bool  inMerge        = false
+var int   mergeStartBar  = na
+var float mergeHigh      = na
+var float mergeLow       = na
+
+// arrays
+var arrStart = array.new_int()
+var arrEnd   = array.new_int()
+var arrHigh  = array.new_float()
+var arrLow   = array.new_float()
+var arrOpen  = array.new_float()
+var arrClose = array.new_float()
+
+// =====================[ HLX text helpers ]=====================
+f_text_size(_opt) =>
+    _opt == "Tiny" ? size.tiny : _opt == "Small" ? size.small : _opt == "Normal" ? size.normal : size.large
+
+f_tag_unit(_idx, _txt, _col) =>
+    if not showHLXTextLabels
+        na
+    else
+        ok = _idx >= 0 and _idx < array.size(arrStart)
+        if not ok
+            na
+        else
+            _s  = array.get(arrStart, _idx)
+            _e  = array.get(arrEnd,   _idx)
+            _hi = array.get(arrHigh,  _idx)
+            _lo = array.get(arrLow,   _idx)
+            _midX = int(math.round((_s + _e) * 0.5))
+            _offY = (_hi - _lo) * hlxTextYOffsetPct
+            lb = getOrReuseLabel(labelsHLXPool)
+            label.set_xy(lb, _midX, _hi + _offY)
+            label.set_text(lb, _txt)
+            label.set_textcolor(lb, _col)
+            label.set_style(lb, label.style_label_down)
+            label.set_size(lb, f_text_size(hlxTextSizeOpt))
+            label.set_color(lb, color.new(color.black, 100))
+
+// =====================[ FIB drawing ]=====================
+f_drawFib_to(sB, eB, hP, lP, doExtend) =>
+    if not __showFibLevels
+        na
+    else
+        diff = hP - lP
+
+        baseDefault  = array.from( 0.0,1.0,0.236,0.382,0.5,0.618,0.764,1.236,1.382,1.5,1.618,1.764,2.0,2.236,2.382,2.5,2.618,2.764,3.0,3.236,3.382,3.5,3.618,3.764,4.0,4.236,-0.236,-0.382,-0.5,-0.618,-0.764,-1.0,-1.236,-1.382,-1.5,-1.618,-1.764,-2.0,-2.236,-2.382,-2.5,-2.618,-2.764,-3.0,-3.236 )
+        extraDefault = array.from( 0.118,0.882,1.118,1.44,1.882,2.118,2.44,2.882,3.118,3.44,3.882,4.118,4.44,-0.118,-0.882,-1.118,-0.44,-1.44,-1.882,-2.118,-2.44,-2.882,-3.118,-3.44,-3.882,-4.118,-4.44 )
+        defaultList = showExtraFibs ? array.concat(baseDefault, extraDefault) : baseDefault
+
+        customArr = array.new_float()
+        if str.length(customRatiosStr) > 0
+            for s in str.split(customRatiosStr, ",")
+                val = str.tonumber(str.trim(s))
+                if not na(val)
+                    array.push(customArr, val)
+
+        fibs = array.size(customArr) > 0 ? array.concat(defaultList, customArr) : defaultList
+        extMode = doExtend ? extend.right : extend.none
+
+        boundaries = array.new_float()
+        for i = 1 to numGroups
+            array.push(boundaries, i * 100)
+
+        // FILLs (???????)
+        if enableF134Fill
+            topUp    = lP + diff * 1.382
+            botUp    = lP + diff * 1.236
+            topDown  = lP + diff * -0.236
+            botDown  = lP + diff * -0.382
+            f_fillBand(sB, eB, topUp,   botUp,   fill134Color, doExtend)
+            f_fillBand(sB, eB, topDown, botDown, fill134Color, doExtend)
+
+        if enableFMultiBands
+            for g = 1 to fillGroupsCount
+                f_fillBandForGroup(sB, eB, lP, diff, g, fill134Color, doExtend)
+
+        // ???? ????? + ??????
+        for f in fibs
+            absf = math.abs(f)
+            isExtra = f_isExtra(absf)
+
+            drawThis = ( ((absf==0) or (absf==1) or (absf==2) or (absf==3) or (absf==4)) and showFib_0  ) or
+                       ( ((absf==0.236) or (absf==0.764) or (absf==1.236) or (absf==1.764) or (absf==2.236) or (absf==2.764) or (absf==3.236) or (absf==3.764))  and showFib_236 ) or
+                       ( ((absf==0.382) or (absf==0.618) or (absf==1.382) or (absf==1.618) or (absf==2.382) or (absf==2.618) or (absf==3.382) or (absf==3.618)) and showFib_382 ) or
+                       ( ((absf==0.5) or (absf==1.5) or (absf==2.5) or (absf==3.5)) and showFib_5 ) or
+                       ( isExtra and showExtraFibs  ) or
+                       ( ( absf!=0 and absf!=1 and absf!=2 and absf!=3 and absf!=4 and
+                           absf!=0.236 and absf!=0.764 and absf!=1.236 and absf!=1.764 and absf!=2.236 and absf!=2.764 and absf!=3.236 and absf!=3.764 and
+                           absf!=0.382 and absf!=0.618 and absf!=1.382 and absf!=1.618 and absf!=2.382 and absf!=2.618 and absf!=3.382 and absf!=3.618 and
+                           absf!=0.5 and absf!=1.5 and absf!=2.5 and absf!=3.5 )  and showFib_other )
+
+            if not drawThis
+                continue
+
+            pct = f < 0 ? 100 + absf * 100 : absf * 100
+
+            grp = 0
+            for i = 0 to array.size(boundaries) - 1
+                if pct <= array.get(boundaries, i)
+                    grp := i + 1
+                    break
+            if grp == 0
+                continue
+
+            lvl = lP + diff * f
+
+            col = isExtra? color.gray :
+                  ( (absf==0) or (absf==1) or (absf==2) or (absf==3) or (absf==4) ) ? fibColorMain :
+                  ( (absf==0.5) or (absf==1.5) or (absf==2.5) or (absf==3.5) )      ? fibColorSecondary :
+                  ( (absf==0.382) or (absf==0.618) or (absf==1.382) or (absf==1.618) or (absf==2.382) or (absf==2.618) or (absf==3.382) or (absf==3.618) ) ? fibColorTertiary  :
+                                                                                                                             fibColorQuaternary
+
+            sty = ( f == -0.236 or (absf==0) or (absf==1) or (absf==2) or (absf==3) or (absf==4) or (absf==0.5) or (absf==1.5) or (absf==2.5) or (absf==3.5) or (absf==1.236) or (absf==2.236) or (absf==3.236) or (absf==4.236) ) ? line.style_solid :   ( (absf==0.382) or (absf==0.618) or (absf==1.382) or (absf==1.618) or (absf==2.382) or (absf==2.618) or (absf==3.382) or (absf==3.618) or (absf==0.118) or (absf==0.882) or (absf==1.118) or (absf==1.44) or (absf==1.882) or (absf==2.118) or (absf==2.44)  or (absf==2.882) or (absf==3.118) or (absf==3.44)  or (absf==3.882) or (absf==4.118) or (absf==4.44) ) ? line.style_dotted : line.style_dashed
+
+            wth = (sty == line.style_solid) ? fibWidthMain : fibWidthOthers
+            line.new( x1 = sB, y1 = lvl, x2 = eB,  y2 = lvl, width = wth, color = col, style = sty, extend = extMode )
+            fibLabel = f < 0 ? 100 + absf * 100 : absf * 100
+            label.new( x = sB + 3, y = lvl, text = str.tostring(fibLabel, "#.##"), textcolor = color.white, style = label.style_none )
+
+// ===== highlight helper =====
+f_highlight_unit(_idx, _col, _op, _bw) =>
+    _sOk = _idx >= 0 and _idx < array.size(arrStart)
+    if not _sOk
+        na
+    else
+        _s  = array.get(arrStart, _idx)
+        _e  = array.get(arrEnd,   _idx)
+        _hi = array.get(arrHigh,  _idx)
+        _lo = array.get(arrLow,   _idx)
+        _b  = getOrReuseBox(boxesPool)
+        box.set_left  (_b, _s)
+        box.set_right (_b, _e)
+        box.set_top   (_b, _hi)
+        box.set_bottom(_b, _lo)
+        box.set_bgcolor(_b, color.new(_col, _op))
+        box.set_border_color(_b, _col)
+        box.set_border_width(_b, _bw)
+
+// =====================[ Separators cadence ]=====================
+tfMul = timeframe.multiplier
+isNewDefault = (timeframe.isintraday and tfMul == 5   and adjHour % 3  == 0 and adjMin == 0 and (adjHour != adjHour[1] or adjMin != adjMin[1])) or  (timeframe.isintraday and tfMul == 1   and adjMin == 0       and (adjHour != adjHour[1] or adjMin != adjMin[1])) or  (timeframe.isintraday and tfMul == 15  and adjHour % 6  == 0 and adjMin == 0 and (adjHour != adjHour[1] or adjMin != adjMin[1])) or  (timeframe.isintraday and tfMul == 30  and adjHour % 12 == 0 and adjMin == 0 and (adjHour != adjHour[1] or adjMin != adjMin[1])) or   (timeframe.isintraday and tfMul == 60 and dayofmonth(adjTime) != dayofmonth(adjTime[1])) or   (timeframe.isintraday and tfMul == 240 and weekofyear(adjTime) != weekofyear(adjTime[1])) or   (timeframe.isdaily     and month(adjTime)     != month(adjTime[1])) or   ((timeframe.isweekly or timeframe.ismonthly) and year(adjTime)  != year(adjTime[1]))
+
+isNewCustom = useCustomTF and ta.change(time(tfSeparator))
+isNew      = useCustomTF ? isNewCustom : isNewDefault
+
+// =====================[ Main per-unit logic ]=====================
+if isNew
+    if not na(sepStart)
+        array.push(arrStart, sepStart)
+        array.push(arrEnd,   bar_index)
+        array.push(arrHigh,  sepHigh)
+        array.push(arrLow,   sepLow)
+        array.push(arrOpen,  firstOpen)
+        array.push(arrClose, lastClose)
+
+        idx = array.size(arrStart) - 1
+        totalRanges = array.size(arrStart)
+
+        // ===== Highlights =====
+        if __enablePrevBreakHL and idx > 0
+            prevLow  = array.get(arrLow,  idx - 1)
+            prevHigh = array.get(arrHigh, idx - 1)
+            curLow   = sepLow
+            curHigh  = sepHigh
+            [lvl0, lvl100, lvl123_up, lvl123_dn, prevRng] = f_prev_levels(prevLow, prevHigh)
+            curRng = curHigh - curLow
+            validPrev = prevRng > 0
+            validLen  = curRng >= prevRng * 0.5
+            bullBreak = validPrev and validLen and (curHigh > lvl100) and (curHigh <= lvl123_up) and (curLow >= lvl0)
+            bearBreak = validPrev and validLen and (curLow  < lvl0)    and (curLow  >= lvl123_dn) and (curHigh <= lvl100)
+            if bullBreak or bearBreak
+                _col = bullBreak ? hlBullColor : hlBearColor
+                if idx >= math.max(0, totalRanges - maxHLToDraw)
+                    f_highlight_unit(idx - 1, _col, hlOpacity, hlBorderWidth)
+                    f_highlight_unit(idx,     _col, hlOpacity, hlBorderWidth)
+                    f_tag_unit(idx - 1, "?????? ?????", _col)
+                    f_tag_unit(idx,     "?????? ?????", _col)
+
+        if __enablePrevInsideHL and idx > 0
+            pLow  = array.get(arrLow,  idx - 1)
+            pHigh = array.get(arrHigh, idx - 1)
+            cLow  = sepLow
+            cHigh = sepHigh
+            insideNoBreak = (cHigh <= pHigh) and (cLow >= pLow)
+            if insideNoBreak
+                if idx >= math.max(0, totalRanges - maxInsideHLToDraw)
+                    f_highlight_unit(idx - 1, insideColor, insideOpacity, insideBorderWidth)
+                    f_highlight_unit(idx,     insideColor, insideOpacity, insideBorderWidth)
+                    f_tag_unit(idx - 1, "?????", insideColor)
+                    f_tag_unit(idx,     "?????", insideColor)
+
+        // (??? ???? ?????): ????? + ??? ??????? < 50% ?? ???????
+        if __enablePrevInsideShortHL and idx > 0
+            pLowS  = array.get(arrLow,  idx - 1)
+            pHighS = array.get(arrHigh, idx - 1)
+            cLowS  = sepLow
+            cHighS = sepHigh
+            insideNoBreakS = (cHighS <= pHighS) and (cLowS >= pLowS)
+            pRngS = pHighS - pLowS
+            cRngS = cHighS - cLowS
+            isShort = pRngS > 0 and cRngS < pRngS * 0.5
+            if insideNoBreakS and isShort
+                if idx >= math.max(0, totalRanges - maxInsideHLToDraw)
+                    f_highlight_unit(idx - 1, insideColor, insideOpacity, insideBorderWidth)
+                    f_highlight_unit(idx,     insideColor, insideOpacity, insideBorderWidth)
+                    f_tag_unit(idx - 1, "??? ???? ?????", insideColor)
+                    f_tag_unit(idx,     "??? ???? ?????", insideColor)
+
+        if __enablePrev0100BothHL and idx > 0
+            prevLow2  = array.get(arrLow,  idx - 1)
+            prevHigh2 = array.get(arrHigh, idx - 1)
+            brokeBoth = (sepHigh > prevHigh2) and (sepLow < prevLow2)
+            if brokeBoth and idx >= math.max(0, totalRanges - maxBreakHLToDraw)
+                f_highlight_unit(idx - 1, break0100Color, break0100Opacity, break0100BorderWidth)
+                f_highlight_unit(idx,     break0100Color, break0100Opacity, break0100BorderWidth)
+                f_tag_unit(idx - 1, "?????", break0100Color)
+                f_tag_unit(idx,     "?????", break0100Color)
+
+        if __enablePrevWeak123HL and idx > 0
+            pLow3  = array.get(arrLow,  idx - 1)
+            pHigh3 = array.get(arrHigh, idx - 1)
+            [pv0, pv100, pv123_up, pv123_dn, pRng] = f_prev_levels(pLow3, pHigh3)
+            cRng = sepHigh - sepLow
+            weakBull = (sepHigh > pv100) and (sepHigh < pv123_up) and (sepLow >= pv0)   and (cRng < pRng * 0.5)
+            weakBear = (sepLow  < pv0)    and (sepLow  > pv123_dn) and (sepHigh <= pv100) and (cRng < pRng * 0.5)
+            if (weakBull or weakBear) and idx >= math.max(0, totalRanges - maxWeakHLToDraw)
+                _wcol = weakBull ? weakBullColor : weakBearColor
+                f_highlight_unit(idx - 1, _wcol, weakOpacity, weakBorderWidth)
+                f_highlight_unit(idx,     _wcol, weakOpacity, weakBorderWidth)
+                f_tag_unit(idx - 1, "?????", _wcol)
+                f_tag_unit(idx,     "?????", _wcol)
+
+        // === NEW: ??? ???? ???? (properties = ?????) + prev < 50% current
+        if __enablePrevBackInsideShortHL and idx > 0
+            pLo  = array.get(arrLow,  idx - 1)
+            pHi  = array.get(arrHigh, idx - 1)
+            cLo  = sepLow
+            cHi  = sepHigh
+            prevR = pHi - pLo
+            curR  = cHi - cLo
+            brokeBothBK = (cHi > pHi) and (cLo < pLo)     // ??? ??? "?????"
+            sizeCond    = (prevR > 0) and (curR > 0) and (prevR < curR * 0.5)
+            if brokeBothBK and sizeCond and idx >= math.max(0, totalRanges - maxBreakHLToDraw)
+                // ??? ????? ???????:
+                f_highlight_unit(idx - 1, break0100Color, break0100Opacity, break0100BorderWidth)
+                f_highlight_unit(idx,     break0100Color, break0100Opacity, break0100BorderWidth)
+                // ????
+                f_tag_unit(idx - 1, "??? ???? ????", break0100Color)
+                f_tag_unit(idx,     "??? ???? ????", break0100Color)
+
+        // ===== ??? ??????? =========
+        lastStartBar := sepStart
+        lastHigh     := sepHigh
+        lastLow      := sepLow
+        lastIdx      := idx
+
+        shouldDraw = idx >= math.max(0, totalRanges - maxRangesToDraw)
+
+        if __showSeparators
+            f_drawSeparator(true, line.style_dotted, color.rgb(128,127,127))
+
+        if mergeRanges
+            // draw pre-merge normally
+            if idx < mergedStart
+                if shouldDraw
+                    if __showHL
+                        lnH = getOrReuseLine(linesHighPool)
+                        line.set_xy1(lnH, sepStart, sepHigh)
+                        line.set_xy2(lnH, bar_index, sepHigh)
+                        line.set_width(lnH, hlLineWidth)
+                        line.set_color(lnH, hlColorUp)
+                        line.set_style(lnH, hlLineStyle == "Solid" ? line.style_solid : hlLineStyle == "Dotted" ? line.style_dotted : line.style_dashed)
+
+                        lnL = getOrReuseLine(linesLowPool)
+                        line.set_xy1(lnL, sepStart, sepLow)
+                        line.set_xy2(lnL, bar_index, sepLow)
+                        line.set_width(lnL, hlLineWidth)
+                        line.set_color(lnL, hlColorUp)
+                        line.set_style(lnL, hlLineStyle == "Solid" ? line.style_solid : hlLineStyle == "Dotted" ? line.style_dotted : line.style_dashed)
+
+                    if __showLabels
+                        lb = getOrReuseLabel(labelsPool)
+                        midBar  = int(math.round((sepStart + bar_index) * 0.5))
+                        yOffNum = (sepHigh - sepLow) * 0.10
+                        tooFar  = (bar_index - midBar) > maxLabelLookback
+                        if not tooFar
+                            label.set_xy(lb, midBar - 3, sepHigh + yOffNum)
+                            label.set_text(lb, str.tostring(idx))
+                        else
+                            label.set_text(lb, "")
+
+                    f_drawFib_to(sepStart, bar_index, sepHigh, sepLow, false)
+
+                    if __showArrows
+                        isBull  = lastClose > firstOpen
+                        arrTxt  = isBull ? "?" : "?"
+                        arrCol  = isBull ? color.lime : color.red
+                        midBarA = int(math.round((sepStart + bar_index) * 0.5))
+                        yOffA   = (sepHigh - sepLow) * 0.15
+                        label.new(midBarA + 3, sepHigh + yOffA, arrTxt, textcolor=arrCol, style=label.style_none, size=size.small)
+
+            if idx == mergedStart
+                inMerge       := true
+                mergeStartBar := sepStart
+                mergeHigh     := sepHigh
+                mergeLow      := sepLow
+
+            if inMerge and idx > mergedStart and idx <= mergedEnd
+                mergeHigh := math.max(mergeHigh, sepHigh)
+                mergeLow  := math.min(mergeLow,  sepLow)
+
+            if inMerge and idx == mergedEnd
+                if shouldDraw
+                    if __showHL
+                        lnH = getOrReuseLine(linesHighPool)
+                        line.set_xy1(lnH, mergeStartBar, mergeHigh)
+                        line.set_xy2(lnH, bar_index,      mergeHigh)
+                        line.set_width(lnH, hlLineWidth)
+                        line.set_color(lnH, hlColorUp)
+                        line.set_style(lnH, hlLineStyle == "Solid" ? line.style_solid : hlLineStyle == "Dotted" ? line.style_dotted : line.style_dashed)
+
+                        lnL = getOrReuseLine(linesLowPool)
+                        line.set_xy1(lnL, mergeStartBar, mergeLow)
+                        line.set_xy2(lnL, bar_index,      mergeLow)
+                        line.set_width(lnL, hlLineWidth)
+                        line.set_color(lnL, hlColorUp)
+                        line.set_style(lnL, hlLineStyle == "Solid" ? line.style_solid : hlLineStyle == "Dotted" ? line.style_dotted : line.style_dashed)
+
+                    if __showLabels
+                        lb = getOrReuseLabel(labelsPool)
+                        midBar  = int(math.round((mergeStartBar + bar_index) * 0.5))
+                        yOffNum = (mergeHigh - mergeLow) * 0.10
+                        tooFar  = (bar_index - midBar) > maxLabelLookback
+                        if not tooFar
+                            label.set_xy(lb, midBar - 3, mergeHigh + yOffNum)
+                            label.set_text(lb, str.tostring(mergedStart))
+                        else
+                            label.set_text(lb, "")
+
+                    f_drawFib_to(mergeStartBar, bar_index, mergeHigh, mergeLow, extendMerge)
+
+                    if __showArrows
+                        oMerged  = array.get(arrOpen,  mergedStart)
+                        cMerged  = array.get(arrClose, mergedEnd)
+                        isBull   = cMerged > oMerged
+                        arrTxt   = isBull ? "?" : "?"
+                        arrCol   = isBull ? color.lime : color.red
+                        midBarA  = int(math.round((mergeStartBar + bar_index) * 0.5))
+                        yOffA    = (mergeHigh - mergeLow) * 0.15
+                        label.new(midBarA + 3, mergeHigh + yOffA, arrTxt, textcolor=arrCol, style=label.style_none, size=size.small)
+
+                inMerge := false
+
+            if idx > mergedEnd and not extendMerge
+                if shouldDraw
+                    if __showHL
+                        lnH = getOrReuseLine(linesHighPool)
+                        line.set_xy1(lnH, sepStart, sepHigh)
+                        line.set_xy2(lnH, bar_index, sepHigh)
+                        line.set_width(lnH, hlLineWidth)
+                        line.set_color(lnH, hlColorUp)
+                        line.set_style(lnH, hlLineStyle == "Solid" ? line.style_solid : hlLineStyle == "Dotted" ? line.style_dotted : line.style_dashed)
+
+                        lnL = getOrReuseLine(linesLowPool)
+                        line.set_xy1(lnL, sepStart, sepLow)
+                        line.set_xy2(lnL, bar_index, sepLow)
+                        line.set_width(lnL, hlLineWidth)
+                        line.set_color(lnL, hlColorUp)
+                        line.set_style(lnL, hlLineStyle == "Solid" ? line.style_solid : hlLineStyle == "Dotted" ? line.style_dotted : line.style_dashed)
+
+                    if __showLabels
+                        lb = getOrReuseLabel(labelsPool)
+                        midBar  = int(math.round((sepStart + bar_index) * 0.5))
+                        yOffNum = (sepHigh - sepLow) * 0.10
+                        tooFar  = (bar_index - midBar) > maxLabelLookback
+                        if not tooFar
+                            label.set_xy(lb, midBar - 3, sepHigh + yOffNum)
+                            label.set_text(lb, str.tostring(idx))
+                        else
+                            label.set_text(lb, "")
+
+                    f_drawFib_to(sepStart, bar_index, sepHigh, sepLow, false)
+
+                    if __showArrows
+                        isBull  = lastClose > firstOpen
+                        arrTxt  = isBull ? "?" : "?"
+                        arrCol  = isBull ? color.lime : color.red
+                        midBarA = int(math.round((sepStart + bar_index) * 0.5))
+                        yOffA   = (sepHigh - sepLow) * 0.15
+                        label.new(midBarA + 3, sepHigh + yOffA, arrTxt, textcolor=arrCol, style=label.style_none, size=size.small)
+
+        else
+            // NOT mergeRanges
+            if selectedIdx > 0
+                if idx < selectedIdx
+                    if idx >= math.max(0, array.size(arrStart) - maxRangesToDraw)
+                        if __showHL
+                            lnH = getOrReuseLine(linesHighPool)
+                            line.set_xy1(lnH, sepStart, sepHigh)
+                            line.set_xy2(lnH, bar_index, sepHigh)
+                            line.set_width(lnH, hlLineWidth)
+                            line.set_color(lnH, hlColorUp)
+                            line.set_style(lnH, hlLineStyle == "Solid" ? line.style_solid : hlLineStyle == "Dotted" ? line.style_dotted : line.style_dashed)
+
+                            lnL = getOrReuseLine(linesLowPool)
+                            line.set_xy1(lnL, sepStart, sepLow)
+                            line.set_xy2(lnL, bar_index, sepLow)
+                            line.set_width(lnL, hlLineWidth)
+                            line.set_color(lnL, hlColorUp)
+                            line.set_style(lnL, hlLineStyle == "Solid" ? line.style_solid : hlLineStyle == "Dotted" ? line.style_dotted : line.style_dashed)
+
+                        if __showLabels
+                            lb = getOrReuseLabel(labelsPool)
+                            midBar  = int(math.round((sepStart + bar_index) * 0.5))
+                            yOffNum = (sepHigh - sepLow) * 0.10
+                            tooFar  = (bar_index - midBar) > maxLabelLookback
+                            if not tooFar
+                                label.set_xy(lb, midBar - 3, sepHigh + yOffNum)
+                                label.set_text(lb, str.tostring(idx))
+                            else
+                                label.set_text(lb, "")
+
+                        f_drawFib_to(sepStart, bar_index, sepHigh, sepLow, false)
+
+                        if __showArrows
+                            isBull  = lastClose > firstOpen
+                            arrTxt  = isBull ? "?" : "?"
+                            arrCol  = isBull ? color.lime : color.red
+                            midBarA = int(math.round((sepStart + bar_index) * 0.5))
+                            yOffA   = (sepHigh - sepLow) * 0.15
+                            label.new(midBarA + 3, sepHigh + yOffA, arrTxt, textcolor=arrCol, style=label.style_none, size=size.small)
+
+                if idx == selectedIdx
+                    if idx >= math.max(0, array.size(arrStart) - maxRangesToDraw)
+                        if __showHL
+                            lnH = getOrReuseLine(linesHighPool)
+                            line.set_xy1(lnH, sepStart, sepHigh)
+                            line.set_xy2(lnH, bar_index, sepHigh)
+                            line.set_width(lnH, hlLineWidth)
+                            line.set_color(lnH, hlColorUp)
+                            line.set_style(lnH, hlLineStyle == "Solid" ? line.style_solid : hlLineStyle == "Dotted" ? line.style_dotted : line.style_dashed)
+
+                            lnL = getOrReuseLine(linesLowPool)
+                            line.set_xy1(lnL, sepStart, sepLow)
+                            line.set_xy2(lnL, bar_index, sepLow)
+                            line.set_width(lnL, hlLineWidth)
+                            line.set_color(lnL, hlColorUp)
+                            line.set_style(lnL, hlLineStyle == "Solid" ? line.style_solid : hlLineStyle == "Dotted" ? line.style_dotted : line.style_dashed)
+
+                        if __showLabels
+                            lb = getOrReuseLabel(labelsPool)
+                            midBar  = int(math.round((sepStart + bar_index) * 0.5))
+                            yOffNum = (sepHigh - sepLow) * 0.10
+                            tooFar  = (bar_index - midBar) > maxLabelLookback
+                            if not tooFar
+                                label.set_xy(lb, midBar - 3, sepHigh + yOffNum)
+                                label.set_text(lb, str.tostring(idx))
+                            else
+                                label.set_text(lb, "")
+
+                        f_drawFib_to(sepStart, bar_index, sepHigh, sepLow, true)
+
+                        if __showArrows
+                            isBull  = lastClose > firstOpen
+                            arrTxt  = isBull ? "?" : "?"
+                            arrCol  = isBull ? color.lime : color.red
+                            midBarA = int(math.round((sepStart + bar_index) * 0.5))
+                            yOffA   = (sepHigh - sepLow) * 0.15
+                            label.new(midBarA + 3, sepHigh + yOffA, arrTxt, textcolor=arrCol, style=label.style_none, size=size.small)
+
+            else
+                // selectedIdx == 0
+                if idx >= math.max(0, array.size(arrStart) - maxRangesToDraw)
+                    if __showHL
+                        lnH = getOrReuseLine(linesHighPool)
+                        line.set_xy1(lnH, sepStart, sepHigh)
+                        line.set_xy2(lnH, bar_index, sepHigh)
+                        line.set_width(lnH, hlLineWidth)
+                        line.set_color(lnH, hlColorUp)
+                        line.set_style(lnH, hlLineStyle == "Solid" ? line.style_solid : hlLineStyle == "Dotted" ? line.style_dotted : line.style_dashed)
+
+                        lnL = getOrReuseLine(linesLowPool)
+                        line.set_xy1(lnL, sepStart, sepLow)
+                        line.set_xy2(lnL, bar_index, sepLow)
+                        line.set_width(lnL, hlLineWidth)
+                        line.set_color(lnL, hlColorUp)
+                        line.set_style(lnL, hlLineStyle == "Solid" ? line.style_solid : hlLineStyle == "Dotted" ? line.style_dotted : line.style_dashed)
+
+                    if __showLabels
+                        lb = getOrReuseLabel(labelsPool)
+                        midBar  = int(math.round((sepStart + bar_index) * 0.5))
+                        yOffNum = (sepHigh - sepLow) * 0.10
+                        tooFar  = (bar_index - midBar) > maxLabelLookback
+                        if not tooFar
+                            label.set_xy(lb, midBar - 3, sepHigh + yOffNum)
+                            label.set_text(lb, str.tostring(idx))
+                        else
+                            label.set_text(lb, "")
+
+                    f_drawFib_to(sepStart, bar_index, sepHigh, sepLow, false)
+
+                    if __showArrows
+                        isBull  = lastClose > firstOpen
+                        arrTxt  = isBull ? "?" : "?"
+                        arrCol  = isBull ? color.lime : color.red
+                        midBarA = int(math.round((sepStart + bar_index) * 0.5))
+                        yOffA   = (sepHigh - sepLow) * 0.15
+                        label.new(midBarA + 3, sepHigh + yOffA, arrTxt, textcolor=arrCol, style=label.style_none, size=size.small)
+
+        lastUnitSpan := bar_index - sepStart
+        sepHigh   := high
+        sepLow    := low
+        sepStart  := bar_index
+        rangeCount += 1
+        firstOpen := open
+        lastClose := na
+    else
+        sepHigh   := high
+        sepLow    := low
+        sepStart  := bar_index
+        rangeCount += 1
+        firstOpen := open
+        lastClose := na
+else
+    sepHigh   := na(sepHigh) ? high : math.max(sepHigh, high)
+    sepLow    := na(sepLow)  ? low  : math.min(sepLow,  low)
+    lastClose := close
+
+// ====== Auto-extend last unit (only when selectedIdx = 0) ======
+if (not mergeRanges) and selectedIdx == 0 and barstate.islast and not na(lastStartBar) and not na(sepStart) and not na(lastUnitSpan)
+    nextSepPred = sepStart + lastUnitSpan
+    lastIndexApprox = array.size(arrStart) - 1
+    if lastIndexApprox >= math.max(0, array.size(arrStart) - maxRangesToDraw)
+        if __showHL
+            lnH = getOrReuseLine(linesHighPool)
+            line.set_xy1(lnH, lastStartBar, lastHigh)
+            line.set_xy2(lnH, nextSepPred, lastHigh)
+            line.set_width(lnH, hlLineWidth)
+            line.set_color(lnH, color.rgb(2, 66, 118))
+            line.set_style(lnH, hlLineStyle == "Solid" ? line.style_solid : hlLineStyle == "Dotted" ? line.style_dotted : line.style_dashed)
+
+            lnL = getOrReuseLine(linesLowPool)
+            line.set_xy1(lnL, lastStartBar, lastLow)
+            line.set_xy2(lnL, nextSepPred, lastLow)
+            line.set_width(lnL, hlLineWidth)
+            line.set_color(lnL, color.blue)
+            line.set_style(lnL, hlLineStyle == "Solid" ? line.style_solid : hlLineStyle == "Dotted" ? line.style_dotted : line.style_dashed)
+
+        f_drawFib_to(lastStartBar, nextSepPred, lastHigh, lastLow, false)
+
+        if __showArrows and array.size(arrOpen) > lastIdx and array.size(arrClose) > lastIdx
+            oLast  = array.get(arrOpen,  lastIdx)
+            cLast  = array.get(arrClose, lastIdx)
+            isBull = cLast > oLast
+            arrTxt = isBull ? "?" : "?"
+            arrCol = isBull ? color.lime : color.red
+            midBarA = int(math.round((lastStartBar + nextSepPred) * 0.5))
+            yOffA   = (lastHigh - lastLow) * 0.15
+            label.new(midBarA + 3, lastHigh + yOffA, arrTxt, textcolor=arrCol, style=label.style_none, size=size.small)
+
+// =====================[ RIGHT: HTF Fib block on the right ]=====================
+f_nextHTF_str() =>
+    mul = timeframe.multiplier
+    if timeframe.isintraday
+        mul == 1   ? "5"   : mul == 5   ? "15"  :  mul == 15  ? "30"  :  mul == 30  ? "60"  : mul == 60  ? "240" : mul == 120 ? "240" : mul == 240 ? "D"   :   "D"
+    else
+        timeframe.isdaily   ? "W"   : timeframe.isweekly  ? "M"   : timeframe.ismonthly ? "12M" :    "12M"
+
+f_unit_for_higher(tf_str) =>
+    tf_str == "5"                    ? "180" : tf_str == "15"                   ? "360" :  tf_str == "30"                   ? "720" :  (tf_str == "60" or tf_str == "120") ? "D" :  tf_str == "240"                  ? "W"   :  tf_str == "D"                    ? "M"   :  (tf_str == "W" or tf_str == "M") ? "12M" :   "D"
+
+var string __htf_str = na
+__htf_str := f_nextHTF_str()
+
+var string __unit_str = na
+__unit_str := f_unit_for_higher(__htf_str)
+
+unit_hi_prev = request.security(syminfo.tickerid, __unit_str, high[1], lookahead=barmerge.lookahead_off)
+unit_lo_prev = request.security(syminfo.tickerid, __unit_str, low[1],  lookahead=barmerge.lookahead_off)
+
+manual_hi_prev = request.security(syminfo.tickerid, rightFibTF, high[1], lookahead=barmerge.lookahead_off)
+manual_lo_prev = request.security(syminfo.tickerid, rightFibTF, low[1],  lookahead=barmerge.lookahead_off)
+
+if __showAutoHTFFib and barstate.islast
+    sX = bar_index + rightPadBars
+    eX = bar_index + rightPadBars + rightWidthBars
+    float rHi = na
+    float rLo = na
+    if useManualRightTF
+        rHi := manual_hi_prev
+        rLo := manual_lo_prev
+    else
+        rHi := unit_hi_prev
+        rLo := unit_lo_prev
+    if not na(rHi) and not na(rLo)
+        f_drawFib_to(sX, eX, rHi, rLo, false)
+
+// =====================[ DEBUG: Global Fib Block Grid (Multi-Layers vFinal9) ]=====================
+var float __lineOffsetTicks  = 2.0
+var float __labelOffsetTicks = 200
+var int   __lineWidth        = 1
+var __fontSize               = size.normal
+
+lineSpanLeftBars  = 10
+lineSpanRightBars = 5
+labelOffsetBars   = 50
+
+dbgColZero      = color.new(color.blue,    0)
+dbgColMid       = color.new(color.aqua,    0)
+dbgCol236764    = color.new(color.fuchsia, 0)
+dbgCol382618    = color.new(color.yellow,  0)
+
+f_autoBlockSize(_p) =>
+    _p <    200 ?    1.0  :  _p <   2000 ?   10.0  :  _p <  10000 ?  100.0  :   _p <  20000 ? 1000.0  :   10000.0
+
+var priceLabeled = array.new_float()
+
+f_alreadyLabeled(_price) =>
+    _sz = array.size(priceLabeled)
+    if _sz == 0
+        false
+    else
+        _found = false
+        for ii = 0 to _sz - 1
+            if math.abs(array.get(priceLabeled, ii) - _price) <= syminfo.mintick * 0.5
+                _found := true
+                break
+        _found
+
+f_drawLevelLine(_yReal, _col, _style) =>
+    _lineOffsetPrice = syminfo.mintick * __lineOffsetTicks
+    _yDraw           = _yReal + _lineOffsetPrice
+    line.new(  x1 = bar_index - lineSpanLeftBars,  y1 = _yDraw, x2 = bar_index + lineSpanRightBars, y2 = _yDraw, width = __lineWidth, color = _col,  style = _style, extend = extend.both)
+
+f_drawLevelLabel(_yReal, _col) =>
+    if not barstate.islast
+        na
+    else
+        if f_alreadyLabeled(_yReal)
+            na
+        else
+            _lineOffsetPrice  = syminfo.mintick * __lineOffsetTicks
+            _labelExtraOffset = syminfo.mintick * __labelOffsetTicks
+            _yDrawLabel       = _yReal + _lineOffsetPrice + _labelExtraOffset
+            lb = label.new(       x = bar_index + labelOffsetBars,        y = _yDrawLabel,      text = str.tostring(_yReal, format.mintick),       textcolor = color.white,                       style = label.style_label_left,                size = __fontSize,           color = color.new(color.black, 0)          )
+            label.set_textalign(lb, text.align_left)
+            array.push(priceLabeled, _yReal)
+
+f_drawOneBlock(_blockLow, _blockHigh, _blockSize) =>
+    _rng = _blockSize
+    _lvl000 = _blockLow + _rng * 0.000
+    _lvl236 = _blockLow + _rng * 0.236
+    _lvl382 = _blockLow + _rng * 0.382
+    _lvl500 = _blockLow + _rng * 0.500
+    _lvl618 = _blockLow + _rng * 0.618
+    _lvl764 = _blockLow + _rng * 0.764
+    _lvl100 = _blockLow + _rng * 1.000
+    f_drawLevelLine(_lvl000, dbgColZero,    line.style_solid)
+    f_drawLevelLine(_lvl100, dbgColZero,    line.style_solid)
+    f_drawLevelLine(_lvl500, dbgColMid,     line.style_solid)
+    f_drawLevelLine(_lvl236, dbgCol236764,  line.style_dashed)
+    f_drawLevelLine(_lvl764, dbgCol236764,  line.style_dashed)
+    f_drawLevelLine(_lvl382, dbgCol382618,  line.style_dotted)
+    f_drawLevelLine(_lvl618, dbgCol382618,  line.style_dotted)
+    f_drawLevelLabel(_lvl000, dbgColZero)
+    f_drawLevelLabel(_lvl100, dbgColZero)
+    f_drawLevelLabel(_lvl500, dbgColMid)
+    f_drawLevelLabel(_lvl236, dbgCol236764)
+    f_drawLevelLabel(_lvl764, dbgCol236764)
+    f_drawLevelLabel(_lvl382, dbgCol382618)
+    f_drawLevelLabel(_lvl618, dbgCol382618)
+
+if showDebugFib
+    array.clear(priceLabeled)
+    _bs = useManualBlockSize ? manualBlockSize : f_autoBlockSize(close)
+    _base = math.floor(close / _bs) * _bs
+    for i = -numBlocksDown to numBlocksUp
+        _blockLow  = _base + i * _bs
+        _blockHigh = _blockLow + _bs
+        f_drawOneBlock(_blockLow, _blockHigh, _bs)
+
+// ======================================================================
+// ===============  MARKERS (FIB TOUCH) - SMALL ARROWS  =================
+// ======================================================================
+groupMarkersFT = "Markers (Fib Touch)"
+
+enableFibTouchMarkers = input.bool(false, "Enable Fib-Touch Markers (0.236/0.764/1.236×)", group=groupMarkersFT)
+pivotLenFT            = input.int(3, "Pivot Length", minval=1, maxval=50, group=groupMarkersFT)
+touchRatiosStrFT      = input.string("0.236,0.764,1.236", "Ratios (comma, multiples allowed)", group=groupMarkersFT)
+toleranceModeFT       = input.string("ticks", "Tolerance mode", options=["ticks","% of block"], group=groupMarkersFT)
+toleranceTicksFT      = input.int(100, "Tolerance (ticks)", minval=1, maxval=100000, group=groupMarkersFT)
+tolerancePctFT        = input.float(0.002, "Tolerance (% of block)", minval=0.00001, step=0.0001, group=groupMarkersFT)
+markerUpColorFT       = input.color(color.new(color.lime, 0), "Low marker color (bull)", group=groupMarkersFT)
+markerDnColorFT       = input.color(color.new(color.red,  0), "High marker color (bear)", group=groupMarkersFT)
+
+// ---------- helpers ----------
+f_bs_effective_ft(_p) =>
+    useManualBlockSize ? manualBlockSize : f_autoBlockSize(_p)
+
+// ?????? ????? ?? ???? DEBUG
+f_frac_in_block_GRID_ft(_price, _bs) =>
+    _baseGrid = math.floor(close / _bs) * _bs
+    _k        = math.round((_price - _baseGrid) / _bs)
+    _blockLow = _baseGrid + _k * _bs
+    _fracRaw  = (_price - _blockLow) / _bs
+    _fracRaw < 0 ? _fracRaw + 1 : _fracRaw
+
+// ????? ??? ???????
+var ratiosFT = array.new_float()
+if barstate.isfirst
+    array.clear(ratiosFT)
+    if str.length(touchRatiosStrFT) > 0
+        for tk in str.split(touchRatiosStrFT, ",")
+            v = str.tonumber(str.trim(tk))
+            if not na(v)
+                _abs = math.abs(v)
+                r = _abs - math.floor(_abs) // 1.236 -> 0.236
+                if r > 0 and r < 1
+                    array.push(ratiosFT, r)
+    if array.size(ratiosFT) == 0
+        array.push(ratiosFT, 0.236)
+        array.push(ratiosFT, 0.764)
+
+// ??? ??????? ?? ?????
+f_is_touch_ft(_price, _bs, _tolTicks) =>
+    _frac = f_frac_in_block_GRID_ft(_price, _bs)
+    _tol  = toleranceModeFT == "ticks" ? (syminfo.mintick * _tolTicks) / _bs : tolerancePctFT
+    bool  _hit  = false
+    float _near = na
+    for i = 0 to array.size(ratiosFT) - 1
+        _r = array.get(ratiosFT, i)
+        if math.abs(_frac - _r) <= _tol
+            _hit  := true
+            _near := _r
+            break
+    [_hit, _near]
+
+// ---------- pivots ----------
+pivHFT = ta.pivothigh(high, pivotLenFT, pivotLenFT)
+pivLFT = ta.pivotlow (low,  pivotLenFT, pivotLenFT)
+
+// ---------- draw ----------
+if enableFibTouchMarkers
+    // HIGH touch
+    if not na(pivHFT)
+        _bsH = f_bs_effective_ft(pivHFT)
+        [_hitH, _nearH] = f_is_touch_ft(pivHFT, _bsH, toleranceTicksFT)
+        if _hitH
+            label.new(          bar_index - pivotLenFT,          high[pivotLenFT] + (high[pivotLenFT] - low[pivotLenFT]) * 0.08,         "",          style=label.style_circle,          size=size.tiny,            color=color.new(markerDnColorFT, 40)      )
+
+    // LOW touch
+    if not na(pivLFT)
+        _bsL = f_bs_effective_ft(pivLFT)
+        [_hitL, _nearL] = f_is_touch_ft(pivLFT, _bsL, toleranceTicksFT)
+        if _hitL
+            label.new(        bar_index - pivotLenFT,        low[pivotLenFT] - (high[pivotLenFT] - low[pivotLenFT]) * 0.08,   "",          style=label.style_circle,           size=size.tiny,            color=color.new(markerUpColorFT, 40)         )
+
