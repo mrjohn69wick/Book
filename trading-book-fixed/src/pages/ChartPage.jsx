@@ -103,8 +103,9 @@ const ChartPage = () => {
       const result = validateLawRenderable({
         law,
         renderedMarkers: stat?.renderedMarkers || 0,
-        renderedLines: (stat?.renderedLines || 0) + (stat?.renderedBands || 0),
-        fallbackVisible: hasFallback && ((stat?.renderedLines || 0) + (stat?.renderedBands || 0) > 0),
+        renderedLines: stat?.renderedLines || 0,
+        renderedBoxes: stat?.renderedBands || 0,
+        fallbackVisible: hasFallback && (stat?.renderedBands || 0) > 0,
       });
       results.push(result);
     }

@@ -12,7 +12,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_002": {
     "mode": "UNKNOWN_MAPPING",
@@ -27,7 +29,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_003": {
     "mode": "recipe_defined",
@@ -41,7 +45,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "Derived from existing chartRecipe in laws.js"
+    "notes": "Derived from existing chartRecipe in laws.js",
+    "attempts": 1,
+    "status": "mapped"
   },
   "LAW_004": {
     "mode": "UNKNOWN_MAPPING",
@@ -56,7 +62,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_005": {
     "mode": "recipe_defined",
@@ -70,7 +78,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "Derived from existing chartRecipe in laws.js"
+    "notes": "Derived from existing chartRecipe in laws.js",
+    "attempts": 1,
+    "status": "mapped"
   },
   "LAW_006": {
     "mode": "UNKNOWN_MAPPING",
@@ -85,7 +95,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_007": {
     "mode": "UNKNOWN_MAPPING",
@@ -100,7 +112,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_008": {
     "mode": "UNKNOWN_MAPPING",
@@ -115,7 +129,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_009": {
     "mode": "UNKNOWN_MAPPING",
@@ -130,7 +146,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_010": {
     "mode": "recipe_defined",
@@ -144,7 +162,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "Derived from existing chartRecipe in laws.js"
+    "notes": "Derived from existing chartRecipe in laws.js",
+    "attempts": 1,
+    "status": "mapped"
   },
   "LAW_011": {
     "mode": "UNKNOWN_MAPPING",
@@ -159,7 +179,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_012": {
     "mode": "UNKNOWN_MAPPING",
@@ -174,7 +196,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_013": {
     "mode": "UNKNOWN_MAPPING",
@@ -189,7 +213,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_014": {
     "mode": "UNKNOWN_MAPPING",
@@ -204,7 +230,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_015": {
     "mode": "UNKNOWN_MAPPING",
@@ -219,7 +247,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_016": {
     "mode": "UNKNOWN_MAPPING",
@@ -234,7 +264,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_017": {
     "mode": "UNKNOWN_MAPPING",
@@ -249,7 +281,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_018": {
     "mode": "UNKNOWN_MAPPING",
@@ -264,7 +298,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_019": {
     "mode": "UNKNOWN_MAPPING",
@@ -279,7 +315,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_020": {
     "mode": "UNKNOWN_MAPPING",
@@ -294,7 +332,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_021": {
     "mode": "UNKNOWN_MAPPING",
@@ -309,7 +349,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_022": {
     "mode": "UNKNOWN_MAPPING",
@@ -324,7 +366,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_023": {
     "mode": "UNKNOWN_MAPPING",
@@ -339,7 +383,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_024": {
     "mode": "UNKNOWN_MAPPING",
@@ -354,7 +400,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_025": {
     "mode": "UNKNOWN_MAPPING",
@@ -369,7 +417,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_026": {
     "mode": "UNKNOWN_MAPPING",
@@ -384,7 +434,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_027": {
     "mode": "UNKNOWN_MAPPING",
@@ -399,7 +451,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_028": {
     "mode": "UNKNOWN_MAPPING",
@@ -414,7 +468,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_029": {
     "mode": "UNKNOWN_MAPPING",
@@ -429,7 +485,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_030": {
     "mode": "recipe_defined",
@@ -443,7 +501,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "Derived from existing chartRecipe in laws.js"
+    "notes": "Derived from existing chartRecipe in laws.js",
+    "attempts": 1,
+    "status": "mapped"
   },
   "LAW_031": {
     "mode": "recipe_defined",
@@ -457,7 +517,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "Derived from existing chartRecipe in laws.js"
+    "notes": "Derived from existing chartRecipe in laws.js",
+    "attempts": 1,
+    "status": "mapped"
   },
   "LAW_032": {
     "mode": "recipe_defined",
@@ -471,7 +533,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "Derived from existing chartRecipe in laws.js"
+    "notes": "Derived from existing chartRecipe in laws.js",
+    "attempts": 1,
+    "status": "mapped"
   },
   "LAW_033": {
     "mode": "recipe_defined",
@@ -485,7 +549,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "Derived from existing chartRecipe in laws.js"
+    "notes": "Derived from existing chartRecipe in laws.js",
+    "attempts": 1,
+    "status": "mapped"
   },
   "LAW_034": {
     "mode": "UNKNOWN_MAPPING",
@@ -500,7 +566,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_035": {
     "mode": "UNKNOWN_MAPPING",
@@ -515,7 +583,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_036": {
     "mode": "UNKNOWN_MAPPING",
@@ -530,7 +600,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_037": {
     "mode": "UNKNOWN_MAPPING",
@@ -545,7 +617,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_038": {
     "mode": "UNKNOWN_MAPPING",
@@ -560,7 +634,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_039": {
     "mode": "UNKNOWN_MAPPING",
@@ -575,7 +651,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_040": {
     "mode": "UNKNOWN_MAPPING",
@@ -590,7 +668,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_041": {
     "mode": "UNKNOWN_MAPPING",
@@ -605,7 +685,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_042": {
     "mode": "UNKNOWN_MAPPING",
@@ -620,7 +702,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_043": {
     "mode": "UNKNOWN_MAPPING",
@@ -635,7 +719,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_044": {
     "mode": "UNKNOWN_MAPPING",
@@ -650,7 +736,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_045": {
     "mode": "UNKNOWN_MAPPING",
@@ -665,7 +753,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_046": {
     "mode": "recipe_defined",
@@ -679,7 +769,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "Derived from existing chartRecipe in laws.js"
+    "notes": "Derived from existing chartRecipe in laws.js",
+    "attempts": 1,
+    "status": "mapped"
   },
   "LAW_047": {
     "mode": "UNKNOWN_MAPPING",
@@ -694,7 +786,9 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   },
   "LAW_048": {
     "mode": "UNKNOWN_MAPPING",
@@ -709,6 +803,8 @@
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied."
+    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
+    "attempts": 10,
+    "status": "fallback_after_exhaustive_mapping"
   }
 }

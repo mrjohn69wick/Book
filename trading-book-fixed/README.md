@@ -237,3 +237,5 @@ VITE_TWELVE_PROXY_BASE=https://<your-worker-domain>
 يتم حفظ تغطية الخرائط في:
 - `src/data/lawIndicatorMap.json`
 - `docs/chart-coverage-report.md`
+
+- دليل التطوير التقني للرسم: `docs/indicator-port-dev.md`
