@@ -5,6 +5,8 @@ import { getLawById } from '../data/laws';
 import { useAppliedLaw } from '../context/AppliedLawContext';
 import ChartErrorBoundary from '../components/ChartErrorBoundary';
 import { keys } from '../utils/storage';
+import MarketPanel from '../components/MarketPanel';
+import { useMarketData } from '../context/MarketDataContext';
 
 const ChartPage = () => {
   const {
@@ -24,6 +26,7 @@ const ChartPage = () => {
   const [showEquilibrium, setShowEquilibrium] = useState(true);
   const [showKeyLevels, setShowKeyLevels] = useState(false);
   const [showZones, setShowZones] = useState(false);
+  const { bars, latestBar, instrumentId, timeframeId } = useMarketData();
   const appliedLaw = appliedLawId ? getLawById(appliedLawId) : null;
   const appliedLawColor = appliedLaw?.color ?? getCategoryColor(appliedLaw?.category);
   const needsInputs = Boolean(appliedLaw?.chartRecipe?.inputs?.length);
@@ -109,14 +112,23 @@ const ChartPage = () => {
               تم تعطيل الشارت مؤقتًا. أزل المفتاح من التخزين المحلي لإعادة التفعيل.
             </div>
           ) : (
-            <ChartErrorBoundary>
+            <ChartErrorBoundary
+              symbol={instrumentId}
+              timeframe={timeframeId}
+              barsCount={bars.length}
+              lastBarTime={bars[bars.length - 1]?.time}
+            >
+              <MarketPanel />
               <LightweightChart
                 height={600}
                 showControls={true}
+                advancedControls={true}
                 showEquilibrium={showEquilibrium}
                 showKeyLevels={showKeyLevels}
                 showZones={showZones}
                 appliedLaw={appliedLaw}
+                externalBars={bars}
+                latestBar={latestBar}
               />
             </ChartErrorBoundary>
           )}

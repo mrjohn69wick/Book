@@ -15,6 +15,7 @@ import SettingsPage from './pages/SettingsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import { laws } from './data/laws';
 import { AppliedLawProvider } from './context/AppliedLawContext';
+import { MarketDataProvider } from './context/MarketDataContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import { ensureStorageVersion, keys, safeGetJSON } from './utils/storage';
 
@@ -40,29 +41,31 @@ function App() {
 
   return (
     <AppliedLawProvider>
-      <div className="app" dir="rtl">
-        <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
-        <ErrorBoundary>
-          <main className={`main-content ${sidebarOpen ? 'sidebar-open' : ''}`}>
-            <ProgressBar completed={progress.completed} total={progress.total} />
-            <Switch>
-              <Route path="/" component={HomePage} />
-              <Route path="/learn/:lawId">
-                {(params) => <LearnPage lawId={params.lawId} />}
-              </Route>
-              <Route path="/learn" component={LearnPage} />
-              <Route path="/laws" component={LawsPage} />
-              <Route path="/glossary" component={GlossaryPage} />
-              <Route path="/training" component={TrainingPage} />
-              <Route path="/search" component={SearchPage} />
-              <Route path="/chart" component={ChartPage} />
-              <Route path="/mt5" component={MT5Page} />
-              <Route path="/settings" component={SettingsPage} />
-              <Route component={NotFoundPage} />
-            </Switch>
-          </main>
-        </ErrorBoundary>
-      </div>
+      <MarketDataProvider>
+        <div className="app" dir="rtl">
+          <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+          <ErrorBoundary>
+            <main className={`main-content ${sidebarOpen ? 'sidebar-open' : ''}`}>
+              <ProgressBar completed={progress.completed} total={progress.total} />
+              <Switch>
+                <Route path="/" component={HomePage} />
+                <Route path="/learn/:lawId">
+                  {(params) => <LearnPage lawId={params.lawId} />}
+                </Route>
+                <Route path="/learn" component={LearnPage} />
+                <Route path="/laws" component={LawsPage} />
+                <Route path="/glossary" component={GlossaryPage} />
+                <Route path="/training" component={TrainingPage} />
+                <Route path="/search" component={SearchPage} />
+                <Route path="/chart" component={ChartPage} />
+                <Route path="/mt5" component={MT5Page} />
+                <Route path="/settings" component={SettingsPage} />
+                <Route component={NotFoundPage} />
+              </Switch>
+            </main>
+          </ErrorBoundary>
+        </div>
+      </MarketDataProvider>
     </AppliedLawProvider>
   );
 }

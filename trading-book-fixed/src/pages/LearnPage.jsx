@@ -6,6 +6,8 @@ import './LearnPage.css';
 import { useAppliedLaw } from '../context/AppliedLawContext';
 import { keys, safeGetJSON, safeSetJSON } from '../utils/storage';
 import ChartErrorBoundary from '../components/ChartErrorBoundary';
+import MarketPanel from '../components/MarketPanel';
+import { useMarketData } from '../context/MarketDataContext';
 
 const LearnPage = ({ lawId }) => {
   const initialIndex = lawId
@@ -16,6 +18,7 @@ const LearnPage = ({ lawId }) => {
   );
   const [completedLaws, setCompletedLaws] = useState([]);
   const { appliedLawId, setAppliedLawId } = useAppliedLaw();
+  const { bars, latestBar, instrumentId, timeframeId } = useMarketData();
   const [, navigate] = useLocation();
 
   const currentLaw = laws[currentLawIndex];
@@ -182,8 +185,21 @@ const LearnPage = ({ lawId }) => {
               تم تعطيل الشارت مؤقتًا. أزل المفتاح من التخزين المحلي لإعادة التفعيل.
             </div>
           ) : (
-            <ChartErrorBoundary>
-              <LightweightChart height={500} showControls={true} appliedLaw={appliedLaw} />
+            <ChartErrorBoundary
+              symbol={instrumentId}
+              timeframe={timeframeId}
+              barsCount={bars.length}
+              lastBarTime={bars[bars.length - 1]?.time}
+            >
+              <MarketPanel />
+              <LightweightChart
+                height={500}
+                showControls={true}
+                advancedControls={true}
+                appliedLaw={appliedLaw}
+                externalBars={bars}
+                latestBar={latestBar}
+              />
             </ChartErrorBoundary>
           )}
           

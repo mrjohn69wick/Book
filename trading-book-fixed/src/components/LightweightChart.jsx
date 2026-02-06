@@ -9,10 +9,13 @@ import { normalizeBars } from '../lib/ohlcv/normalizeBars';
 const LightweightChart = ({
   height = 500,
   showControls = true,
+  advancedControls = false,
   showEquilibrium = false,
   showKeyLevels = false,
   showZones = false,
-  appliedLaw = null
+  appliedLaw = null,
+  externalBars = null,
+  latestBar = null
 }) => {
   const chartContainerRef = useRef(null);
   const chartRef = useRef(null);
@@ -495,6 +498,12 @@ const LightweightChart = ({
 
   // Update chart data
   useEffect(() => {
+    if (Array.isArray(externalBars)) {
+      setData(externalBars);
+    }
+  }, [externalBars]);
+
+  useEffect(() => {
     if (!candlestickSeriesRef.current || !hasValidBars(data)) {
       return;
     }
@@ -506,6 +515,17 @@ const LightweightChart = ({
       setErrorMessage('تعذر عرض البيانات الحالية. يرجى التحقق من الملف.');
     }
   }, [data]);
+
+  useEffect(() => {
+    if (!candlestickSeriesRef.current || !latestBar) {
+      return;
+    }
+    try {
+      candlestickSeriesRef.current.update(latestBar);
+    } catch (error) {
+      console.error('Error updating latest bar:', error);
+    }
+  }, [latestBar]);
 
   useEffect(() => {
     if (!candlestickSeriesRef.current || !hasValidBars(data)) {
@@ -812,24 +832,48 @@ const LightweightChart = ({
   return (
     <div className="lightweight-chart-wrapper">
       {showControls && (
-        <div className="chart-controls">
-          <label className="chart-button">
-            📁 تحميل CSV
-            <input
-              type="file"
-              accept=".csv"
-              onChange={handleFileUpload}
-              style={{ display: 'none' }}
-            />
-          </label>
-          <button 
-            className="chart-button"
-            onClick={loadSampleData}
-            disabled={isLoading}
-          >
-            📊 بيانات تجريبية
-          </button>
-        </div>
+        advancedControls ? (
+          <details style={{ marginBottom: '0.5rem' }}>
+            <summary>خيارات متقدمة (CSV)</summary>
+            <div className="chart-controls">
+              <label className="chart-button">
+                📁 تحميل CSV
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={handleFileUpload}
+                  style={{ display: 'none' }}
+                />
+              </label>
+              <button
+                className="chart-button"
+                onClick={loadSampleData}
+                disabled={isLoading}
+              >
+                📊 بيانات تجريبية
+              </button>
+            </div>
+          </details>
+        ) : (
+          <div className="chart-controls">
+            <label className="chart-button">
+              📁 تحميل CSV
+              <input
+                type="file"
+                accept=".csv"
+                onChange={handleFileUpload}
+                style={{ display: 'none' }}
+              />
+            </label>
+            <button
+              className="chart-button"
+              onClick={loadSampleData}
+              disabled={isLoading}
+            >
+              📊 بيانات تجريبية
+            </button>
+          </div>
+        )
       )}
       
       {isLoading && (
@@ -842,6 +886,11 @@ const LightweightChart = ({
       {errorMessage && !isLoading && (
         <div className="chart-error" role="alert">
           {errorMessage}
+        </div>
+      )}
+      {!errorMessage && !isLoading && !hasValidBars(data) && (
+        <div className="chart-error" role="status">
+          اختر الأداة والإطار الزمني ثم اضغط تحميل، أو استخدم CSV المتقدم.
         </div>
       )}
       

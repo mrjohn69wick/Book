@@ -9,6 +9,8 @@ export const keys = {
   chartData: `${STORAGE_PREFIX}chartData`,
   tutorialState: `${STORAGE_PREFIX}tutorialState`,
   disableChart: `${STORAGE_PREFIX}disableChart`,
+  twelveDataKey: `${STORAGE_PREFIX}twelvedataKey`,
+  marketSelection: `${STORAGE_PREFIX}marketSelection`,
 };
 
 export const safeJsonParse = (value, fallback) => {
