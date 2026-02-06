@@ -1,810 +1,803 @@
 {
   "LAW_001": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_002": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_003": {
     "mode": "recipe_defined",
+    "attempts": 1,
     "features": [
-      "priceLine",
-      "marker",
-      "zone/fib_by_recipe"
+      "baseline",
+      "PrevBreakHL",
+      "recipeOverlay"
     ],
-    "sources": [
+    "reason": "Direct chartRecipe exists in laws.js and is merged with baseline layer.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "Derived from existing chartRecipe in laws.js",
-    "attempts": 1,
-    "status": "mapped"
+    "todos": []
   },
   "LAW_004": {
-    "mode": "UNKNOWN_MAPPING",
+    "mode": "keyword_mapped",
+    "attempts": 5,
     "features": [
+      "baseline",
       "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "safeFallback"
     ],
-    "sources": [
+    "reason": "Equilibrium concept in books is tied to unit HL + fib 0.236.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": []
   },
   "LAW_005": {
     "mode": "recipe_defined",
+    "attempts": 1,
     "features": [
-      "priceLine",
-      "marker",
-      "zone/fib_by_recipe"
+      "baseline",
+      "fibGrid",
+      "unitHL",
+      "recipeOverlay"
     ],
-    "sources": [
+    "reason": "Direct chartRecipe exists in laws.js and is merged with baseline layer.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "Derived from existing chartRecipe in laws.js",
-    "attempts": 1,
-    "status": "mapped"
+    "todos": []
   },
   "LAW_006": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_007": {
-    "mode": "UNKNOWN_MAPPING",
+    "mode": "keyword_mapped",
+    "attempts": 5,
     "features": [
-      "unitHL",
+      "baseline",
+      "PrevBreakHL",
       "fibGrid",
-      "zoneBand",
-      "marker"
+      "safeFallback"
     ],
-    "sources": [
+    "reason": "Keyword match to break highlight in indicator. Ratio/zone keyword found; mapped to fib grid and bands.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": []
   },
   "LAW_008": {
-    "mode": "UNKNOWN_MAPPING",
+    "mode": "keyword_mapped",
+    "attempts": 5,
     "features": [
-      "unitHL",
+      "baseline",
+      "PrevBreakHL",
+      "InsideHL",
       "fibGrid",
-      "zoneBand",
-      "marker"
+      "safeFallback"
     ],
-    "sources": [
+    "reason": "Keyword match to break highlight in indicator. Keyword match to inside/no-break highlight. Ratio/zone keyword found; mapped to fib grid and bands.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": []
   },
   "LAW_009": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_010": {
     "mode": "recipe_defined",
+    "attempts": 1,
     "features": [
-      "priceLine",
-      "marker",
-      "zone/fib_by_recipe"
+      "baseline",
+      "fibGrid",
+      "recipeOverlay"
     ],
-    "sources": [
+    "reason": "Direct chartRecipe exists in laws.js and is merged with baseline layer.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "Derived from existing chartRecipe in laws.js",
-    "attempts": 1,
-    "status": "mapped"
+    "todos": []
   },
   "LAW_011": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_012": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_013": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_014": {
-    "mode": "UNKNOWN_MAPPING",
+    "mode": "keyword_mapped",
+    "attempts": 5,
     "features": [
-      "unitHL",
+      "baseline",
+      "PrevBreakHL",
       "fibGrid",
-      "zoneBand",
-      "marker"
+      "safeFallback"
     ],
-    "sources": [
+    "reason": "Keyword match to break highlight in indicator. Ratio/zone keyword found; mapped to fib grid and bands.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": []
   },
   "LAW_015": {
-    "mode": "UNKNOWN_MAPPING",
+    "mode": "keyword_mapped",
+    "attempts": 5,
     "features": [
-      "unitHL",
+      "baseline",
+      "PrevBreakHL",
       "fibGrid",
-      "zoneBand",
-      "marker"
+      "safeFallback"
     ],
-    "sources": [
+    "reason": "Keyword match to break highlight in indicator. Ratio/zone keyword found; mapped to fib grid and bands.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": []
   },
   "LAW_016": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_017": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_018": {
-    "mode": "UNKNOWN_MAPPING",
+    "mode": "keyword_mapped",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "InsideHL",
+      "safeFallback"
     ],
-    "sources": [
+    "reason": "Keyword match to inside/no-break highlight.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": []
   },
   "LAW_019": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_020": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_021": {
-    "mode": "UNKNOWN_MAPPING",
+    "mode": "keyword_mapped",
+    "attempts": 5,
     "features": [
-      "unitHL",
+      "baseline",
       "fibGrid",
-      "zoneBand",
-      "marker"
+      "safeFallback"
     ],
-    "sources": [
+    "reason": "Ratio/zone keyword found; mapped to fib grid and bands.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": []
   },
   "LAW_022": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_023": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_024": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_025": {
-    "mode": "UNKNOWN_MAPPING",
+    "mode": "keyword_mapped",
+    "attempts": 5,
     "features": [
-      "unitHL",
+      "baseline",
       "fibGrid",
-      "zoneBand",
-      "marker"
+      "safeFallback"
     ],
-    "sources": [
+    "reason": "Ratio/zone keyword found; mapped to fib grid and bands.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": []
   },
   "LAW_026": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_027": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_028": {
-    "mode": "UNKNOWN_MAPPING",
+    "mode": "keyword_mapped",
+    "attempts": 5,
     "features": [
-      "unitHL",
+      "baseline",
       "fibGrid",
-      "zoneBand",
-      "marker"
+      "safeFallback"
     ],
-    "sources": [
+    "reason": "Ratio/zone keyword found; mapped to fib grid and bands.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": []
   },
   "LAW_029": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_030": {
     "mode": "recipe_defined",
+    "attempts": 1,
     "features": [
-      "priceLine",
-      "marker",
-      "zone/fib_by_recipe"
+      "baseline",
+      "fibGrid",
+      "recipeOverlay"
     ],
-    "sources": [
+    "reason": "Direct chartRecipe exists in laws.js and is merged with baseline layer.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "Derived from existing chartRecipe in laws.js",
-    "attempts": 1,
-    "status": "mapped"
+    "todos": []
   },
   "LAW_031": {
     "mode": "recipe_defined",
+    "attempts": 1,
     "features": [
-      "priceLine",
-      "marker",
-      "zone/fib_by_recipe"
+      "baseline",
+      "fibGrid",
+      "recipeOverlay"
     ],
-    "sources": [
+    "reason": "Direct chartRecipe exists in laws.js and is merged with baseline layer.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "Derived from existing chartRecipe in laws.js",
-    "attempts": 1,
-    "status": "mapped"
+    "todos": []
   },
   "LAW_032": {
     "mode": "recipe_defined",
+    "attempts": 1,
     "features": [
-      "priceLine",
-      "marker",
-      "zone/fib_by_recipe"
+      "baseline",
+      "fibGrid",
+      "recipeOverlay"
     ],
-    "sources": [
+    "reason": "Direct chartRecipe exists in laws.js and is merged with baseline layer.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "Derived from existing chartRecipe in laws.js",
-    "attempts": 1,
-    "status": "mapped"
+    "todos": []
   },
   "LAW_033": {
     "mode": "recipe_defined",
+    "attempts": 1,
     "features": [
-      "priceLine",
-      "marker",
-      "zone/fib_by_recipe"
+      "baseline",
+      "InsideHL",
+      "fibGrid",
+      "recipeOverlay"
     ],
-    "sources": [
+    "reason": "Direct chartRecipe exists in laws.js and is merged with baseline layer.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "Derived from existing chartRecipe in laws.js",
-    "attempts": 1,
-    "status": "mapped"
+    "todos": []
   },
   "LAW_034": {
-    "mode": "UNKNOWN_MAPPING",
+    "mode": "keyword_mapped",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "Weak123",
+      "safeFallback"
     ],
-    "sources": [
+    "reason": "Keyword match to weak 1-2-3 highlight.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": []
   },
   "LAW_035": {
-    "mode": "UNKNOWN_MAPPING",
+    "mode": "keyword_mapped",
+    "attempts": 5,
     "features": [
-      "unitHL",
+      "baseline",
       "fibGrid",
-      "zoneBand",
-      "marker"
+      "safeFallback"
     ],
-    "sources": [
+    "reason": "Ratio/zone keyword found; mapped to fib grid and bands.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": []
   },
   "LAW_036": {
-    "mode": "UNKNOWN_MAPPING",
+    "mode": "keyword_mapped",
+    "attempts": 5,
     "features": [
-      "unitHL",
+      "baseline",
+      "PrevBreakHL",
       "fibGrid",
-      "zoneBand",
-      "marker"
+      "safeFallback"
     ],
-    "sources": [
+    "reason": "Keyword match to break highlight in indicator. Ratio/zone keyword found; mapped to fib grid and bands.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": []
   },
   "LAW_037": {
-    "mode": "UNKNOWN_MAPPING",
+    "mode": "keyword_mapped",
+    "attempts": 5,
     "features": [
-      "unitHL",
+      "baseline",
       "fibGrid",
-      "zoneBand",
-      "marker"
+      "safeFallback"
     ],
-    "sources": [
+    "reason": "Ratio/zone keyword found; mapped to fib grid and bands.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": []
   },
   "LAW_038": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_039": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_040": {
-    "mode": "UNKNOWN_MAPPING",
+    "mode": "keyword_mapped",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "InsideHL",
+      "safeFallback"
     ],
-    "sources": [
+    "reason": "Keyword match to inside/no-break highlight.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": []
   },
   "LAW_041": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_042": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_043": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_044": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_045": {
     "mode": "UNKNOWN_MAPPING",
+    "attempts": 5,
     "features": [
-      "unitHL",
-      "fibGrid",
-      "zoneBand",
-      "marker"
+      "baseline",
+      "safeFallback"
     ],
-    "sources": [
-      "BOOK_V3_COMBINED.md",
-      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
-      "indicator.txt"
+    "reason": "No unambiguous executable trigger found after 5-attempt pass across books and indicator; fallback applied to avoid misleading signal invention.",
+    "sourceRefs": [
+      "BOOK_V3_COMBINED.md §Conflict Rules/Index",
+      "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md §law references",
+      "indicator.txt HL/Fib sections"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": [
+      "Add deterministic trigger once law-specific chart condition is explicitly documented in source text or indicator."
+    ]
   },
   "LAW_046": {
     "mode": "recipe_defined",
+    "attempts": 1,
     "features": [
-      "priceLine",
-      "marker",
-      "zone/fib_by_recipe"
+      "baseline",
+      "fibGrid",
+      "unitHL",
+      "recipeOverlay"
     ],
-    "sources": [
+    "reason": "Direct chartRecipe exists in laws.js and is merged with baseline layer.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "Derived from existing chartRecipe in laws.js",
-    "attempts": 1,
-    "status": "mapped"
+    "todos": []
   },
   "LAW_047": {
-    "mode": "UNKNOWN_MAPPING",
+    "mode": "keyword_mapped",
+    "attempts": 5,
     "features": [
-      "unitHL",
+      "baseline",
       "fibGrid",
-      "zoneBand",
-      "marker"
+      "safeFallback"
     ],
-    "sources": [
+    "reason": "Ratio/zone keyword found; mapped to fib grid and bands.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": []
   },
   "LAW_048": {
-    "mode": "UNKNOWN_MAPPING",
+    "mode": "keyword_mapped",
+    "attempts": 5,
     "features": [
-      "unitHL",
+      "baseline",
       "fibGrid",
-      "zoneBand",
-      "marker"
+      "safeFallback"
     ],
-    "sources": [
+    "reason": "Ratio/zone keyword found; mapped to fib grid and bands.",
+    "sourceRefs": [
       "BOOK_V3_COMBINED.md",
       "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md",
       "indicator.txt"
     ],
-    "notes": "No explicit safe mapping in code/books parse; fallback neutral overlay applied.",
-    "attempts": 10,
-    "status": "fallback_after_exhaustive_mapping"
+    "todos": []
   }
 }

@@ -249,3 +249,6 @@ VITE_TWELVE_PROXY_BASE=https://<your-worker-domain>
   - `pnpm run e2e:stable`
 
 ملاحظة: إذا فشل Chromium في الحاوية (SIGSEGV/TargetClosedError)، يتم الرجوع تلقائيًا إلى التحقق غير المعتمد على المتصفح.
+
+
+- حالة رسم القوانين الحالية: `docs/LAW_DRAWING_STATUS.md`

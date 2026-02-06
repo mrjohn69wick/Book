@@ -6,6 +6,8 @@ import { resolveRecipeValue } from '../data/parseRecipe';
 import { useAppliedLaw } from '../context/AppliedLawContext';
 import { normalizeBars } from '../lib/ohlcv/normalizeBars';
 import { createOverlayRegistry } from '../lib/chart/overlayRegistry';
+import { buildMergedRenderPlan } from '../lib/indicator/model';
+import lawIndicatorMap from '../data/lawIndicatorMap.json';
 
 const LightweightChart = ({
   height = 500,
@@ -38,6 +40,7 @@ const LightweightChart = ({
   const [errorMessage, setErrorMessage] = useState('');
   const dataRef = useRef(data);
   const lastStatsSignatureRef = useRef('');
+  const dedupeSignatureRef = useRef(new Set());
   const {
     tutorialActive,
     tutorialLawId,
@@ -64,6 +67,7 @@ const LightweightChart = ({
 
     overlaysRef.current.priceLines = [];
     overlaysRef.current.markers = [];
+    dedupeSignatureRef.current = new Set();
     overlayRegistryRef.current.priceLines = [];
     overlayRegistryRef.current.markers = [];
     tutorialMarkersRef.current = {};
@@ -104,6 +108,10 @@ const LightweightChart = ({
     const fromY = candlestickSeriesRef.current.priceToCoordinate(fromPrice);
     const toY = candlestickSeriesRef.current.priceToCoordinate(toPrice);
     if (!Number.isFinite(fromY) || !Number.isFinite(toY)) return;
+
+    const signature = `band:${lawId}:${fromPrice.toFixed(6)}:${toPrice.toFixed(6)}:${label}:${color}`;
+    if (dedupeSignatureRef.current.has(signature)) return;
+    dedupeSignatureRef.current.add(signature);
 
     const band = overlayRegistryRef.current.zoneBands.find((item) => item.style.display === 'none') || document.createElement('div');
     const top = Math.min(fromY, toY);
@@ -159,6 +167,10 @@ const LightweightChart = ({
       }[lineStyle] || LineStyle.Solid)
       : lineStyle;
 
+    const signature = `line:${Number(price).toFixed(6)}:${color}:${resolvedLineStyle}:${lineWidth}:${title}`;
+    if (dedupeSignatureRef.current.has(signature)) return null;
+    dedupeSignatureRef.current.add(signature);
+
     const line = candlestickSeriesRef.current.createPriceLine({
       price,
       color,
@@ -188,6 +200,10 @@ const LightweightChart = ({
     } = options;
 
     const resolvedText = text || (Number.isFinite(price) ? price.toFixed(2) : '');
+    const signature = `marker:${lawId}:${time}:${Number(price).toFixed(6)}:${options.shape || 'circle'}:${options.text || ''}`;
+    if (dedupeSignatureRef.current.has(signature)) return null;
+    dedupeSignatureRef.current.add(signature);
+
     const marker = {
       time,
       position,
@@ -350,9 +366,11 @@ const LightweightChart = ({
     return { min, max };
   };
 
-  const applyLawRecipe = (law) => {
+  const applyLawRecipe = (law, options = {}) => {
     const lawId = law?.id || 'unknown-law';
-    applyBaselineIndicatorOverlay(law);
+    if (!options.skipBaseline) {
+      applyBaselineIndicatorOverlay(law);
+    }
 
     if (!law?.chartRecipe) {
       const lastBar = data[data.length - 1];
@@ -498,23 +516,27 @@ const LightweightChart = ({
     }
 
     clearOverlays();
+    const merged = buildMergedRenderPlan({ laws: activeLaws, bars: data, mapping: lawIndicatorMap });
+    if (merged?.baseline?.lines?.length || merged?.baseline?.bands?.length) {
+      applyBaselineIndicatorOverlay({ id: 'BASELINE_SHARED' });
+    }
     activeLaws.forEach((law) => {
-      applyLawRecipe(law);
+      applyLawRecipe(law, { skipBaseline: true });
     });
     if (markersRef.current) {
       markersRef.current.setMarkers(lawOverlayRegistry.current.getMarkers());
     }
     if (onOverlayStatsChange) {
-      const rawStats = lawOverlayRegistry.current.getStats();
       const stats = activeLaws.map((law) => {
-        const hit = rawStats.find((item) => item.lawId === law.id) || { priceLines: 0, markers: 0, bands: 0 };
+        const plan = merged.stats.find((item) => item.lawId === law.id) || { markersCount: 0, linesCount: 0, boxesCount: 0 };
         return {
           lawId: law.id,
           hasRecipeOverlays: Boolean(law?.chartRecipe?.overlays?.length),
           hasInputs: Boolean(law?.chartRecipe?.inputs?.length),
-          renderedMarkers: hit.markers,
-          renderedLines: hit.priceLines,
-          renderedBands: hit.bands,
+          renderedMarkers: plan.markersCount,
+          renderedLines: plan.linesCount,
+          renderedBands: plan.boxesCount,
+          unknownReason: plan.unknownReason,
         };
       });
       const signature = JSON.stringify(stats);
@@ -590,7 +612,11 @@ const LightweightChart = ({
       clearTutorialError();
 
       const { shape, color, position } = getMarkerStyleForInput(assigns);
-      const marker = {
+      const signature = `marker:${lawId}:${time}:${Number(price).toFixed(6)}:${options.shape || 'circle'}:${options.text || ''}`;
+    if (dedupeSignatureRef.current.has(signature)) return null;
+    dedupeSignatureRef.current.add(signature);
+
+    const marker = {
         time: param.time,
         position,
         shape,

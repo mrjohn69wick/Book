@@ -13,3 +13,7 @@
 - Added deterministic non-browser validation script (`validate:laws`) for all law draw plans.
 - Added hardened Playwright config + retry wrapper (`e2e:stable`) with automatic fallback on container Chromium crashes.
 - Added indicator model module for reusable unit segmentation and fib-plan generation.
+
+- Refactored chart rendering to shared baseline overlay + per-law deduped overlays (multi-law safe).
+- Ported indicator highlight/fib/band model primitives and enriched law mapping reasons for deterministic validator.
+- Added LAW_DRAWING_STATUS operational note and stricter validation report fields (features/reasons/attempts).
