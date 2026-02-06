@@ -43,6 +43,9 @@ function App() {
           <ProgressBar completed={progress.completed} total={progress.total} />
           <Switch>
             <Route path="/" component={HomePage} />
+            <Route path="/learn/:lawId">
+              {(params) => <LearnPage lawId={params.lawId} />}
+            </Route>
             <Route path="/learn" component={LearnPage} />
             <Route path="/laws" component={LawsPage} />
             <Route path="/glossary" component={GlossaryPage} />

@@ -5,8 +5,13 @@ import LightweightChart from '../components/LightweightChart';
 import './LearnPage.css';
 import { useAppliedLaw } from '../context/AppliedLawContext';
 
-const LearnPage = () => {
-  const [currentLawIndex, setCurrentLawIndex] = useState(0);
+const LearnPage = ({ lawId }) => {
+  const initialIndex = lawId
+    ? laws.findIndex((law) => law.id === lawId)
+    : 0;
+  const [currentLawIndex, setCurrentLawIndex] = useState(
+    initialIndex >= 0 ? initialIndex : 0
+  );
   const [completedLaws, setCompletedLaws] = useState([]);
   const { appliedLawId, setAppliedLawId } = useAppliedLaw();
   const [, navigate] = useLocation();
@@ -22,6 +27,15 @@ const LearnPage = () => {
       setCompletedLaws(JSON.parse(saved));
     }
   }, []);
+
+  useEffect(() => {
+    if (lawId) {
+      const newIndex = laws.findIndex((law) => law.id === lawId);
+      if (newIndex >= 0) {
+        setCurrentLawIndex(newIndex);
+      }
+    }
+  }, [lawId]);
 
   const handleNext = () => {
     if (currentLawIndex < laws.length - 1) {

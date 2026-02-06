@@ -80,7 +80,7 @@ const HomePage = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Open Production Book
+            افتح النسخة الكاملة للكتاب
           </a>
         </div>
       </section>
