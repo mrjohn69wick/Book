@@ -1,0 +1,17 @@
+export const instruments = [
+  { id: 'XAU/USD', label: 'XAU/USD', group: 'metals' },
+  { id: 'XAG/USD', label: 'XAG/USD', group: 'metals' },
+  { id: 'EUR/USD', label: 'EUR/USD', group: 'forex' },
+  { id: 'GBP/USD', label: 'GBP/USD', group: 'forex' },
+  { id: 'USD/JPY', label: 'USD/JPY', group: 'forex' },
+  { id: 'USD/CHF', label: 'USD/CHF', group: 'forex' },
+  { id: 'AUD/USD', label: 'AUD/USD', group: 'forex' },
+  { id: 'BTC/USD', label: 'BTC/USD', group: 'crypto' },
+  { id: 'ETH/USD', label: 'ETH/USD', group: 'crypto' },
+  { id: 'SOL/USD', label: 'SOL/USD', group: 'crypto' },
+  { id: 'SPY', label: 'SPY', group: 'indices' },
+  { id: 'QQQ', label: 'QQQ', group: 'indices' },
+  { id: 'DIA', label: 'DIA', group: 'indices' },
+  { id: 'IWM', label: 'IWM', group: 'indices' },
+  { id: 'VTI', label: 'VTI', group: 'indices' },
+];

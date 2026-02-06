@@ -1,14 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
-import { CandlestickSeries, LineStyle, createChart } from 'lightweight-charts';
+import { CandlestickSeries, LineStyle, createChart, createSeriesMarkers } from 'lightweight-charts';
 import Papa from 'papaparse';
 import './LightweightChart.css';
+import { resolveRecipeValue } from '../data/parseRecipe';
+import { useAppliedLaw } from '../context/AppliedLawContext';
+import { normalizeBars } from '../lib/ohlcv/normalizeBars';
 
 const LightweightChart = ({
   height = 500,
   showControls = true,
+  advancedControls = false,
   showEquilibrium = false,
   showKeyLevels = false,
-  showZones = false
+  showZones = false,
+  appliedLaw = null,
+  externalBars = null,
+  latestBar = null
 }) => {
   const chartContainerRef = useRef(null);
   const chartRef = useRef(null);
@@ -16,90 +23,591 @@ const LightweightChart = ({
   const equilibriumLineRef = useRef(null);
   const keyLevelLinesRef = useRef([]);
   const zoneLinesRef = useRef([]);
+  const overlaysRef = useRef({ priceLines: [], markers: [] });
+  const tutorialMarkersRef = useRef({});
+  const clickHandlerRef = useRef(null);
+  const markersRef = useRef(null);
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const dataRef = useRef(data);
+  const {
+    tutorialActive,
+    tutorialLawId,
+    tutorialStepIndex,
+    tutorialInputs,
+    markStepCompleted,
+    setTutorialInput,
+    startTutorial,
+    endTutorial,
+    setTutorialError,
+    clearTutorialError
+  } = useAppliedLaw();
+
+  const clearOverlays = () => {
+    if (!candlestickSeriesRef.current) {
+      overlaysRef.current = { priceLines: [], markers: [] };
+      tutorialMarkersRef.current = {};
+      return;
+    }
+
+    overlaysRef.current.priceLines.forEach((line) => {
+      candlestickSeriesRef.current.removePriceLine(line);
+    });
+
+    overlaysRef.current.priceLines = [];
+    overlaysRef.current.markers = [];
+    tutorialMarkersRef.current = {};
+    if (markersRef.current) {
+      markersRef.current.setMarkers([]);
+    }
+  };
+
+  const addPriceLine = (price, options = {}) => {
+    if (!candlestickSeriesRef.current || !Number.isFinite(price)) {
+      return null;
+    }
+
+    const {
+      color = '#ffffff',
+      lineStyle = LineStyle.Solid,
+      lineWidth = 1,
+      title = '',
+      axisLabelVisible = true
+    } = options;
+
+    const resolvedLineStyle = typeof lineStyle === 'string'
+      ? ({
+        dashed: LineStyle.Dashed,
+        dotted: LineStyle.Dotted
+      }[lineStyle] || LineStyle.Solid)
+      : lineStyle;
+
+    const line = candlestickSeriesRef.current.createPriceLine({
+      price,
+      color,
+      lineWidth,
+      lineStyle: resolvedLineStyle,
+      axisLabelVisible,
+      title
+    });
+
+    overlaysRef.current.priceLines.push(line);
+    return line;
+  };
+
+  const addMarker = (time, price, options = {}) => {
+    if (!candlestickSeriesRef.current || time == null) {
+      return null;
+    }
+
+    const {
+      position = 'aboveBar',
+      shape = 'circle',
+      color = '#ffffff',
+      text = '',
+      size = 1
+    } = options;
+
+    const resolvedText = text || (Number.isFinite(price) ? price.toFixed(2) : '');
+    const marker = {
+      time,
+      position,
+      shape,
+      color,
+      size,
+      text: resolvedText
+    };
+
+    overlaysRef.current.markers.push(marker);
+    if (markersRef.current) {
+      markersRef.current.setMarkers(overlaysRef.current.markers);
+    }
+    return marker;
+  };
+
+  const setMarkerForStep = (stepIndex, marker) => {
+    const existing = tutorialMarkersRef.current[stepIndex];
+
+    if (existing) {
+      overlaysRef.current.markers = overlaysRef.current.markers.filter(
+        (item) => item !== existing
+      );
+    }
+
+    if (marker) {
+      overlaysRef.current.markers.push(marker);
+      tutorialMarkersRef.current[stepIndex] = marker;
+    } else {
+      delete tutorialMarkersRef.current[stepIndex];
+    }
+
+    if (markersRef.current) {
+      markersRef.current.setMarkers(overlaysRef.current.markers);
+    }
+  };
+
+  const getMarkerStyleForInput = (inputName) => {
+    if (!inputName) {
+      return { shape: 'circle', color: '#f59e0b', position: 'aboveBar' };
+    }
+
+    if (inputName.includes('entry')) {
+      return { shape: 'arrowUp', color: '#22c55e', position: 'belowBar' };
+    }
+
+    if (inputName.includes('stop')) {
+      return { shape: 'arrowDown', color: '#ef4444', position: 'aboveBar' };
+    }
+
+    return { shape: 'circle', color: '#60a5fa', position: 'aboveBar' };
+  };
+
+  const drawFibLines = (low, high, options = {}) => {
+    if (!Number.isFinite(low) || !Number.isFinite(high) || low === high) {
+      return;
+    }
+
+    const {
+      color = '#60a5fa',
+      lineStyle = 'dotted',
+      lineWidth = 1,
+      includeEquilibrium = true
+    } = options;
+
+    const ratios = includeEquilibrium
+      ? [0.236, 0.382, 0.5, 0.618, 0.786]
+      : [0.382, 0.5, 0.618, 0.786];
+    const range = high - low;
+
+    ratios.forEach((ratio) => {
+      const price = low + range * ratio;
+      const isEquilibrium = ratio === 0.236;
+      const title = isEquilibrium ? '0.236 الاتزان' : ratio.toFixed(3);
+
+      addPriceLine(price, {
+        color: isEquilibrium ? '#f97316' : color,
+        lineStyle: isEquilibrium ? LineStyle.Dashed : lineStyle,
+        lineWidth: isEquilibrium ? 2 : lineWidth,
+        title,
+        axisLabelVisible: true
+      });
+    });
+  };
+
+  const getDataRange = () => {
+    if (!data.length) {
+      return null;
+    }
+
+    const lows = data.map((bar) => bar.low ?? bar.value ?? bar.close);
+    const highs = data.map((bar) => bar.high ?? bar.value ?? bar.close);
+    return {
+      low: Math.min(...lows),
+      high: Math.max(...highs)
+    };
+  };
+
+  const hasValidBars = (bars) => Array.isArray(bars) && bars.length > 1;
+
+  const computeMinMax = (bars) => {
+    let min = Infinity;
+    let max = -Infinity;
+
+    bars.forEach((bar) => {
+      if (!Number.isFinite(bar.low) || !Number.isFinite(bar.high)) {
+        return;
+      }
+      if (bar.low < min) min = bar.low;
+      if (bar.high > max) max = bar.high;
+    });
+
+    if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) {
+      return null;
+    }
+
+    return { min, max };
+  };
+
+  const applyLawRecipe = (law) => {
+    if (!law?.chartRecipe) {
+      const lastBar = data[data.length - 1];
+      if (lastBar) {
+        addMarker(lastBar.time, lastBar.close, {
+          shape: 'circle',
+          color: '#9ca3af',
+          text: law.id
+        });
+        return true;
+      }
+      return false;
+    }
+
+    const recipe = law.chartRecipe;
+    const needsInputs = Array.isArray(recipe.inputs) && recipe.inputs.length > 0;
+
+    if (needsInputs) {
+      return false;
+    }
+
+    const range = getDataRange();
+    const context = range ? { low: range.low, high: range.high } : {};
+    const overlays = Array.isArray(recipe.overlays) ? recipe.overlays : [];
+
+    if (!range && overlays.length) {
+      return false;
+    }
+
+    overlays.forEach((overlay) => {
+      if (!overlay || !overlay.type) return;
+
+      if (overlay.type === 'priceLine') {
+        const rawValue = overlay.value ?? overlay.price;
+        const price = resolveRecipeValue(rawValue, context);
+        addPriceLine(price, {
+          color: overlay.color || '#ffffff',
+          lineStyle: overlay.lineStyle || LineStyle.Solid,
+          lineWidth: overlay.lineWidth || 1,
+          title: overlay.label || overlay.title || ''
+        });
+      }
+
+      if (overlay.type === 'marker') {
+        const rawValue = overlay.value ?? overlay.price;
+        const price = resolveRecipeValue(rawValue, context);
+        const markerTime = overlay.time || data[data.length - 1]?.time;
+        addMarker(markerTime, price, {
+          shape: overlay.shape || 'circle',
+          color: overlay.color || '#f59e0b',
+          text: overlay.label || overlay.text || ''
+        });
+      }
+
+      if (overlay.type === 'zone') {
+        const fromValue = resolveRecipeValue(overlay.from, context);
+        const toValue = resolveRecipeValue(overlay.to, context);
+        const zoneColor = overlay.color || '#facc15';
+
+        if (Number.isFinite(fromValue)) {
+          addPriceLine(fromValue, {
+            color: zoneColor,
+            lineStyle: overlay.lineStyle || 'dashed',
+            lineWidth: overlay.lineWidth || 1,
+            title: overlay.label || ''
+          });
+        }
+
+        if (Number.isFinite(toValue)) {
+          addPriceLine(toValue, {
+            color: zoneColor,
+            lineStyle: overlay.lineStyle || 'dashed',
+            lineWidth: overlay.lineWidth || 1,
+            title: overlay.label || ''
+          });
+        }
+      }
+    });
+
+    if (!overlays.length) {
+      const lastBar = data[data.length - 1];
+      if (lastBar) {
+        addMarker(lastBar.time, lastBar.close, {
+          shape: 'circle',
+          color: '#9ca3af',
+          text: law.id
+        });
+      }
+    }
+
+    return true;
+  };
+
+  useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
+
+  useEffect(() => {
+    if (!candlestickSeriesRef.current || !data.length) {
+      return;
+    }
+
+    if (!appliedLaw) {
+      clearOverlays();
+      endTutorial();
+      return;
+    }
+
+    const needsInputs = Boolean(appliedLaw?.chartRecipe?.inputs?.length);
+    if (needsInputs) {
+      clearOverlays();
+      if (!tutorialActive || tutorialLawId !== appliedLaw.id) {
+        startTutorial(appliedLaw.id);
+      }
+      return;
+    }
+
+    clearOverlays();
+    applyLawRecipe(appliedLaw);
+  }, [appliedLaw, data, tutorialActive, tutorialLawId, startTutorial, endTutorial]);
+
+  useEffect(() => {
+    const chart = chartRef.current;
+    const series = candlestickSeriesRef.current;
+
+    if (!chart || !series) {
+      return;
+    }
+
+    const handleClick = (param) => {
+      if (!tutorialActive || tutorialLawId !== appliedLaw?.id) {
+        return;
+      }
+
+      const steps = appliedLaw?.tutorialSteps || [];
+      const step = steps[tutorialStepIndex];
+      const assigns = step?.assigns;
+
+      if (!assigns) {
+        return;
+      }
+
+      if (!param?.time) {
+        return;
+      }
+
+      const seriesPrice = param.seriesPrices?.get(series);
+      let price = seriesPrice;
+
+      if (price && typeof price === 'object') {
+        price = price.close ?? price.value ?? price.open;
+      }
+
+      if (!Number.isFinite(price)) {
+        const bar = data.find((item) => item.time === param.time);
+        price = bar?.close ?? bar?.high ?? bar?.low;
+      }
+
+      if (!Number.isFinite(price)) {
+        return;
+      }
+
+      if (assigns === 'stopPrice' && tutorialInputs.entryPrice) {
+        if (price >= tutorialInputs.entryPrice.price) {
+          setTutorialError('يجب أن يكون الوقف أدنى من الدخول في السيناريو الافتراضي.');
+          return;
+        }
+      }
+
+      if (assigns === 'rangeLow' && tutorialInputs.rangeHigh) {
+        if (price >= tutorialInputs.rangeHigh.price) {
+          setTutorialError('يجب أن يكون القاع أقل من القمة المختارة.');
+          return;
+        }
+      }
+
+      if (assigns === 'rangeHigh' && tutorialInputs.rangeLow) {
+        if (price <= tutorialInputs.rangeLow.price) {
+          setTutorialError('يجب أن تكون القمة أعلى من القاع المختار.');
+          return;
+        }
+      }
+
+      clearTutorialError();
+
+      const { shape, color, position } = getMarkerStyleForInput(assigns);
+      const marker = {
+        time: param.time,
+        position,
+        shape,
+        color,
+        size: 1,
+        text: assigns
+      };
+
+      setMarkerForStep(tutorialStepIndex, marker);
+      setTutorialInput(assigns, { time: param.time, price });
+      markStepCompleted(tutorialStepIndex);
+    };
+
+    if (clickHandlerRef.current) {
+      chart.unsubscribeClick(clickHandlerRef.current);
+    }
+
+    clickHandlerRef.current = handleClick;
+    chart.subscribeClick(handleClick);
+
+    return () => {
+      if (clickHandlerRef.current) {
+        chart.unsubscribeClick(clickHandlerRef.current);
+      }
+    };
+  }, [
+    appliedLaw,
+    data,
+    tutorialActive,
+    tutorialLawId,
+    tutorialStepIndex,
+    markStepCompleted,
+    setTutorialInput,
+    setTutorialError,
+    clearTutorialError,
+    tutorialInputs
+  ]);
 
   // Initialize chart
   useEffect(() => {
     if (!chartContainerRef.current) return;
 
-    const chart = createChart(chartContainerRef.current, {
-      width: chartContainerRef.current.clientWidth,
-      height: height,
-      layout: {
-        background: { color: '#1a1d2e' },
-        textColor: '#b8c1ec',
-      },
-      grid: {
-        vertLines: { color: '#2d3348' },
-        horzLines: { color: '#2d3348' },
-      },
-      rightPriceScale: {
-        borderColor: '#374151',
-      },
-      timeScale: {
-        borderColor: '#374151',
-        timeVisible: true,
-        secondsVisible: false,
-      },
-      localization: {
-        locale: 'ar-SA',
-      },
-    });
+    let resizeObserver;
 
-    const candlestickSeries = chart.addSeries(CandlestickSeries, {
-      upColor: '#10b981',
-      downColor: '#ef4444',
-      borderVisible: false,
-      wickUpColor: '#10b981',
-      wickDownColor: '#ef4444',
-    });
+    const ensureChart = (width, heightValue) => {
+      if (chartRef.current || !chartContainerRef.current) {
+        return;
+      }
+      if (width <= 0 || heightValue <= 0) {
+        return;
+      }
 
-    chartRef.current = chart;
-    candlestickSeriesRef.current = candlestickSeries;
+      const chart = createChart(chartContainerRef.current, {
+        width,
+        height: heightValue,
+        layout: {
+          background: { color: '#1a1d2e' },
+          textColor: '#b8c1ec',
+        },
+        grid: {
+          vertLines: { color: '#2d3348' },
+          horzLines: { color: '#2d3348' },
+        },
+        rightPriceScale: {
+          borderColor: '#374151',
+        },
+        timeScale: {
+          borderColor: '#374151',
+          timeVisible: true,
+          secondsVisible: false,
+        },
+        localization: {
+          locale: 'ar-SA',
+        },
+      });
 
-    // Handle resize
-    const handleResize = () => {
-      if (chartContainerRef.current && chartRef.current) {
-        chartRef.current.applyOptions({
-          width: chartContainerRef.current.clientWidth,
-        });
+      const candlestickSeries = chart.addSeries(CandlestickSeries, {
+        upColor: '#10b981',
+        downColor: '#ef4444',
+        borderVisible: false,
+        wickUpColor: '#10b981',
+        wickDownColor: '#ef4444',
+      });
+
+      chartRef.current = chart;
+      candlestickSeriesRef.current = candlestickSeries;
+      markersRef.current = createSeriesMarkers(candlestickSeries, []);
+
+      if (hasValidBars(dataRef.current)) {
+        candlestickSeries.setData(dataRef.current);
+        chart.timeScale().fitContent();
       }
     };
 
-    const resizeObserver = new ResizeObserver(handleResize);
-    resizeObserver.observe(chartContainerRef.current);
+    const handleResize = () => {
+      if (!chartContainerRef.current) {
+        return;
+      }
+      const width = chartContainerRef.current.clientWidth;
+      const heightValue = chartContainerRef.current.clientHeight || height;
+      if (width <= 0 || heightValue <= 0) {
+        return;
+      }
 
-    // Load sample data by default
-    loadSampleData();
+      if (!chartRef.current) {
+        ensureChart(width, heightValue);
+        return;
+      }
+
+      chartRef.current.applyOptions({
+        width,
+        height: heightValue,
+      });
+    };
+
+    resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(chartContainerRef.current);
+    handleResize();
 
     return () => {
-      resizeObserver.disconnect();
+      clearOverlays();
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
       if (chartRef.current) {
         chartRef.current.remove();
+        chartRef.current = null;
+        candlestickSeriesRef.current = null;
+        markersRef.current = null;
       }
     };
   }, [height]);
 
   // Update chart data
   useEffect(() => {
-    if (candlestickSeriesRef.current && data.length > 0) {
+    if (Array.isArray(externalBars)) {
+      const { bars: normalized, error } = normalizeBars(externalBars);
+      if (error && error !== 'Not enough valid bars') {
+        setErrorMessage('تعذر عرض البيانات الحالية. يرجى التحقق من المصدر.');
+        setData([]);
+        return;
+      }
+      if (normalized.length < 2) {
+        setErrorMessage('');
+        setData([]);
+        return;
+      }
+      setErrorMessage('');
+      setData(normalized);
+    }
+  }, [externalBars]);
+
+  useEffect(() => {
+    if (!candlestickSeriesRef.current || !hasValidBars(data)) {
+      return;
+    }
+    try {
       candlestickSeriesRef.current.setData(data);
       chartRef.current.timeScale().fitContent();
+    } catch (error) {
+      console.error('Error setting chart data:', error);
+      setErrorMessage('تعذر عرض البيانات الحالية. يرجى التحقق من الملف.');
     }
   }, [data]);
 
   useEffect(() => {
-    if (!candlestickSeriesRef.current || data.length === 0) {
+    if (!candlestickSeriesRef.current || !latestBar) {
+      return;
+    }
+    const isValidLatest = [latestBar.time, latestBar.open, latestBar.high, latestBar.low, latestBar.close]
+      .every((value) => Number.isFinite(value));
+    if (!isValidLatest) {
+      return;
+    }
+    try {
+      candlestickSeriesRef.current.update(latestBar);
+    } catch (error) {
+      console.error('Error updating latest bar:', error);
+    }
+  }, [latestBar]);
+
+  useEffect(() => {
+    if (!candlestickSeriesRef.current || !hasValidBars(data)) {
       return;
     }
 
     const series = candlestickSeriesRef.current;
-    const lows = data.map((point) => point.low);
-    const highs = data.map((point) => point.high);
-    const minPrice = Math.min(...lows);
-    const maxPrice = Math.max(...highs);
+    const range = computeMinMax(data);
+    if (!range) {
+      return;
+    }
+    const { min: minPrice, max: maxPrice } = range;
 
     const getLevel = (ratio) => minPrice + (maxPrice - minPrice) * ratio;
 
@@ -332,7 +840,7 @@ const LightweightChart = ({
     setIsLoading(true);
     setErrorMessage('');
     try {
-      const response = await fetch('./sample-data.csv');
+      const response = await fetch(`${import.meta.env.BASE_URL}sample-data.csv`);
       if (!response.ok) {
         throw new Error('Failed to load sample data');
       }
@@ -342,13 +850,13 @@ const LightweightChart = ({
         header: true,
         skipEmptyLines: true,
         complete: (results) => {
-          const chartData = buildChartData(results.data);
-
-          if (chartData.length === 0) {
+          const { bars, error } = normalizeBars(buildChartData(results.data));
+          if (error) {
             setErrorMessage('تعذر قراءة البيانات التجريبية. يرجى التحقق من الملف.');
+            setData([]);
+          } else {
+            setData(bars);
           }
-
-          setData(chartData);
           setIsLoading(false);
         },
         error: (error) => {
@@ -374,13 +882,13 @@ const LightweightChart = ({
       header: true,
       skipEmptyLines: true,
       complete: (results) => {
-        const chartData = buildChartData(results.data);
-
-        if (chartData.length === 0) {
+        const { bars, error } = normalizeBars(buildChartData(results.data));
+        if (error) {
           setErrorMessage('لم يتم العثور على بيانات صالحة في الملف.');
+          setData([]);
+        } else {
+          setData(bars);
         }
-
-        setData(chartData);
         setIsLoading(false);
       },
       error: (error) => {
@@ -394,24 +902,48 @@ const LightweightChart = ({
   return (
     <div className="lightweight-chart-wrapper">
       {showControls && (
-        <div className="chart-controls">
-          <label className="chart-button">
-            📁 تحميل CSV
-            <input
-              type="file"
-              accept=".csv"
-              onChange={handleFileUpload}
-              style={{ display: 'none' }}
-            />
-          </label>
-          <button 
-            className="chart-button"
-            onClick={loadSampleData}
-            disabled={isLoading}
-          >
-            📊 بيانات تجريبية
-          </button>
-        </div>
+        advancedControls ? (
+          <details style={{ marginBottom: '0.5rem' }}>
+            <summary>خيارات متقدمة (CSV)</summary>
+            <div className="chart-controls">
+              <label className="chart-button">
+                📁 تحميل CSV
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={handleFileUpload}
+                  style={{ display: 'none' }}
+                />
+              </label>
+              <button
+                className="chart-button"
+                onClick={loadSampleData}
+                disabled={isLoading}
+              >
+                📊 بيانات تجريبية
+              </button>
+            </div>
+          </details>
+        ) : (
+          <div className="chart-controls">
+            <label className="chart-button">
+              📁 تحميل CSV
+              <input
+                type="file"
+                accept=".csv"
+                onChange={handleFileUpload}
+                style={{ display: 'none' }}
+              />
+            </label>
+            <button
+              className="chart-button"
+              onClick={loadSampleData}
+              disabled={isLoading}
+            >
+              📊 بيانات تجريبية
+            </button>
+          </div>
+        )
       )}
       
       {isLoading && (
@@ -424,6 +956,11 @@ const LightweightChart = ({
       {errorMessage && !isLoading && (
         <div className="chart-error" role="alert">
           {errorMessage}
+        </div>
+      )}
+      {!errorMessage && !isLoading && !hasValidBars(data) && (
+        <div className="chart-error" role="status">
+          اختر الأداة والإطار الزمني ثم اضغط تحميل، أو استخدم CSV المتقدم.
         </div>
       )}
       
