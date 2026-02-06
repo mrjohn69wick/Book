@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import LightweightChart from '../components/LightweightChart';
 import './ChartPage.css';
 import { getLawById, laws } from '../data/laws';
@@ -36,6 +36,7 @@ const ChartPage = () => {
   const [selectedLawId, setSelectedLawId] = useState(laws[0]?.id || '');
   const [validationReport, setValidationReport] = useState([]);
   const [overlayStats, setOverlayStats] = useState([]);
+  const overlayStatsRef = useRef([]);
   const { bars, latestBar, instrumentId, timeframeId } = useMarketData();
   const appliedLaw = appliedLawId ? getLawById(appliedLawId) : null;
   const appliedLawColor = appliedLaw?.color ?? getCategoryColor(appliedLaw?.category);
@@ -97,17 +98,13 @@ const ChartPage = () => {
     for (const law of laws) {
       handleApplyLaw(law, 'replace', { skipTutorial: true });
       await new Promise((resolve) => setTimeout(resolve, 250));
-      const stat = overlayStats.find((item) => item.lawId === law.id);
+      const stat = overlayStatsRef.current.find((item) => item.lawId === law.id);
       const hasFallback = !(law?.chartRecipe?.overlays?.length) || Boolean(law?.chartRecipe?.inputs?.length);
-      const barsUnavailable = bars.length < 2;
-      const recipeGeometryHint = Array.isArray(law?.chartRecipe?.overlays)
-        ? law.chartRecipe.overlays.filter((item) => item?.type !== 'marker').length
-        : 0;
       const result = validateLawRenderable({
         law,
         renderedMarkers: stat?.renderedMarkers || 0,
-        renderedLines: Math.max((stat?.renderedLines || 0) + (stat?.renderedBands || 0), recipeGeometryHint),
-        fallbackVisible: hasFallback && (barsUnavailable || ((stat?.renderedLines || 0) + (stat?.renderedBands || 0) >= 0)),
+        renderedLines: (stat?.renderedLines || 0) + (stat?.renderedBands || 0),
+        fallbackVisible: hasFallback && ((stat?.renderedLines || 0) + (stat?.renderedBands || 0) > 0),
       });
       results.push(result);
     }
@@ -228,7 +225,10 @@ const ChartPage = () => {
                 showZones={showZones}
                 appliedLaw={appliedLaw}
                 appliedLaws={appliedLaws}
-                onOverlayStatsChange={setOverlayStats}
+                onOverlayStatsChange={(stats) => {
+                  overlayStatsRef.current = stats;
+                  setOverlayStats(stats);
+                }}
                 externalBars={bars}
                 latestBar={latestBar}
               />

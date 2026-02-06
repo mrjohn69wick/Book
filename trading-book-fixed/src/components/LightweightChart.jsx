@@ -450,8 +450,33 @@ const LightweightChart = ({
     const needsInputs = Boolean(primaryLaw?.chartRecipe?.inputs?.length);
     if (needsInputs) {
       clearOverlays();
+      activeLaws.forEach((law) => {
+        applyUnknownMappingFallback(law);
+      });
+      if (markersRef.current) {
+        markersRef.current.setMarkers(lawOverlayRegistry.current.getMarkers());
+      }
       if (!tutorialActive || tutorialLawId !== primaryLaw.id) {
         startTutorial(primaryLaw.id);
+      }
+      if (onOverlayStatsChange) {
+        const rawStats = lawOverlayRegistry.current.getStats();
+        const stats = activeLaws.map((law) => {
+          const hit = rawStats.find((item) => item.lawId === law.id) || { priceLines: 0, markers: 0, bands: 0 };
+          return {
+            lawId: law.id,
+            hasRecipeOverlays: Boolean(law?.chartRecipe?.overlays?.length),
+            hasInputs: Boolean(law?.chartRecipe?.inputs?.length),
+            renderedMarkers: hit.markers,
+            renderedLines: hit.priceLines,
+            renderedBands: hit.bands,
+          };
+        });
+        const signature = JSON.stringify(stats);
+        if (signature !== lastStatsSignatureRef.current) {
+          lastStatsSignatureRef.current = signature;
+          onOverlayStatsChange(stats);
+        }
       }
       return;
     }
