@@ -136,6 +136,35 @@ Date,Open,High,Low,Close,Volume
 ...
 \`\`\`
 
+
+## بيانات السوق الحية (Live Market Data)
+
+- **المزودات المدعومة:**
+  - Binance للـ Crypto (`BTCUSDT`, `ETHUSDT`, `BNBUSDT`) مع pagination حتى 3000+ شمعة.
+  - Twelve Data للـ Forex/Metals/Indices مع كاش + backoff + fallback عبر `symbol_search`.
+- **الأدوات الافتراضية:**
+  - Metals: `XAU/USD`, `XAG/USD`
+  - Forex: `EUR/USD`, `GBP/USD`, `USD/JPY`, `USD/CHF`, `AUD/USD`
+  - Indices: `US500`, `US100`, `US30`, `GER40`
+- **الفريمات:** من `1m` إلى `1M` مع عرض `1Y` مُشتق من شموع شهرية.
+- **حد الشموع:** 1500 / 3000 / 5000 (أفضل جهد حسب قيود المزود).
+
+### ملاحظة أمان للمفتاح الافتراضي
+- التطبيق يضع مفتاح Twelve Data افتراضيًا لأول تشغيل لتسهيل التجربة.
+- لأن التطبيق static على GitHub Pages، هذا المفتاح **عام** ويمكن استبداله من صفحة الإعدادات بمفتاحك الخاص في أي وقت.
+
+### إعداد Proxy اختياري (Cloudflare Worker)
+إذا واجهت CORS أو أردت إخفاء المفتاح:
+
+1. أنشئ Worker يمرر طلب `/time_series` إلى Twelve Data بسيرفر-سايد secret.
+2. اضبط متغير البيئة في الواجهة:
+
+```bash
+VITE_TWELVE_PROXY_BASE=https://<your-worker-domain>
+```
+
+3. عند وجود المتغير سيستخدمه التطبيق، وإلا سيستخدم Twelve Data مباشرة.
+
 ## الميزات المتقدمة
 
 ### حفظ التقدم
