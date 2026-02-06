@@ -29,6 +29,7 @@ const LightweightChart = ({
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const dataRef = useRef(data);
   const {
     tutorialActive,
     tutorialLawId,
@@ -306,6 +307,10 @@ const LightweightChart = ({
   };
 
   useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
+
+  useEffect(() => {
     if (!candlestickSeriesRef.current || !data.length) {
       return;
     }
@@ -437,61 +442,91 @@ const LightweightChart = ({
   useEffect(() => {
     if (!chartContainerRef.current) return;
 
-    const chart = createChart(chartContainerRef.current, {
-      width: chartContainerRef.current.clientWidth,
-      height: height,
-      layout: {
-        background: { color: '#1a1d2e' },
-        textColor: '#b8c1ec',
-      },
-      grid: {
-        vertLines: { color: '#2d3348' },
-        horzLines: { color: '#2d3348' },
-      },
-      rightPriceScale: {
-        borderColor: '#374151',
-      },
-      timeScale: {
-        borderColor: '#374151',
-        timeVisible: true,
-        secondsVisible: false,
-      },
-      localization: {
-        locale: 'ar-SA',
-      },
-    });
+    let resizeObserver;
 
-    const candlestickSeries = chart.addSeries(CandlestickSeries, {
-      upColor: '#10b981',
-      downColor: '#ef4444',
-      borderVisible: false,
-      wickUpColor: '#10b981',
-      wickDownColor: '#ef4444',
-    });
+    const ensureChart = (width, heightValue) => {
+      if (chartRef.current || !chartContainerRef.current) {
+        return;
+      }
+      if (width <= 0 || heightValue <= 0) {
+        return;
+      }
 
-    chartRef.current = chart;
-    candlestickSeriesRef.current = candlestickSeries;
+      const chart = createChart(chartContainerRef.current, {
+        width,
+        height: heightValue,
+        layout: {
+          background: { color: '#1a1d2e' },
+          textColor: '#b8c1ec',
+        },
+        grid: {
+          vertLines: { color: '#2d3348' },
+          horzLines: { color: '#2d3348' },
+        },
+        rightPriceScale: {
+          borderColor: '#374151',
+        },
+        timeScale: {
+          borderColor: '#374151',
+          timeVisible: true,
+          secondsVisible: false,
+        },
+        localization: {
+          locale: 'ar-SA',
+        },
+      });
 
-    // Handle resize
-    const handleResize = () => {
-      if (chartContainerRef.current && chartRef.current) {
-        chartRef.current.applyOptions({
-          width: chartContainerRef.current.clientWidth,
-        });
+      const candlestickSeries = chart.addSeries(CandlestickSeries, {
+        upColor: '#10b981',
+        downColor: '#ef4444',
+        borderVisible: false,
+        wickUpColor: '#10b981',
+        wickDownColor: '#ef4444',
+      });
+
+      chartRef.current = chart;
+      candlestickSeriesRef.current = candlestickSeries;
+
+      if (hasValidBars(dataRef.current)) {
+        candlestickSeries.setData(dataRef.current);
+        chart.timeScale().fitContent();
       }
     };
 
-    const resizeObserver = new ResizeObserver(handleResize);
-    resizeObserver.observe(chartContainerRef.current);
+    const handleResize = () => {
+      if (!chartContainerRef.current) {
+        return;
+      }
+      const width = chartContainerRef.current.clientWidth;
+      const heightValue = chartContainerRef.current.clientHeight || height;
+      if (width <= 0 || heightValue <= 0) {
+        return;
+      }
 
-    // Load sample data by default
-    loadSampleData();
+      if (!chartRef.current) {
+        ensureChart(width, heightValue);
+        return;
+      }
+
+      chartRef.current.applyOptions({
+        width,
+        height: heightValue,
+      });
+    };
+
+    resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(chartContainerRef.current);
+    handleResize();
 
     return () => {
       clearOverlays();
-      resizeObserver.disconnect();
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
       if (chartRef.current) {
         chartRef.current.remove();
+        chartRef.current = null;
+        candlestickSeriesRef.current = null;
       }
     };
   }, [height]);
@@ -499,7 +534,19 @@ const LightweightChart = ({
   // Update chart data
   useEffect(() => {
     if (Array.isArray(externalBars)) {
-      setData(externalBars);
+      const { bars: normalized, error } = normalizeBars(externalBars);
+      if (error && error !== 'Not enough valid bars') {
+        setErrorMessage('تعذر عرض البيانات الحالية. يرجى التحقق من المصدر.');
+        setData([]);
+        return;
+      }
+      if (normalized.length < 2) {
+        setErrorMessage('');
+        setData([]);
+        return;
+      }
+      setErrorMessage('');
+      setData(normalized);
     }
   }, [externalBars]);
 
@@ -518,6 +565,11 @@ const LightweightChart = ({
 
   useEffect(() => {
     if (!candlestickSeriesRef.current || !latestBar) {
+      return;
+    }
+    const isValidLatest = [latestBar.time, latestBar.open, latestBar.high, latestBar.low, latestBar.close]
+      .every((value) => Number.isFinite(value));
+    if (!isValidLatest) {
       return;
     }
     try {
@@ -780,14 +832,14 @@ const LightweightChart = ({
         header: true,
         skipEmptyLines: true,
         complete: (results) => {
-        const { bars, error } = normalizeBars(buildChartData(results.data));
-        if (error) {
-          setErrorMessage('تعذر قراءة البيانات التجريبية. يرجى التحقق من الملف.');
-          setData([]);
-        } else {
-          setData(bars);
-        }
-        setIsLoading(false);
+          const { bars, error } = normalizeBars(buildChartData(results.data));
+          if (error) {
+            setErrorMessage('تعذر قراءة البيانات التجريبية. يرجى التحقق من الملف.');
+            setData([]);
+          } else {
+            setData(bars);
+          }
+          setIsLoading(false);
         },
         error: (error) => {
           console.error('Error parsing CSV:', error);

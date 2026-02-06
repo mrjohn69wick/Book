@@ -3,14 +3,24 @@ import { instruments } from '../lib/marketData/instruments';
 import { timeframes, defaultLimits } from '../lib/marketData/timeframes';
 import { fetchWithBackoff } from '../lib/marketData/providers/twelveData';
 import { resampleToYearly } from '../lib/marketData/resample';
+import { normalizeBars } from '../lib/ohlcv/normalizeBars';
+import { getCachedBars, getTimeframeTtl, setCachedBars } from '../lib/marketData/cache';
 import { keys, safeGetJSON, safeSetJSON } from '../utils/storage';
 
 const MarketDataContext = createContext(null);
 
 export const MarketDataProvider = ({ children }) => {
   const stored = safeGetJSON(keys.marketSelection, {});
-  const [instrumentId, setInstrumentId] = useState(stored.instrumentId || instruments[0].id);
-  const [timeframeId, setTimeframeId] = useState(stored.timeframeId || timeframes[0].id);
+  const initialInstrument = instruments.some((item) => item.id === stored.instrumentId)
+    ? stored.instrumentId
+    : instruments[0].id;
+  const initialTimeframe = timeframes.some((item) => item.id === stored.timeframeId)
+    ? stored.timeframeId
+    : timeframes[0].id;
+  const storedMode = safeGetJSON(keys.marketMode, 'live');
+  const [instrumentId, setInstrumentId] = useState(initialInstrument);
+  const [timeframeId, setTimeframeId] = useState(initialTimeframe);
+  const [mode, setMode] = useState(storedMode === 'snapshot' ? 'snapshot' : 'live');
   const [bars, setBars] = useState([]);
   const [latestBar, setLatestBar] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -26,13 +36,30 @@ export const MarketDataProvider = ({ children }) => {
     });
   };
 
+  const stopPolling = () => {
+    if (pollerRef.current) {
+      clearInterval(pollerRef.current);
+      pollerRef.current = null;
+    }
+  };
+
   const loadCandles = async ({ apiKey, limitOverride } = {}) => {
     setLoading(true);
     setError('');
     setRateLimited(false);
 
     const tf = timeframes.find((item) => item.id === timeframeId);
-    const limit = limitOverride || defaultLimits[timeframeId] || 1500;
+    if (!tf) {
+      setError('الإطار الزمني غير مدعوم.');
+      setLoading(false);
+      return;
+    }
+    const storedLimit = safeGetJSON(keys.marketLimit, null);
+    const storedLimitNumber = Number(storedLimit);
+    const resolvedLimit = Number.isFinite(storedLimitNumber) && storedLimitNumber > 0
+      ? storedLimitNumber
+      : null;
+    const limit = limitOverride || resolvedLimit || defaultLimits[timeframeId] || 1500;
     if (!apiKey) {
       setError('أضف مفتاح Twelve Data من صفحة الإعدادات.');
       setLoading(false);
@@ -40,6 +67,22 @@ export const MarketDataProvider = ({ children }) => {
     }
 
     try {
+      const cacheKey = `twelvedata:${instrumentId}:${tf.interval}:${limit}`;
+      const cached = await getCachedBars(cacheKey, getTimeframeTtl(timeframeId));
+      if (cached?.bars?.length) {
+        const { bars: normalized, error: normalizeError } = normalizeBars(cached.bars);
+        if (!normalizeError && normalized.length > 1) {
+          setBars(normalized);
+          setLatestBar(normalized[normalized.length - 1] || null);
+          setLastUpdated(cached.timestamp);
+          if (mode === 'live') {
+            startPolling(apiKey);
+          }
+          setLoading(false);
+          return;
+        }
+      }
+
       const { bars: fetched } = await fetchWithBackoff({
         symbol: instrumentId,
         interval: tf.interval,
@@ -47,14 +90,36 @@ export const MarketDataProvider = ({ children }) => {
         apiKey,
       });
 
-      const resultBars = tf.resample === '1y' ? resampleToYearly(fetched) : fetched;
+      const { bars: normalized, error: normalizeError } = normalizeBars(fetched);
+      if (normalizeError) {
+        setBars([]);
+        setLatestBar(null);
+        setError('تعذر قراءة بيانات الشموع.');
+        setLoading(false);
+        return;
+      }
+
+      const resultBars = tf.resample === '1y' ? resampleToYearly(normalized) : normalized;
+      if (resultBars.length < 2) {
+        setBars([]);
+        setLatestBar(null);
+        setError('');
+        setLoading(false);
+        return;
+      }
+
       setBars(resultBars);
       setLatestBar(resultBars[resultBars.length - 1] || null);
       setLastUpdated(Date.now());
+      await setCachedBars(cacheKey, resultBars);
+      if (mode === 'live') {
+        startPolling(apiKey);
+      }
     } catch (err) {
       if (err?.status === 429 || err?.message === 'RATE_LIMIT') {
         setRateLimited(true);
         setError('تم تجاوز حد الطلبات. يرجى الانتظار ثم إعادة المحاولة.');
+        stopPolling();
       } else {
         setError('تعذر تحميل البيانات من Twelve Data.');
       }
@@ -64,8 +129,9 @@ export const MarketDataProvider = ({ children }) => {
   };
 
   const startPolling = (apiKey) => {
-    if (!apiKey) return;
+    if (!apiKey || mode !== 'live') return;
     const tf = timeframes.find((item) => item.id === timeframeId);
+    if (!tf) return;
     const intervalMs = ['1m'].includes(timeframeId)
       ? 20000
       : ['5m', '15m'].includes(timeframeId)
@@ -84,37 +150,52 @@ export const MarketDataProvider = ({ children }) => {
           limit: 2,
           apiKey,
         });
-        const nextBars = tf.resample === '1y' ? resampleToYearly(fetched) : fetched;
+        const { bars: normalized, error: normalizeError } = normalizeBars(fetched);
+        if (normalizeError) {
+          return;
+        }
+        const nextBars = tf.resample === '1y' ? resampleToYearly(normalized) : normalized;
         const last = nextBars[nextBars.length - 1];
         if (last) {
           setLatestBar(last);
+          setLastUpdated(Date.now());
         }
       } catch (err) {
         if (err?.status === 429 || err?.message === 'RATE_LIMIT') {
           setRateLimited(true);
+          stopPolling();
         }
       }
     }, intervalMs);
   };
 
   useEffect(() => {
-    if (pollerRef.current) {
-      clearInterval(pollerRef.current);
-      pollerRef.current = null;
-    }
+    stopPolling();
   }, [instrumentId, timeframeId]);
 
   useEffect(() => {
     return () => {
-      if (pollerRef.current) {
-        clearInterval(pollerRef.current);
-      }
+      stopPolling();
     };
   }, []);
+
+  useEffect(() => {
+    safeSetJSON(keys.marketMode, mode);
+    if (mode !== 'live') {
+      stopPolling();
+    }
+  }, [mode]);
+
+  useEffect(() => {
+    const apiKey = safeGetJSON(keys.twelveDataKey, '');
+    if (!apiKey) return;
+    loadCandles({ apiKey });
+  }, [instrumentId, timeframeId, mode]);
 
   const value = useMemo(() => ({
     instrumentId,
     timeframeId,
+    mode,
     bars,
     latestBar,
     loading,
@@ -129,13 +210,16 @@ export const MarketDataProvider = ({ children }) => {
       setTimeframeId(id);
       persistSelection(instrumentId, id);
     },
+    setMode: (nextMode) => {
+      setMode(nextMode === 'snapshot' ? 'snapshot' : 'live');
+    },
     loadCandles: async (args) => {
       await loadCandles(args);
-      startPolling(args?.apiKey);
     },
     startPolling,
+    stopPolling,
     clearError: () => setError(''),
-  }), [instrumentId, timeframeId, bars, latestBar, loading, error, lastUpdated, rateLimited]);
+  }), [instrumentId, timeframeId, mode, bars, latestBar, loading, error, lastUpdated, rateLimited]);
 
   return (
     <MarketDataContext.Provider value={value}>

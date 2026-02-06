@@ -11,6 +11,8 @@ export const keys = {
   disableChart: `${STORAGE_PREFIX}disableChart`,
   twelveDataKey: `${STORAGE_PREFIX}twelvedataKey`,
   marketSelection: `${STORAGE_PREFIX}marketSelection`,
+  marketMode: `${STORAGE_PREFIX}marketMode`,
+  marketLimit: `${STORAGE_PREFIX}marketLimit`,
 };
 
 export const safeJsonParse = (value, fallback) => {

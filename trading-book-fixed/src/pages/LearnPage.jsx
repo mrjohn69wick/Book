@@ -23,14 +23,16 @@ const LearnPage = ({ lawId }) => {
 
   const currentLaw = laws[currentLawIndex];
   const totalLaws = laws.length;
-  const completedCount = Math.min(completedLaws.length, totalLaws);
+  const completedIds = Array.isArray(completedLaws) ? completedLaws : [];
+  const completedCount = Math.min(new Set(completedIds).size, totalLaws);
   const progress = totalLaws > 0 ? Math.round((completedCount / totalLaws) * 100) : 0;
   const appliedLaw = appliedLawId ? getLawById(appliedLawId) : null;
   const isChartDisabled = localStorage.getItem(keys.disableChart) === '1';
 
   useEffect(() => {
     // Load completed laws from localStorage
-    setCompletedLaws(safeGetJSON(keys.completedLawIds, []));
+    const stored = safeGetJSON(keys.completedLawIds, []);
+    setCompletedLaws(Array.isArray(stored) ? stored : []);
   }, []);
 
   useEffect(() => {

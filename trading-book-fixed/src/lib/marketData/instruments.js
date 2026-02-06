@@ -8,7 +8,7 @@ export const instruments = [
   { id: 'AUD/USD', label: 'AUD/USD', group: 'forex' },
   { id: 'BTC/USD', label: 'BTC/USD', group: 'crypto' },
   { id: 'ETH/USD', label: 'ETH/USD', group: 'crypto' },
-  { id: 'BNB/USD', label: 'BNB/USD', group: 'crypto' },
+  { id: 'SOL/USD', label: 'SOL/USD', group: 'crypto' },
   { id: 'SPY', label: 'SPY', group: 'indices' },
   { id: 'QQQ', label: 'QQQ', group: 'indices' },
   { id: 'DIA', label: 'DIA', group: 'indices' },

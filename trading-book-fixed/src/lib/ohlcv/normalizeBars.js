@@ -9,6 +9,9 @@ export const normalizeBars = (input) => {
     if (Number.isFinite(time) && time > 1e12) {
       time = Math.floor(time / 1000);
     }
+    if (Number.isFinite(time)) {
+      time = Math.floor(time);
+    }
 
     const open = Number(bar?.open);
     const high = Number(bar?.high);
