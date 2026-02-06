@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import './SimplePage.css';
 import { keys, safeGetJSON, safeSetJSON } from '../utils/storage';
-import { fetchWithBackoff } from '../lib/marketData/providers/twelveData';
+import { createMarketDataService } from '../services/marketData';
+
+const marketDataService = createMarketDataService();
 
 const SettingsPage = () => {
   const [theme, setTheme] = useState('dark');
@@ -35,8 +37,9 @@ const SettingsPage = () => {
       return;
     }
     try {
-      await fetchWithBackoff({
-        symbol: 'SPY',
+      await marketDataService.fetchCandles({
+        providerId: 'twelvedata',
+        symbol: 'EUR/USD',
         interval: '1day',
         limit: 1,
         apiKey: apiKey.trim(),
