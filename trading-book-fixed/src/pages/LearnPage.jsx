@@ -20,12 +20,19 @@ const LearnPage = ({ lawId }) => {
   const progress = Math.round(((currentLawIndex + 1) / laws.length) * 100);
   const appliedLaw = appliedLawId ? getLawById(appliedLawId) : null;
 
+  const safeParse = (key, fallback) => {
+    try {
+      const value = localStorage.getItem(key);
+      return value ? JSON.parse(value) : fallback;
+    } catch {
+      localStorage.removeItem(key);
+      return fallback;
+    }
+  };
+
   useEffect(() => {
     // Load completed laws from localStorage
-    const saved = localStorage.getItem('completed-laws');
-    if (saved) {
-      setCompletedLaws(JSON.parse(saved));
-    }
+    setCompletedLaws(safeParse('completed-laws', []));
   }, []);
 
   useEffect(() => {
@@ -66,6 +73,9 @@ const LearnPage = ({ lawId }) => {
     navigate('/chart');
   };
 
+  const conditions = Array.isArray(currentLaw.conditions) ? currentLaw.conditions : [];
+  const expectedResults = Array.isArray(currentLaw.expectedResults) ? currentLaw.expectedResults : [];
+  const sources = Array.isArray(currentLaw.sources) ? currentLaw.sources : [];
   const isCompleted = completedLaws.includes(currentLaw.id);
   const sectionLabel = getSectionLabel(currentLaw.category);
 
@@ -105,7 +115,7 @@ const LearnPage = ({ lawId }) => {
           <div className="law-section">
             <h3 className="section-title">شروط التطبيق:</h3>
             <ul className="section-list">
-              {currentLaw.conditions.map((condition, idx) => (
+              {conditions.map((condition, idx) => (
                 <li key={idx}>{condition}</li>
               ))}
             </ul>
@@ -114,7 +124,7 @@ const LearnPage = ({ lawId }) => {
           <div className="law-section">
             <h3 className="section-title">النتائج المتوقعة:</h3>
             <ul className="section-list">
-              {currentLaw.expectedResults.map((result, idx) => (
+              {expectedResults.map((result, idx) => (
                 <li key={idx}>{result}</li>
               ))}
             </ul>
@@ -128,7 +138,7 @@ const LearnPage = ({ lawId }) => {
           <div className="law-section">
             <h3 className="section-title">المصادر:</h3>
             <div className="sources">
-              {currentLaw.sources.map((source, idx) => (
+              {sources.map((source, idx) => (
                 <span key={idx} className="source-badge">{source}</span>
               ))}
             </div>
