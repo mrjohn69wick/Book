@@ -1,15 +1,19 @@
 import { useState, useEffect } from 'react';
-import { laws } from '../data/laws';
+import { useLocation } from 'wouter';
+import { laws, getLawById } from '../data/laws';
 import LightweightChart from '../components/LightweightChart';
 import './LearnPage.css';
+import { useAppliedLaw } from '../context/AppliedLawContext';
 
 const LearnPage = () => {
   const [currentLawIndex, setCurrentLawIndex] = useState(0);
   const [completedLaws, setCompletedLaws] = useState([]);
-  const [appliedLaw, setAppliedLaw] = useState(null);
+  const { appliedLawId, setAppliedLawId } = useAppliedLaw();
+  const [, navigate] = useLocation();
 
   const currentLaw = laws[currentLawIndex];
   const progress = Math.round(((currentLawIndex + 1) / laws.length) * 100);
+  const appliedLaw = appliedLawId ? getLawById(appliedLawId) : null;
 
   useEffect(() => {
     // Load completed laws from localStorage
@@ -22,14 +26,12 @@ const LearnPage = () => {
   const handleNext = () => {
     if (currentLawIndex < laws.length - 1) {
       setCurrentLawIndex(currentLawIndex + 1);
-      setAppliedLaw(null);
     }
   };
 
   const handlePrevious = () => {
     if (currentLawIndex > 0) {
       setCurrentLawIndex(currentLawIndex - 1);
-      setAppliedLaw(null);
     }
   };
 
@@ -46,7 +48,8 @@ const LearnPage = () => {
   };
 
   const handleApplyToChart = () => {
-    setAppliedLaw(currentLaw);
+    setAppliedLawId(currentLaw.id);
+    navigate('/chart');
   };
 
   const isCompleted = completedLaws.includes(currentLaw.id);
@@ -155,14 +158,14 @@ const LearnPage = () => {
         </div>
 
         <div className="chart-section">
-          <LightweightChart height={500} showControls={true} />
+          <LightweightChart height={500} showControls={true} appliedLaw={appliedLaw} />
           
           <div className="applied-law-info">
             <h3 className="info-title">📍 القانون المطبق</h3>
             {appliedLaw ? (
               <div className="applied-law-card">
                 <h4>{appliedLaw.title}</h4>
-                <p>اضغط على "طبّق الآن" لأي قانون لعرض التفسير هنا</p>
+                <p>{appliedLaw.summary}</p>
               </div>
             ) : (
               <p className="no-law-applied">لم يتم تطبيق أي قانون بعد</p>

@@ -2,13 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import { CandlestickSeries, LineStyle, createChart } from 'lightweight-charts';
 import Papa from 'papaparse';
 import './LightweightChart.css';
+import { resolveRecipeValue } from '../data/parseRecipe';
+import { useAppliedLaw } from '../context/AppliedLawContext';
 
 const LightweightChart = ({
   height = 500,
   showControls = true,
   showEquilibrium = false,
   showKeyLevels = false,
-  showZones = false
+  showZones = false,
+  appliedLaw = null
 }) => {
   const chartContainerRef = useRef(null);
   const chartRef = useRef(null);
@@ -16,9 +19,394 @@ const LightweightChart = ({
   const equilibriumLineRef = useRef(null);
   const keyLevelLinesRef = useRef([]);
   const zoneLinesRef = useRef([]);
+  const overlaysRef = useRef({ priceLines: [], markers: [] });
+  const tutorialMarkersRef = useRef({});
+  const clickHandlerRef = useRef(null);
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const {
+    tutorialActive,
+    tutorialLawId,
+    tutorialStepIndex,
+    tutorialInputs,
+    markStepCompleted,
+    setTutorialInput,
+    startTutorial,
+    endTutorial,
+    setTutorialError,
+    clearTutorialError
+  } = useAppliedLaw();
+
+  const clearOverlays = () => {
+    if (!candlestickSeriesRef.current) {
+      overlaysRef.current = { priceLines: [], markers: [] };
+      tutorialMarkersRef.current = {};
+      return;
+    }
+
+    overlaysRef.current.priceLines.forEach((line) => {
+      candlestickSeriesRef.current.removePriceLine(line);
+    });
+
+    overlaysRef.current.priceLines = [];
+    overlaysRef.current.markers = [];
+    tutorialMarkersRef.current = {};
+    candlestickSeriesRef.current.setMarkers([]);
+  };
+
+  const addPriceLine = (price, options = {}) => {
+    if (!candlestickSeriesRef.current || !Number.isFinite(price)) {
+      return null;
+    }
+
+    const {
+      color = '#ffffff',
+      lineStyle = LineStyle.Solid,
+      lineWidth = 1,
+      title = '',
+      axisLabelVisible = true
+    } = options;
+
+    const resolvedLineStyle = typeof lineStyle === 'string'
+      ? ({
+        dashed: LineStyle.Dashed,
+        dotted: LineStyle.Dotted
+      }[lineStyle] || LineStyle.Solid)
+      : lineStyle;
+
+    const line = candlestickSeriesRef.current.createPriceLine({
+      price,
+      color,
+      lineWidth,
+      lineStyle: resolvedLineStyle,
+      axisLabelVisible,
+      title
+    });
+
+    overlaysRef.current.priceLines.push(line);
+    return line;
+  };
+
+  const addMarker = (time, price, options = {}) => {
+    if (!candlestickSeriesRef.current || time == null) {
+      return null;
+    }
+
+    const {
+      position = 'aboveBar',
+      shape = 'circle',
+      color = '#ffffff',
+      text = '',
+      size = 1
+    } = options;
+
+    const resolvedText = text || (Number.isFinite(price) ? price.toFixed(2) : '');
+    const marker = {
+      time,
+      position,
+      shape,
+      color,
+      size,
+      text: resolvedText
+    };
+
+    overlaysRef.current.markers.push(marker);
+    candlestickSeriesRef.current.setMarkers(overlaysRef.current.markers);
+    return marker;
+  };
+
+  const setMarkerForStep = (stepIndex, marker) => {
+    const existing = tutorialMarkersRef.current[stepIndex];
+
+    if (existing) {
+      overlaysRef.current.markers = overlaysRef.current.markers.filter(
+        (item) => item !== existing
+      );
+    }
+
+    if (marker) {
+      overlaysRef.current.markers.push(marker);
+      tutorialMarkersRef.current[stepIndex] = marker;
+    } else {
+      delete tutorialMarkersRef.current[stepIndex];
+    }
+
+    candlestickSeriesRef.current.setMarkers(overlaysRef.current.markers);
+  };
+
+  const getMarkerStyleForInput = (inputName) => {
+    if (!inputName) {
+      return { shape: 'circle', color: '#f59e0b', position: 'aboveBar' };
+    }
+
+    if (inputName.includes('entry')) {
+      return { shape: 'arrowUp', color: '#22c55e', position: 'belowBar' };
+    }
+
+    if (inputName.includes('stop')) {
+      return { shape: 'arrowDown', color: '#ef4444', position: 'aboveBar' };
+    }
+
+    return { shape: 'circle', color: '#60a5fa', position: 'aboveBar' };
+  };
+
+  const drawFibLines = (low, high, options = {}) => {
+    if (!Number.isFinite(low) || !Number.isFinite(high) || low === high) {
+      return;
+    }
+
+    const {
+      color = '#60a5fa',
+      lineStyle = 'dotted',
+      lineWidth = 1,
+      includeEquilibrium = true
+    } = options;
+
+    const ratios = includeEquilibrium
+      ? [0.236, 0.382, 0.5, 0.618, 0.786]
+      : [0.382, 0.5, 0.618, 0.786];
+    const range = high - low;
+
+    ratios.forEach((ratio) => {
+      const price = low + range * ratio;
+      const isEquilibrium = ratio === 0.236;
+      const title = isEquilibrium ? '0.236 الاتزان' : ratio.toFixed(3);
+
+      addPriceLine(price, {
+        color: isEquilibrium ? '#f97316' : color,
+        lineStyle: isEquilibrium ? LineStyle.Dashed : lineStyle,
+        lineWidth: isEquilibrium ? 2 : lineWidth,
+        title,
+        axisLabelVisible: true
+      });
+    });
+  };
+
+  const getDataRange = () => {
+    if (!data.length) {
+      return null;
+    }
+
+    const lows = data.map((bar) => bar.low ?? bar.value ?? bar.close);
+    const highs = data.map((bar) => bar.high ?? bar.value ?? bar.close);
+    return {
+      low: Math.min(...lows),
+      high: Math.max(...highs)
+    };
+  };
+
+  const applyLawRecipe = (law) => {
+    if (!law?.chartRecipe) {
+      return false;
+    }
+
+    const recipe = law.chartRecipe;
+    const needsInputs = Array.isArray(recipe.inputs) && recipe.inputs.length > 0;
+
+    if (needsInputs) {
+      return false;
+    }
+
+    const range = getDataRange();
+    const context = range ? { low: range.low, high: range.high } : {};
+    const overlays = Array.isArray(recipe.overlays) ? recipe.overlays : [];
+
+    if (!range && overlays.length) {
+      return false;
+    }
+
+    overlays.forEach((overlay) => {
+      if (!overlay || !overlay.type) return;
+
+      if (overlay.type === 'priceLine') {
+        const rawValue = overlay.value ?? overlay.price;
+        const price = resolveRecipeValue(rawValue, context);
+        addPriceLine(price, {
+          color: overlay.color || '#ffffff',
+          lineStyle: overlay.lineStyle || LineStyle.Solid,
+          lineWidth: overlay.lineWidth || 1,
+          title: overlay.label || overlay.title || ''
+        });
+      }
+
+      if (overlay.type === 'marker') {
+        const rawValue = overlay.value ?? overlay.price;
+        const price = resolveRecipeValue(rawValue, context);
+        const markerTime = overlay.time || data[data.length - 1]?.time;
+        addMarker(markerTime, price, {
+          shape: overlay.shape || 'circle',
+          color: overlay.color || '#f59e0b',
+          text: overlay.label || overlay.text || ''
+        });
+      }
+
+      if (overlay.type === 'zone') {
+        const fromValue = resolveRecipeValue(overlay.from, context);
+        const toValue = resolveRecipeValue(overlay.to, context);
+        const zoneColor = overlay.color || '#facc15';
+
+        if (Number.isFinite(fromValue)) {
+          addPriceLine(fromValue, {
+            color: zoneColor,
+            lineStyle: overlay.lineStyle || 'dashed',
+            lineWidth: overlay.lineWidth || 1,
+            title: overlay.label || ''
+          });
+        }
+
+        if (Number.isFinite(toValue)) {
+          addPriceLine(toValue, {
+            color: zoneColor,
+            lineStyle: overlay.lineStyle || 'dashed',
+            lineWidth: overlay.lineWidth || 1,
+            title: overlay.label || ''
+          });
+        }
+      }
+    });
+
+    if (!overlays.length) {
+      const lastBar = data[data.length - 1];
+      if (lastBar) {
+        addMarker(lastBar.time, lastBar.close, {
+          shape: 'circle',
+          color: '#9ca3af',
+          text: law.id
+        });
+      }
+    }
+
+    return true;
+  };
+
+  useEffect(() => {
+    if (!candlestickSeriesRef.current || !data.length) {
+      return;
+    }
+
+    if (!appliedLaw) {
+      clearOverlays();
+      endTutorial();
+      return;
+    }
+
+    const needsInputs = Boolean(appliedLaw?.chartRecipe?.inputs?.length);
+    if (needsInputs) {
+      clearOverlays();
+      if (!tutorialActive || tutorialLawId !== appliedLaw.id) {
+        startTutorial(appliedLaw.id);
+      }
+      return;
+    }
+
+    clearOverlays();
+    applyLawRecipe(appliedLaw);
+  }, [appliedLaw, data, tutorialActive, tutorialLawId, startTutorial, endTutorial]);
+
+  useEffect(() => {
+    const chart = chartRef.current;
+    const series = candlestickSeriesRef.current;
+
+    if (!chart || !series) {
+      return;
+    }
+
+    const handleClick = (param) => {
+      if (!tutorialActive || tutorialLawId !== appliedLaw?.id) {
+        return;
+      }
+
+      const steps = appliedLaw?.tutorialSteps || [];
+      const step = steps[tutorialStepIndex];
+      const assigns = step?.assigns;
+
+      if (!assigns) {
+        return;
+      }
+
+      if (!param?.time) {
+        return;
+      }
+
+      const seriesPrice = param.seriesPrices?.get(series);
+      let price = seriesPrice;
+
+      if (price && typeof price === 'object') {
+        price = price.close ?? price.value ?? price.open;
+      }
+
+      if (!Number.isFinite(price)) {
+        const bar = data.find((item) => item.time === param.time);
+        price = bar?.close ?? bar?.high ?? bar?.low;
+      }
+
+      if (!Number.isFinite(price)) {
+        return;
+      }
+
+      if (assigns === 'stopPrice' && tutorialInputs.entryPrice) {
+        if (price >= tutorialInputs.entryPrice.price) {
+          setTutorialError('يجب أن يكون الوقف أدنى من الدخول في السيناريو الافتراضي.');
+          return;
+        }
+      }
+
+      if (assigns === 'rangeLow' && tutorialInputs.rangeHigh) {
+        if (price >= tutorialInputs.rangeHigh.price) {
+          setTutorialError('يجب أن يكون القاع أقل من القمة المختارة.');
+          return;
+        }
+      }
+
+      if (assigns === 'rangeHigh' && tutorialInputs.rangeLow) {
+        if (price <= tutorialInputs.rangeLow.price) {
+          setTutorialError('يجب أن تكون القمة أعلى من القاع المختار.');
+          return;
+        }
+      }
+
+      clearTutorialError();
+
+      const { shape, color, position } = getMarkerStyleForInput(assigns);
+      const marker = {
+        time: param.time,
+        position,
+        shape,
+        color,
+        size: 1,
+        text: assigns
+      };
+
+      setMarkerForStep(tutorialStepIndex, marker);
+      setTutorialInput(assigns, { time: param.time, price });
+      markStepCompleted(tutorialStepIndex);
+    };
+
+    if (clickHandlerRef.current) {
+      chart.unsubscribeClick(clickHandlerRef.current);
+    }
+
+    clickHandlerRef.current = handleClick;
+    chart.subscribeClick(handleClick);
+
+    return () => {
+      if (clickHandlerRef.current) {
+        chart.unsubscribeClick(clickHandlerRef.current);
+      }
+    };
+  }, [
+    appliedLaw,
+    data,
+    tutorialActive,
+    tutorialLawId,
+    tutorialStepIndex,
+    markStepCompleted,
+    setTutorialInput,
+    setTutorialError,
+    clearTutorialError,
+    tutorialInputs
+  ]);
 
   // Initialize chart
   useEffect(() => {
@@ -75,6 +463,7 @@ const LightweightChart = ({
     loadSampleData();
 
     return () => {
+      clearOverlays();
       resizeObserver.disconnect();
       if (chartRef.current) {
         chartRef.current.remove();
