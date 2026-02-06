@@ -1,12 +1,38 @@
 import { useState } from 'react';
 import LightweightChart from '../components/LightweightChart';
 import './ChartPage.css';
+import { getLawById } from '../data/laws';
+import { useAppliedLaw } from '../context/AppliedLawContext';
 
 const ChartPage = () => {
-  const [appliedLaw, setAppliedLaw] = useState(null);
+  const {
+    appliedLawId,
+    setAppliedLawId,
+    tutorialActive,
+    tutorialLawId,
+    tutorialStepIndex,
+    tutorialStepCompleted,
+    tutorialError,
+    startTutorial,
+    endTutorial,
+    clearTutorialError,
+    nextTutorialStep,
+    previousTutorialStep
+  } = useAppliedLaw();
   const [showEquilibrium, setShowEquilibrium] = useState(true);
   const [showKeyLevels, setShowKeyLevels] = useState(false);
   const [showZones, setShowZones] = useState(false);
+  const appliedLaw = appliedLawId ? getLawById(appliedLawId) : null;
+  const appliedLawColor = appliedLaw?.color ?? getCategoryColor(appliedLaw?.category);
+  const needsInputs = Boolean(appliedLaw?.chartRecipe?.inputs?.length);
+  const isTutorialActive = tutorialActive && tutorialLawId === appliedLawId;
+  const tutorialStep = isTutorialActive
+    ? appliedLaw?.tutorialSteps?.[tutorialStepIndex]
+    : null;
+  const stepRequiresInput = Boolean(tutorialStep?.assigns);
+  const isStepComplete = Boolean(tutorialStepCompleted[tutorialStepIndex]);
+  const tutorialStepsCount = appliedLaw?.tutorialSteps?.length ?? 0;
+  const isLastStep = Boolean(tutorialStepsCount && tutorialStepIndex === tutorialStepsCount - 1);
 
   const quickLaws = [
     { id: 'LAW_001', name: 'لا شك ليست حتمية', color: '#6366f1' },
@@ -17,8 +43,17 @@ const ChartPage = () => {
   ];
 
   const handleApplyLaw = (law) => {
-    setAppliedLaw(law);
+    setAppliedLawId(law.id);
+    clearTutorialError();
+    if (law?.chartRecipe?.inputs?.length) {
+      startTutorial(law.id);
+    } else {
+      endTutorial();
+    }
   };
+
+  const hasRecipeOverlays = Boolean(appliedLaw?.chartRecipe?.overlays?.length);
+  const showConditions = Boolean(appliedLaw && !needsInputs && !hasRecipeOverlays);
 
   return (
     <div className="chart-page">
@@ -72,6 +107,7 @@ const ChartPage = () => {
             showEquilibrium={showEquilibrium}
             showKeyLevels={showKeyLevels}
             showZones={showZones}
+            appliedLaw={appliedLaw}
           />
         </div>
 
@@ -79,20 +115,67 @@ const ChartPage = () => {
           <div className="law-panel">
             <h3 className="panel-title">📍 القانون المطبق</h3>
             {appliedLaw ? (
-              <div className="applied-law" style={{ borderColor: appliedLaw.color }}>
-                <div className="law-badge" style={{ background: appliedLaw.color }}>
+              <div className="applied-law" style={{ borderColor: appliedLawColor }}>
+                <div className="law-badge" style={{ background: appliedLawColor }}>
                   {appliedLaw.id}
                 </div>
-                <h4 className="law-name">{appliedLaw.name}</h4>
+                <h4 className="law-name">{appliedLaw.title}</h4>
                 <p className="law-explanation">
-                  اضغط على "طبّق الآن" لأي قانون لعرض التفسير هنا
+                  {needsInputs
+                    ? (tutorialStep?.text || 'يتطلب هذا القانون تحديد نقاط على الشارت قبل التطبيق.')
+                    : (appliedLaw.summary || 'تم تطبيق القانون على الشارت.')}
                 </p>
+                {needsInputs && isTutorialActive && (
+                  <div className="tutorial-controls">
+                    {tutorialError && (
+                      <p className="tutorial-error">{tutorialError}</p>
+                    )}
+                    <div className="tutorial-buttons">
+                      {tutorialStepIndex > 0 && (
+                        <button
+                          className="btn-remove"
+                          onClick={previousTutorialStep}
+                        >
+                          السابق
+                        </button>
+                      )}
+                      {isLastStep ? (
+                        <button
+                          className="btn-remove"
+                          onClick={endTutorial}
+                          disabled={stepRequiresInput && !isStepComplete}
+                        >
+                          إتمام
+                        </button>
+                      ) : (
+                        <button
+                          className="btn-remove"
+                          onClick={nextTutorialStep}
+                          disabled={stepRequiresInput && !isStepComplete}
+                        >
+                          التالي
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
                 <button 
                   className="btn-remove"
-                  onClick={() => setAppliedLaw(null)}
+                  onClick={() => {
+                    setAppliedLawId(null);
+                    clearTutorialError();
+                    endTutorial();
+                  }}
                 >
                   إزالة التطبيق
                 </button>
+                {showConditions && (
+                  <ul className="law-conditions">
+                    {appliedLaw.conditions.map((condition, index) => (
+                      <li key={index}>✅ {condition}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
             ) : (
               <div className="no-law">
@@ -133,5 +216,18 @@ const ChartPage = () => {
     </div>
   );
 };
+
+function getCategoryColor(category) {
+  const colors = {
+    'مدرسة': '#6366f1',
+    'مؤشر': '#10b981',
+    'كوني': '#f97316',
+    'ذكاء اصطناعي': '#22c55e',
+    'مشترك': '#a855f7',
+    'تطبيق': '#f59e0b'
+  };
+
+  return colors[category] || '#6366f1';
+}
 
 export default ChartPage;
