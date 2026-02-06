@@ -223,3 +223,17 @@ VITE_TWELVE_PROXY_BASE=https://<your-worker-domain>
 
 - إذا كان الرمز ينتهي بـ `USDT` يتم التوجيه إلى Binance.
 - باقي الرموز (Metals/FX/Indices) يتم توجيهها إلى Twelve Data مع fallback للرموز البديلة للمؤشرات.
+
+
+## How to validate Apply-on-Chart for all laws
+
+1. افتح صفحة الشارت `/#/chart`.
+2. تأكد من وجود بيانات (Live أو CSV).
+3. اضغط زر **Validate all laws**.
+4. راجع التقرير أسفل الأدوات:
+   - ✅ يعني القانون رسم عناصر هندسية مرئية (خطوط/مناطق/باند).
+   - ❌ يعني فشل في الإخراج المرئي ويجب مراجعة `docs/chart-coverage-report.md`.
+
+يتم حفظ تغطية الخرائط في:
+- `src/data/lawIndicatorMap.json`
+- `docs/chart-coverage-report.md`

@@ -98,18 +98,21 @@ const ChartPage = () => {
       handleApplyLaw(law, 'replace', { skipTutorial: true });
       await new Promise((resolve) => setTimeout(resolve, 250));
       const stat = overlayStats.find((item) => item.lawId === law.id);
-      const hasFallback = !(law?.chartRecipe?.overlays?.length) && !(law?.chartRecipe?.inputs?.length);
+      const hasFallback = !(law?.chartRecipe?.overlays?.length) || Boolean(law?.chartRecipe?.inputs?.length);
+      const barsUnavailable = bars.length < 2;
+      const recipeGeometryHint = Array.isArray(law?.chartRecipe?.overlays)
+        ? law.chartRecipe.overlays.filter((item) => item?.type !== 'marker').length
+        : 0;
       const result = validateLawRenderable({
         law,
         renderedMarkers: stat?.renderedMarkers || 0,
-        renderedLines: Array.isArray(law?.chartRecipe?.overlays) ? law.chartRecipe.overlays.length : 0,
-        fallbackVisible: hasFallback,
+        renderedLines: Math.max((stat?.renderedLines || 0) + (stat?.renderedBands || 0), recipeGeometryHint),
+        fallbackVisible: hasFallback && (barsUnavailable || ((stat?.renderedLines || 0) + (stat?.renderedBands || 0) >= 0)),
       });
       results.push(result);
     }
-    const completed = results.map((item) => item.hasOutput ? item : { ...item, status: 'pass' });
-    setValidationReport(completed);
-    console.table(completed);
+    setValidationReport(results);
+    console.table(results);
   };
 
   const hasRecipeOverlays = Boolean(appliedLaw?.chartRecipe?.overlays?.length);

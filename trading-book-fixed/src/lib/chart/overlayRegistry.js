@@ -23,6 +23,18 @@ export const createOverlayRegistry = () => {
       state.forEach((entry) => out.push(...entry.markers));
       return out;
     },
+    getStats() {
+      const out = [];
+      state.forEach((entry, lawId) => {
+        out.push({
+          lawId,
+          priceLines: entry.priceLines.length,
+          markers: entry.markers.length,
+          bands: entry.htmlBands.filter((item) => item?.style?.display !== 'none').length,
+        });
+      });
+      return out;
+    },
     clearLaw(lawId, handlers) {
       const entry = state.get(lawId);
       if (!entry) return;

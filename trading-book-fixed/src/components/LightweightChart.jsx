@@ -296,6 +296,7 @@ const LightweightChart = ({
     // UNKNOWN_MAPPING fallback: TODO(BOOK_V3_COMBINED.md / Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md): add precise mapping when documented.
     addPriceLine(range.low, { color: '#64748b', lineStyle: 'dashed', title: `${lawId} LOW` }, lawId);
     addPriceLine(range.high, { color: '#64748b', lineStyle: 'dashed', title: `${lawId} HIGH` }, lawId);
+    drawFibLines(range.low, range.high, { color: '#a78bfa', lineStyle: 'dotted', includeEquilibrium: true }, lawId);
     addZoneBand(range.low + (range.high - range.low) * 0.236, range.low + (range.high - range.low) * 0.382, `UNKNOWN_MAPPING ${lawId}`, '#a78bfa', lawId);
     addMarker(lastBar.time, lastBar.close, { shape: 'square', color: '#a78bfa', text: `${lawId} UNKNOWN_MAPPING` }, lawId);
     return true;
@@ -463,12 +464,18 @@ const LightweightChart = ({
       markersRef.current.setMarkers(lawOverlayRegistry.current.getMarkers());
     }
     if (onOverlayStatsChange) {
-      const stats = activeLaws.map((law) => ({
-        lawId: law.id,
-        hasRecipeOverlays: Boolean(law?.chartRecipe?.overlays?.length),
-        hasInputs: Boolean(law?.chartRecipe?.inputs?.length),
-        renderedMarkers: lawOverlayRegistry.current.getMarkers().filter((item) => String(item?.text || '').includes(law.id)).length,
-      }));
+      const rawStats = lawOverlayRegistry.current.getStats();
+      const stats = activeLaws.map((law) => {
+        const hit = rawStats.find((item) => item.lawId === law.id) || { priceLines: 0, markers: 0, bands: 0 };
+        return {
+          lawId: law.id,
+          hasRecipeOverlays: Boolean(law?.chartRecipe?.overlays?.length),
+          hasInputs: Boolean(law?.chartRecipe?.inputs?.length),
+          renderedMarkers: hit.markers,
+          renderedLines: hit.priceLines,
+          renderedBands: hit.bands,
+        };
+      });
       const signature = JSON.stringify(stats);
       if (signature !== lastStatsSignatureRef.current) {
         lastStatsSignatureRef.current = signature;
