@@ -14,6 +14,9 @@ import MT5Page from './pages/MT5Page';
 import SettingsPage from './pages/SettingsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import { laws } from './data/laws';
+import { AppliedLawProvider } from './context/AppliedLawContext';
+import ErrorBoundary from './components/ErrorBoundary';
+import { ensureStorageVersion, keys, safeGetJSON } from './utils/storage';
 
 // Import components
 import Sidebar from './components/Sidebar';
@@ -23,36 +26,44 @@ function App() {
   const [progress, setProgress] = useState({ completed: 0, total: laws.length });
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
+  useEffect(() => {
+    ensureStorageVersion();
+  }, []);
+
   // Load progress from localStorage
   useEffect(() => {
-    const savedProgress = localStorage.getItem('trading-book-progress');
-    if (savedProgress) {
-      const parsedProgress = JSON.parse(savedProgress);
-      setProgress({ ...parsedProgress, total: laws.length });
-    } else {
-      setProgress((prev) => ({ ...prev, total: laws.length }));
-    }
+    const completedIds = safeGetJSON(keys.completedLawIds, []);
+    const uniqueIds = Array.isArray(completedIds) ? Array.from(new Set(completedIds)) : [];
+    const completedCount = Math.min(uniqueIds.length, laws.length);
+    setProgress({ completed: completedCount, total: laws.length });
   }, []);
 
   return (
-    <div className="app" dir="rtl">
-      <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
-      <main className={`main-content ${sidebarOpen ? 'sidebar-open' : ''}`}>
-        <ProgressBar completed={progress.completed} total={progress.total} />
-        <Switch>
-          <Route path="/" component={HomePage} />
-          <Route path="/learn" component={LearnPage} />
-          <Route path="/laws" component={LawsPage} />
-          <Route path="/glossary" component={GlossaryPage} />
-          <Route path="/training" component={TrainingPage} />
-          <Route path="/search" component={SearchPage} />
-          <Route path="/chart" component={ChartPage} />
-          <Route path="/mt5" component={MT5Page} />
-          <Route path="/settings" component={SettingsPage} />
-          <Route component={NotFoundPage} />
-        </Switch>
-      </main>
-    </div>
+    <AppliedLawProvider>
+      <div className="app" dir="rtl">
+        <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+        <ErrorBoundary>
+          <main className={`main-content ${sidebarOpen ? 'sidebar-open' : ''}`}>
+            <ProgressBar completed={progress.completed} total={progress.total} />
+            <Switch>
+              <Route path="/" component={HomePage} />
+              <Route path="/learn/:lawId">
+                {(params) => <LearnPage lawId={params.lawId} />}
+              </Route>
+              <Route path="/learn" component={LearnPage} />
+              <Route path="/laws" component={LawsPage} />
+              <Route path="/glossary" component={GlossaryPage} />
+              <Route path="/training" component={TrainingPage} />
+              <Route path="/search" component={SearchPage} />
+              <Route path="/chart" component={ChartPage} />
+              <Route path="/mt5" component={MT5Page} />
+              <Route path="/settings" component={SettingsPage} />
+              <Route component={NotFoundPage} />
+            </Switch>
+          </main>
+        </ErrorBoundary>
+      </div>
+    </AppliedLawProvider>
   );
 }
 
