@@ -8,6 +8,7 @@ export const keys = {
   appliedLaw: `${STORAGE_PREFIX}appliedLaw`,
   appliedLaws: `${STORAGE_PREFIX}appliedLaws`,
   activeLaw: `${STORAGE_PREFIX}activeLaw`,
+  hiddenLaws: `${STORAGE_PREFIX}hiddenLaws`,
   chartData: `${STORAGE_PREFIX}chartData`,
   tutorialState: `${STORAGE_PREFIX}tutorialState`,
   disableChart: `${STORAGE_PREFIX}disableChart`,

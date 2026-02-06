@@ -10,6 +10,9 @@ export const AppliedLawProvider = ({ children }) => {
   const [activeLawId, setActiveLawId] = useState(
     safeGetJSON(keys.activeLaw, initialIds[0] || null)
   );
+  const [hiddenLawIds, setHiddenLawIds] = useState(
+    Array.isArray(safeGetJSON(keys.hiddenLaws, [])) ? safeGetJSON(keys.hiddenLaws, []) : []
+  );
   const [tutorialActive, setTutorialActive] = useState(false);
   const [tutorialLawId, setTutorialLawId] = useState(null);
   const [tutorialStepIndex, setTutorialStepIndex] = useState(0);
@@ -37,6 +40,9 @@ export const AppliedLawProvider = ({ children }) => {
 
   const removeLaw = (lawId) => {
     const next = syncIds(appliedLawIds.filter((id) => id !== lawId));
+    const nextHidden = hiddenLawIds.filter((id) => id !== lawId);
+    setHiddenLawIds(nextHidden);
+    safeSetJSON(keys.hiddenLaws, nextHidden);
     if (activeLawId === lawId) {
       const fallback = next[0] || null;
       setActiveLawId(fallback);
@@ -45,15 +51,24 @@ export const AppliedLawProvider = ({ children }) => {
   };
 
   const toggleLaw = (lawId) => {
-    if (appliedLawIds.includes(lawId)) {
-      removeLaw(lawId);
+    if (!appliedLawIds.includes(lawId)) {
+      return;
+    }
+    if (hiddenLawIds.includes(lawId)) {
+      const next = hiddenLawIds.filter((id) => id !== lawId);
+      setHiddenLawIds(next);
+      safeSetJSON(keys.hiddenLaws, next);
     } else {
-      applyLaw(lawId, 'add');
+      const next = [...hiddenLawIds, lawId];
+      setHiddenLawIds(next);
+      safeSetJSON(keys.hiddenLaws, next);
     }
   };
 
   const clearAll = () => {
     syncIds([]);
+    setHiddenLawIds([]);
+    safeSetJSON(keys.hiddenLaws, []);
     setActiveLawId(null);
     safeSetJSON(keys.activeLaw, null);
     endTutorial();
@@ -111,6 +126,7 @@ export const AppliedLawProvider = ({ children }) => {
 
   const value = useMemo(() => ({
     appliedLawIds,
+    hiddenLawIds,
     activeLawId,
     appliedLawId: activeLawId,
     setAppliedLawId: (lawId) => {
@@ -144,6 +160,7 @@ export const AppliedLawProvider = ({ children }) => {
     previousTutorialStep
   }), [
     appliedLawIds,
+    hiddenLawIds,
     activeLawId,
     tutorialActive,
     tutorialLawId,

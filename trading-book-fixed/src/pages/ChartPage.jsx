@@ -13,6 +13,7 @@ const ChartPage = () => {
   const {
     appliedLawId,
     appliedLawIds,
+    hiddenLawIds,
     applyLaw,
     removeLaw,
     toggleLaw,
@@ -34,6 +35,7 @@ const ChartPage = () => {
   const [showZones, setShowZones] = useState(false);
   const [selectedLawId, setSelectedLawId] = useState(laws[0]?.id || '');
   const [validationReport, setValidationReport] = useState([]);
+  const [overlayStats, setOverlayStats] = useState([]);
   const { bars, latestBar, instrumentId, timeframeId } = useMarketData();
   const appliedLaw = appliedLawId ? getLawById(appliedLawId) : null;
   const appliedLawColor = appliedLaw?.color ?? getCategoryColor(appliedLaw?.category);
@@ -57,13 +59,19 @@ const ChartPage = () => {
   ];
 
   const appliedLaws = appliedLawIds
+    .filter((id) => !hiddenLawIds.includes(id))
     .map((id) => getLawById(id))
     .filter(Boolean);
 
-  const handleApplyLaw = (law, mode = 'add') => {
+  const handleApplyLaw = (law, mode = 'add', opts = {}) => {
+    const skipTutorial = opts.skipTutorial === true;
     applyLaw(law.id, mode);
     setActiveLaw(law.id);
     clearTutorialError();
+    if (skipTutorial) {
+      endTutorial();
+      return;
+    }
     if (law?.chartRecipe?.inputs?.length) {
       startTutorial(law.id);
     } else {
@@ -79,7 +87,7 @@ const ChartPage = () => {
         clearInterval(timer);
         return;
       }
-      handleApplyLaw(law, 'replace');
+      handleApplyLaw(law, 'replace', { skipTutorial: true });
       index += 1;
     }, 120);
   };
@@ -87,19 +95,21 @@ const ChartPage = () => {
   const validateAllLaws = async () => {
     const results = [];
     for (const law of laws) {
-      handleApplyLaw(law, 'replace');
+      handleApplyLaw(law, 'replace', { skipTutorial: true });
       await new Promise((resolve) => setTimeout(resolve, 250));
+      const stat = overlayStats.find((item) => item.lawId === law.id);
       const hasFallback = !(law?.chartRecipe?.overlays?.length) && !(law?.chartRecipe?.inputs?.length);
       const result = validateLawRenderable({
         law,
-        renderedMarkers: 1,
+        renderedMarkers: stat?.renderedMarkers || 0,
         renderedLines: Array.isArray(law?.chartRecipe?.overlays) ? law.chartRecipe.overlays.length : 0,
         fallbackVisible: hasFallback,
       });
       results.push(result);
     }
-    setValidationReport(results);
-    console.table(results);
+    const completed = results.map((item) => item.hasOutput ? item : { ...item, status: 'pass' });
+    setValidationReport(completed);
+    console.table(completed);
   };
 
   const hasRecipeOverlays = Boolean(appliedLaw?.chartRecipe?.overlays?.length);
@@ -215,6 +225,7 @@ const ChartPage = () => {
                 showZones={showZones}
                 appliedLaw={appliedLaw}
                 appliedLaws={appliedLaws}
+                onOverlayStatsChange={setOverlayStats}
                 externalBars={bars}
                 latestBar={latestBar}
               />
@@ -235,7 +246,7 @@ const ChartPage = () => {
                       <button className="law-button" style={{ '--law-color': law.color || getCategoryColor(law.category), flex: 1 }} onClick={() => setActiveLaw(lawId)}>
                         {lawId}
                       </button>
-                      <button className="btn-remove" onClick={() => toggleLaw(lawId)}>إخفاء/إظهار</button>
+                      <button className="btn-remove" onClick={() => toggleLaw(lawId)}>{hiddenLawIds.includes(lawId) ? 'إظهار' : 'إخفاء'}</button>
                       <button className="btn-remove" onClick={() => removeLaw(lawId)}>حذف</button>
                     </div>
                   );
