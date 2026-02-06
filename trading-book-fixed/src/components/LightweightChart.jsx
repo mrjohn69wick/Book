@@ -27,6 +27,7 @@ const LightweightChart = ({
   const tutorialMarkersRef = useRef({});
   const clickHandlerRef = useRef(null);
   const markersRef = useRef(null);
+  const zoneLayerRef = useRef(null);
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -58,9 +59,63 @@ const LightweightChart = ({
     overlaysRef.current.priceLines = [];
     overlaysRef.current.markers = [];
     tutorialMarkersRef.current = {};
+    if (zoneLayerRef.current) {
+      zoneLayerRef.current.innerHTML = '';
+    }
     if (markersRef.current) {
       markersRef.current.setMarkers([]);
     }
+  };
+
+  const ensureZoneLayer = () => {
+    if (!chartContainerRef.current) return null;
+    if (!zoneLayerRef.current) {
+      const layer = document.createElement('div');
+      layer.style.position = 'absolute';
+      layer.style.inset = '0';
+      layer.style.pointerEvents = 'none';
+      layer.style.zIndex = '2';
+      chartContainerRef.current.appendChild(layer);
+      zoneLayerRef.current = layer;
+    }
+    return zoneLayerRef.current;
+  };
+
+  const addZoneBand = (fromPrice, toPrice, label = '', color = '#facc15') => {
+    if (!candlestickSeriesRef.current) return;
+    const layer = ensureZoneLayer();
+    if (!layer) return;
+    const fromY = candlestickSeriesRef.current.priceToCoordinate(fromPrice);
+    const toY = candlestickSeriesRef.current.priceToCoordinate(toPrice);
+    if (!Number.isFinite(fromY) || !Number.isFinite(toY)) return;
+
+    const band = document.createElement('div');
+    const top = Math.min(fromY, toY);
+    const heightPx = Math.max(2, Math.abs(toY - fromY));
+    band.style.position = 'absolute';
+    band.style.left = '0';
+    band.style.right = '0';
+    band.style.top = `${top}px`;
+    band.style.height = `${heightPx}px`;
+    band.style.background = `${color}22`;
+    band.style.borderTop = `1px dashed ${color}`;
+    band.style.borderBottom = `1px dashed ${color}`;
+
+    if (label) {
+      const tag = document.createElement('span');
+      tag.textContent = label;
+      tag.style.position = 'absolute';
+      tag.style.right = '4px';
+      tag.style.top = '0';
+      tag.style.fontSize = '11px';
+      tag.style.color = color;
+      tag.style.background = '#0f172aaa';
+      tag.style.padding = '1px 4px';
+      tag.style.borderRadius = '4px';
+      band.appendChild(tag);
+    }
+
+    layer.appendChild(band);
   };
 
   const addPriceLine = (price, options = {}) => {
@@ -180,10 +235,18 @@ const LightweightChart = ({
       : [0.382, 0.5, 0.618, 0.786];
     const range = high - low;
 
+    const arabicTitles = {
+      0.236: 'حد الأمان',
+      0.382: 'المنطقة الذهبية',
+      0.5: 'الاتزان',
+      0.618: 'حد الأمان الأعلى',
+      0.786: 'امتداد',
+    };
+
     ratios.forEach((ratio) => {
       const price = low + range * ratio;
       const isEquilibrium = ratio === 0.236;
-      const title = isEquilibrium ? '0.236 الاتزان' : ratio.toFixed(3);
+      const title = `${ratio.toFixed(3)} ${arabicTitles[ratio] || ''}`.trim();
 
       addPriceLine(price, {
         color: isEquilibrium ? '#f97316' : color,
@@ -193,6 +256,10 @@ const LightweightChart = ({
         axisLabelVisible: true
       });
     });
+
+    const bandLow = low + range * 0.236;
+    const bandHigh = low + range * 0.382;
+    addZoneBand(bandLow, bandHigh, 'منطقة 0.236 - 0.382', '#38bdf8');
   };
 
   const getDataRange = () => {
@@ -333,7 +400,9 @@ const LightweightChart = ({
 
     if (!appliedLaw) {
       clearOverlays();
-      endTutorial();
+      if (tutorialActive) {
+        endTutorial();
+      }
       return;
     }
 
