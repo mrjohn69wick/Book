@@ -1,54 +1,81 @@
 import { useState, useEffect } from 'react';
-import { laws } from '../data/laws';
+import { useLocation } from 'wouter';
+import { laws, getLawById } from '../data/laws';
 import LightweightChart from '../components/LightweightChart';
 import './LearnPage.css';
+import { useAppliedLaw } from '../context/AppliedLawContext';
+import { keys, safeGetJSON, safeSetJSON } from '../utils/storage';
+import ChartErrorBoundary from '../components/ChartErrorBoundary';
+import MarketPanel from '../components/MarketPanel';
+import { useMarketData } from '../context/MarketDataContext';
 
-const LearnPage = () => {
-  const [currentLawIndex, setCurrentLawIndex] = useState(0);
+const LearnPage = ({ lawId }) => {
+  const initialIndex = lawId
+    ? laws.findIndex((law) => law.id === lawId)
+    : 0;
+  const [currentLawIndex, setCurrentLawIndex] = useState(
+    initialIndex >= 0 ? initialIndex : 0
+  );
   const [completedLaws, setCompletedLaws] = useState([]);
-  const [appliedLaw, setAppliedLaw] = useState(null);
+  const { appliedLawId, setAppliedLawId } = useAppliedLaw();
+  const { bars, latestBar, instrumentId, timeframeId } = useMarketData();
+  const [, navigate] = useLocation();
 
   const currentLaw = laws[currentLawIndex];
-  const progress = Math.round(((currentLawIndex + 1) / laws.length) * 100);
+  const totalLaws = laws.length;
+  const completedIds = Array.isArray(completedLaws) ? completedLaws : [];
+  const completedCount = Math.min(new Set(completedIds).size, totalLaws);
+  const progress = totalLaws > 0 ? Math.round((completedCount / totalLaws) * 100) : 0;
+  const appliedLaw = appliedLawId ? getLawById(appliedLawId) : null;
+  const isChartDisabled = localStorage.getItem(keys.disableChart) === '1';
 
   useEffect(() => {
     // Load completed laws from localStorage
-    const saved = localStorage.getItem('completed-laws');
-    if (saved) {
-      setCompletedLaws(JSON.parse(saved));
-    }
+    const stored = safeGetJSON(keys.completedLawIds, []);
+    setCompletedLaws(Array.isArray(stored) ? stored : []);
   }, []);
+
+  useEffect(() => {
+    if (lawId) {
+      const newIndex = laws.findIndex((law) => law.id === lawId);
+      if (newIndex >= 0) {
+        setCurrentLawIndex(newIndex);
+      }
+    }
+  }, [lawId]);
 
   const handleNext = () => {
     if (currentLawIndex < laws.length - 1) {
       setCurrentLawIndex(currentLawIndex + 1);
-      setAppliedLaw(null);
     }
   };
 
   const handlePrevious = () => {
     if (currentLawIndex > 0) {
       setCurrentLawIndex(currentLawIndex - 1);
-      setAppliedLaw(null);
     }
   };
 
   const handleMarkComplete = () => {
     if (!completedLaws.includes(currentLaw.id)) {
-      const updated = [...completedLaws, currentLaw.id];
+      const updated = Array.from(new Set([...completedLaws, currentLaw.id]));
       setCompletedLaws(updated);
-      localStorage.setItem('completed-laws', JSON.stringify(updated));
-      localStorage.setItem('trading-book-progress', JSON.stringify({
+      safeSetJSON(keys.completedLawIds, updated);
+      safeSetJSON(keys.progress, {
         completed: updated.length,
         total: laws.length
-      }));
+      });
     }
   };
 
   const handleApplyToChart = () => {
-    setAppliedLaw(currentLaw);
+    setAppliedLawId(currentLaw.id);
+    navigate('/chart');
   };
 
+  const conditions = Array.isArray(currentLaw.conditions) ? currentLaw.conditions : [];
+  const expectedResults = Array.isArray(currentLaw.expectedResults) ? currentLaw.expectedResults : [];
+  const sources = Array.isArray(currentLaw.sources) ? currentLaw.sources : [];
   const isCompleted = completedLaws.includes(currentLaw.id);
   const sectionLabel = getSectionLabel(currentLaw.category);
 
@@ -59,7 +86,7 @@ const LearnPage = () => {
         <p className="page-subtitle">تعلم القوانين بالترتيب مع التطبيق العملي على الشارت</p>
         <div className="learn-section-label">{sectionLabel}</div>
         <div className="learn-progress">
-          <span className="progress-text">القانون {currentLawIndex + 1} من {laws.length}</span>
+          <span className="progress-text">{completedCount} / {totalLaws}</span>
           <span className="progress-percent">{progress}%</span>
         </div>
       </div>
@@ -88,7 +115,7 @@ const LearnPage = () => {
           <div className="law-section">
             <h3 className="section-title">شروط التطبيق:</h3>
             <ul className="section-list">
-              {currentLaw.conditions.map((condition, idx) => (
+              {conditions.map((condition, idx) => (
                 <li key={idx}>{condition}</li>
               ))}
             </ul>
@@ -97,7 +124,7 @@ const LearnPage = () => {
           <div className="law-section">
             <h3 className="section-title">النتائج المتوقعة:</h3>
             <ul className="section-list">
-              {currentLaw.expectedResults.map((result, idx) => (
+              {expectedResults.map((result, idx) => (
                 <li key={idx}>{result}</li>
               ))}
             </ul>
@@ -111,7 +138,7 @@ const LearnPage = () => {
           <div className="law-section">
             <h3 className="section-title">المصادر:</h3>
             <div className="sources">
-              {currentLaw.sources.map((source, idx) => (
+              {sources.map((source, idx) => (
                 <span key={idx} className="source-badge">{source}</span>
               ))}
             </div>
@@ -155,14 +182,35 @@ const LearnPage = () => {
         </div>
 
         <div className="chart-section">
-          <LightweightChart height={500} showControls={true} />
+          {isChartDisabled ? (
+            <div className="chart-error" role="alert">
+              تم تعطيل الشارت مؤقتًا. أزل المفتاح من التخزين المحلي لإعادة التفعيل.
+            </div>
+          ) : (
+            <ChartErrorBoundary
+              symbol={instrumentId}
+              timeframe={timeframeId}
+              barsCount={bars.length}
+              lastBarTime={bars[bars.length - 1]?.time}
+            >
+              <MarketPanel />
+              <LightweightChart
+                height={500}
+                showControls={true}
+                advancedControls={true}
+                appliedLaw={appliedLaw}
+                externalBars={bars}
+                latestBar={latestBar}
+              />
+            </ChartErrorBoundary>
+          )}
           
           <div className="applied-law-info">
             <h3 className="info-title">📍 القانون المطبق</h3>
             {appliedLaw ? (
               <div className="applied-law-card">
                 <h4>{appliedLaw.title}</h4>
-                <p>اضغط على "طبّق الآن" لأي قانون لعرض التفسير هنا</p>
+                <p>{appliedLaw.summary}</p>
               </div>
             ) : (
               <p className="no-law-applied">لم يتم تطبيق أي قانون بعد</p>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'wouter';
 import { laws } from '../data/laws';
+import { keys, safeGetJSON } from '../utils/storage';
 import './HomePage.css';
 
 const HomePage = () => {
@@ -39,10 +40,8 @@ const HomePage = () => {
   ];
 
   useEffect(() => {
-    const saved = localStorage.getItem('completed-laws');
-    if (saved) {
-      setCompletedCount(JSON.parse(saved).length);
-    }
+    const completed = safeGetJSON(keys.completedLawIds, []);
+    setCompletedCount(Array.isArray(completed) ? completed.length : 0);
   }, []);
 
   return (
@@ -80,7 +79,7 @@ const HomePage = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Open Production Book
+            افتح النسخة الكاملة للكتاب
           </a>
         </div>
       </section>
