@@ -1,0 +1,64 @@
+import React from 'react';
+import { clearAppStorage } from '../utils/storage';
+
+class ErrorBoundary extends React.Component {
+  state = { hasError: false, error: null, info: null };
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, info) {
+    this.setState({ error, info });
+    console.error('[ErrorBoundary]', error, info);
+    sessionStorage.setItem('last-crash', JSON.stringify({
+      message: error?.message,
+      stack: error?.stack,
+      componentStack: info?.componentStack,
+      ts: Date.now(),
+    }));
+  }
+
+  render() {
+    if (this.state.hasError) {
+      const showDetails = import.meta.env.DEV;
+      const { error, info } = this.state;
+      return (
+        <div style={{ padding: '2rem', textAlign: 'center' }}>
+          حدث خطأ غير متوقع. فضلاً جرّب تحديث الصفحة أو مسح بيانات التخزين.
+          <div style={{ marginTop: '1rem' }}>
+            <button type="button" onClick={() => window.location.reload()}>
+              تحديث الصفحة
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                clearAppStorage();
+                window.location.reload();
+              }}
+              style={{ marginInlineStart: '0.5rem' }}
+            >
+              إعادة ضبط بيانات التطبيق
+            </button>
+          </div>
+          {showDetails && (
+            <details style={{ marginTop: '1rem', textAlign: 'start' }}>
+              <summary>تفاصيل الخطأ</summary>
+              <pre style={{ whiteSpace: 'pre-wrap' }}>
+                {error?.message}
+                {'\n'}
+                {error?.stack}
+                {'\n'}
+                {info?.componentStack}
+              </pre>
+            </details>
+          )}
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+export default ErrorBoundary;
