@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import LightweightChart from '../components/LightweightChart';
 import './ChartPage.css';
-import { getLawById } from '../data/laws';
+import { getLawById, laws } from '../data/laws';
 import { useAppliedLaw } from '../context/AppliedLawContext';
 import ChartErrorBoundary from '../components/ChartErrorBoundary';
 import { keys } from '../utils/storage';
@@ -26,6 +26,7 @@ const ChartPage = () => {
   const [showEquilibrium, setShowEquilibrium] = useState(true);
   const [showKeyLevels, setShowKeyLevels] = useState(false);
   const [showZones, setShowZones] = useState(false);
+  const [selectedLawId, setSelectedLawId] = useState(laws[0]?.id || '');
   const { bars, latestBar, instrumentId, timeframeId } = useMarketData();
   const appliedLaw = appliedLawId ? getLawById(appliedLawId) : null;
   const appliedLawColor = appliedLaw?.color ?? getCategoryColor(appliedLaw?.category);
@@ -222,6 +223,37 @@ const ChartPage = () => {
                   <span className="law-name-short">{law.name}</span>
                 </button>
               ))}
+            </div>
+          </div>
+
+          <div className="quick-laws">
+            <h3 className="panel-title">📚 جميع القوانين</h3>
+            <div className="laws-list">
+              <label className="overlay-option" style={{ width: '100%' }}>
+                <select
+                  value={selectedLawId}
+                  onChange={(event) => setSelectedLawId(event.target.value)}
+                  style={{ width: '100%' }}
+                >
+                  {laws.map((law) => (
+                    <option key={law.id} value={law.id}>
+                      {law.id} — {law.title}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button
+                className="law-button"
+                style={{ '--law-color': getCategoryColor(getLawById(selectedLawId)?.category) }}
+                onClick={() => {
+                  const law = getLawById(selectedLawId);
+                  if (law) {
+                    handleApplyLaw(law);
+                  }
+                }}
+              >
+                تطبيق القانون المحدد
+              </button>
             </div>
           </div>
 
