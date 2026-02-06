@@ -136,6 +136,35 @@ Date,Open,High,Low,Close,Volume
 ...
 \`\`\`
 
+
+## بيانات السوق الحية (Live Market Data)
+
+- **المزودات المدعومة:**
+  - Binance للـ Crypto (`BTCUSDT`, `ETHUSDT`, `BNBUSDT`) مع pagination حتى 3000+ شمعة.
+  - Twelve Data للـ Forex/Metals/Indices مع كاش + backoff + fallback عبر `symbol_search`.
+- **الأدوات الافتراضية:**
+  - Metals: `XAU/USD`, `XAG/USD`
+  - Forex: `EUR/USD`, `GBP/USD`, `USD/JPY`, `USD/CHF`, `AUD/USD`
+  - Indices: `US500`, `US100`, `US30`, `GER40`
+- **الفريمات:** من `1m` إلى `1M` مع عرض `1Y` مُشتق من شموع شهرية.
+- **حد الشموع:** 1500 / 3000 / 5000 (أفضل جهد حسب قيود المزود).
+
+### ملاحظة أمان للمفتاح الافتراضي
+- التطبيق يضع مفتاح Twelve Data افتراضيًا لأول تشغيل لتسهيل التجربة.
+- لأن التطبيق static على GitHub Pages، هذا المفتاح **عام** ويمكن استبداله من صفحة الإعدادات بمفتاحك الخاص في أي وقت.
+
+### إعداد Proxy اختياري (Cloudflare Worker)
+إذا واجهت CORS أو أردت إخفاء المفتاح:
+
+1. أنشئ Worker يمرر طلب `/time_series` إلى Twelve Data بسيرفر-سايد secret.
+2. اضبط متغير البيئة في الواجهة:
+
+```bash
+VITE_TWELVE_PROXY_BASE=https://<your-worker-domain>
+```
+
+3. عند وجود المتغير سيستخدمه التطبيق، وإلا سيستخدم Twelve Data مباشرة.
+
 ## الميزات المتقدمة
 
 ### حفظ التقدم
@@ -182,3 +211,29 @@ Date,Open,High,Low,Close,Volume
 **تم التطوير بواسطة**: Manus AI Agent
 **الإصدار**: 1.0.0
 **تاريخ الإصدار**: فبراير 2026
+
+
+## Multi-Law on Chart
+
+- يمكنك الآن تطبيق أكثر من قانون في نفس الوقت على الشارت.
+- لكل قانون أدوات إدارة: تفعيل/إخفاء/حذف منفصل، مع خيار مسح الكل.
+- يوجد زر **Validate all laws** لاختبار أن كل قانون ينتج مخرجات مرئية أو fallback توضيحي.
+
+## Provider Routing
+
+- إذا كان الرمز ينتهي بـ `USDT` يتم التوجيه إلى Binance.
+- باقي الرموز (Metals/FX/Indices) يتم توجيهها إلى Twelve Data مع fallback للرموز البديلة للمؤشرات.
+
+
+## How to validate Apply-on-Chart for all laws
+
+1. افتح صفحة الشارت `/#/chart`.
+2. تأكد من وجود بيانات (Live أو CSV).
+3. اضغط زر **Validate all laws**.
+4. راجع التقرير أسفل الأدوات:
+   - ✅ يعني القانون رسم عناصر هندسية مرئية (خطوط/مناطق/باند).
+   - ❌ يعني فشل في الإخراج المرئي ويجب مراجعة `docs/chart-coverage-report.md`.
+
+يتم حفظ تغطية الخرائط في:
+- `src/data/lawIndicatorMap.json`
+- `docs/chart-coverage-report.md`
