@@ -8,6 +8,7 @@ export const keys = {
   appliedLaw: `${STORAGE_PREFIX}appliedLaw`,
   chartData: `${STORAGE_PREFIX}chartData`,
   tutorialState: `${STORAGE_PREFIX}tutorialState`,
+  disableChart: `${STORAGE_PREFIX}disableChart`,
 };
 
 export const safeJsonParse = (value, fallback) => {

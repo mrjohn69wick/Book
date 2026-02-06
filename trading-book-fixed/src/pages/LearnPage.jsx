@@ -5,6 +5,7 @@ import LightweightChart from '../components/LightweightChart';
 import './LearnPage.css';
 import { useAppliedLaw } from '../context/AppliedLawContext';
 import { keys, safeGetJSON, safeSetJSON } from '../utils/storage';
+import ChartErrorBoundary from '../components/ChartErrorBoundary';
 
 const LearnPage = ({ lawId }) => {
   const initialIndex = lawId
@@ -22,6 +23,7 @@ const LearnPage = ({ lawId }) => {
   const completedCount = Math.min(completedLaws.length, totalLaws);
   const progress = totalLaws > 0 ? Math.round((completedCount / totalLaws) * 100) : 0;
   const appliedLaw = appliedLawId ? getLawById(appliedLawId) : null;
+  const isChartDisabled = localStorage.getItem(keys.disableChart) === '1';
 
   useEffect(() => {
     // Load completed laws from localStorage
@@ -175,7 +177,15 @@ const LearnPage = ({ lawId }) => {
         </div>
 
         <div className="chart-section">
-          <LightweightChart height={500} showControls={true} appliedLaw={appliedLaw} />
+          {isChartDisabled ? (
+            <div className="chart-error" role="alert">
+              تم تعطيل الشارت مؤقتًا. أزل المفتاح من التخزين المحلي لإعادة التفعيل.
+            </div>
+          ) : (
+            <ChartErrorBoundary>
+              <LightweightChart height={500} showControls={true} appliedLaw={appliedLaw} />
+            </ChartErrorBoundary>
+          )}
           
           <div className="applied-law-info">
             <h3 className="info-title">📍 القانون المطبق</h3>

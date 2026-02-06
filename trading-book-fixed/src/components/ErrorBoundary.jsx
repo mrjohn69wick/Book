@@ -19,10 +19,42 @@ class ErrorBoundary extends React.Component {
     }));
   }
 
+  handleCopyDiagnostics = () => {
+    const payload = this.buildDiagnostics();
+    const text = JSON.stringify(payload, null, 2);
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text);
+    }
+  };
+
+  buildDiagnostics = () => {
+    const { error, info } = this.state;
+    let lastCrash = null;
+    try {
+      const raw = sessionStorage.getItem('last-crash');
+      lastCrash = raw ? JSON.parse(raw) : null;
+    } catch {
+      lastCrash = null;
+    }
+
+    return {
+      mode: import.meta.env.MODE,
+      buildSha: import.meta.env.VITE_BUILD_SHA,
+      url: window.location.href,
+      error: {
+        message: error?.message,
+        stack: error?.stack,
+        componentStack: info?.componentStack,
+      },
+      lastCrash,
+      ts: Date.now(),
+    };
+  };
+
   render() {
     if (this.state.hasError) {
-      const showDetails = import.meta.env.DEV;
-      const { error, info } = this.state;
+      const showDetails = import.meta.env.DEV || window.location.search.includes('debug=1');
+      const diagnostics = this.buildDiagnostics();
       return (
         <div style={{ padding: '2rem', textAlign: 'center' }}>
           حدث خطأ غير متوقع. فضلاً جرّب تحديث الصفحة أو مسح بيانات التخزين.
@@ -45,12 +77,11 @@ class ErrorBoundary extends React.Component {
             <details style={{ marginTop: '1rem', textAlign: 'start' }}>
               <summary>تفاصيل الخطأ</summary>
               <pre style={{ whiteSpace: 'pre-wrap' }}>
-                {error?.message}
-                {'\n'}
-                {error?.stack}
-                {'\n'}
-                {info?.componentStack}
+                {JSON.stringify(diagnostics, null, 2)}
               </pre>
+              <button type="button" onClick={this.handleCopyDiagnostics}>
+                نسخ التفاصيل
+              </button>
             </details>
           )}
         </div>

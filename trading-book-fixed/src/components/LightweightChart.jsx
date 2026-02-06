@@ -4,6 +4,7 @@ import Papa from 'papaparse';
 import './LightweightChart.css';
 import { resolveRecipeValue } from '../data/parseRecipe';
 import { useAppliedLaw } from '../context/AppliedLawContext';
+import { normalizeBars } from '../lib/ohlcv/normalizeBars';
 
 const LightweightChart = ({
   height = 500,
@@ -759,14 +760,14 @@ const LightweightChart = ({
         header: true,
         skipEmptyLines: true,
         complete: (results) => {
-          const chartData = buildChartData(results.data);
-
-          if (chartData.length === 0) {
-            setErrorMessage('تعذر قراءة البيانات التجريبية. يرجى التحقق من الملف.');
-          }
-
-          setData(chartData);
-          setIsLoading(false);
+        const { bars, error } = normalizeBars(buildChartData(results.data));
+        if (error) {
+          setErrorMessage('تعذر قراءة البيانات التجريبية. يرجى التحقق من الملف.');
+          setData([]);
+        } else {
+          setData(bars);
+        }
+        setIsLoading(false);
         },
         error: (error) => {
           console.error('Error parsing CSV:', error);
@@ -791,13 +792,13 @@ const LightweightChart = ({
       header: true,
       skipEmptyLines: true,
       complete: (results) => {
-        const chartData = buildChartData(results.data);
-
-        if (chartData.length === 0) {
+        const { bars, error } = normalizeBars(buildChartData(results.data));
+        if (error) {
           setErrorMessage('لم يتم العثور على بيانات صالحة في الملف.');
+          setData([]);
+        } else {
+          setData(bars);
         }
-
-        setData(chartData);
         setIsLoading(false);
       },
       error: (error) => {

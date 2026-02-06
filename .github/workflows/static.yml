@@ -51,6 +51,8 @@ jobs:
 
       - name: Build Book #1
         working-directory: trading-book-fixed
+        env:
+          VITE_BUILD_SHA: ${{ github.sha }}
         run: pnpm run build
 
       - name: Assemble Pages site (both books)

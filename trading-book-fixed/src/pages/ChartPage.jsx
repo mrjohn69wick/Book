@@ -3,6 +3,8 @@ import LightweightChart from '../components/LightweightChart';
 import './ChartPage.css';
 import { getLawById } from '../data/laws';
 import { useAppliedLaw } from '../context/AppliedLawContext';
+import ChartErrorBoundary from '../components/ChartErrorBoundary';
+import { keys } from '../utils/storage';
 
 const ChartPage = () => {
   const {
@@ -33,6 +35,7 @@ const ChartPage = () => {
   const isStepComplete = Boolean(tutorialStepCompleted[tutorialStepIndex]);
   const tutorialStepsCount = appliedLaw?.tutorialSteps?.length ?? 0;
   const isLastStep = Boolean(tutorialStepsCount && tutorialStepIndex === tutorialStepsCount - 1);
+  const isChartDisabled = localStorage.getItem(keys.disableChart) === '1';
 
   const quickLaws = [
     { id: 'LAW_001', name: 'لا شك ليست حتمية', color: '#6366f1' },
@@ -101,14 +104,22 @@ const ChartPage = () => {
               هذه الخطوط إرشادية للتعلم وليست توصية تداول مباشرة.
             </p>
           </div>
-          <LightweightChart
-            height={600}
-            showControls={true}
-            showEquilibrium={showEquilibrium}
-            showKeyLevels={showKeyLevels}
-            showZones={showZones}
-            appliedLaw={appliedLaw}
-          />
+          {isChartDisabled ? (
+            <div className="chart-error" role="alert">
+              تم تعطيل الشارت مؤقتًا. أزل المفتاح من التخزين المحلي لإعادة التفعيل.
+            </div>
+          ) : (
+            <ChartErrorBoundary>
+              <LightweightChart
+                height={600}
+                showControls={true}
+                showEquilibrium={showEquilibrium}
+                showKeyLevels={showKeyLevels}
+                showZones={showZones}
+                appliedLaw={appliedLaw}
+              />
+            </ChartErrorBoundary>
+          )}
         </div>
 
         <div className="chart-sidebar">
