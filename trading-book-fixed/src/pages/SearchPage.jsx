@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'wouter';
 import { laws } from '../data/laws';
 import { getTermId, terms } from '../data/terms';
 import './SimplePage.css';
@@ -71,10 +72,12 @@ const SearchPage = () => {
             <h3 className="search-section-title">نتائج القوانين</h3>
             {lawResults.length === 0 && <p className="search-empty">لا توجد نتائج مطابقة.</p>}
             {lawResults.map((law) => (
-              <a key={law.id} href={`#/laws#${law.id}`} className="search-result">
-                <span className="search-result-title">{law.title}</span>
-                <span className="search-result-meta">{law.id}</span>
-              </a>
+              <Link key={law.id} href={`/learn/${law.id}`}>
+                <a className="search-result">
+                  <span className="search-result-title">{law.title}</span>
+                  <span className="search-result-meta">{law.id}</span>
+                </a>
+              </Link>
             ))}
           </div>
 
