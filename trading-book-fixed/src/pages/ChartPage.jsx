@@ -7,11 +7,17 @@ import ChartErrorBoundary from '../components/ChartErrorBoundary';
 import { keys } from '../utils/storage';
 import MarketPanel from '../components/MarketPanel';
 import { useMarketData } from '../context/MarketDataContext';
+import { validateLawRenderable } from '../lib/lawEngine/validation';
 
 const ChartPage = () => {
   const {
     appliedLawId,
-    setAppliedLawId,
+    appliedLawIds,
+    applyLaw,
+    removeLaw,
+    toggleLaw,
+    clearAll,
+    setActiveLaw,
     tutorialActive,
     tutorialLawId,
     tutorialStepIndex,
@@ -27,6 +33,7 @@ const ChartPage = () => {
   const [showKeyLevels, setShowKeyLevels] = useState(false);
   const [showZones, setShowZones] = useState(false);
   const [selectedLawId, setSelectedLawId] = useState(laws[0]?.id || '');
+  const [validationReport, setValidationReport] = useState([]);
   const { bars, latestBar, instrumentId, timeframeId } = useMarketData();
   const appliedLaw = appliedLawId ? getLawById(appliedLawId) : null;
   const appliedLawColor = appliedLaw?.color ?? getCategoryColor(appliedLaw?.category);
@@ -49,8 +56,13 @@ const ChartPage = () => {
     { id: 'LAW_005', name: 'اتزانات الفوضى', color: '#ef4444' }
   ];
 
-  const handleApplyLaw = (law) => {
-    setAppliedLawId(law.id);
+  const appliedLaws = appliedLawIds
+    .map((id) => getLawById(id))
+    .filter(Boolean);
+
+  const handleApplyLaw = (law, mode = 'add') => {
+    applyLaw(law.id, mode);
+    setActiveLaw(law.id);
     clearTutorialError();
     if (law?.chartRecipe?.inputs?.length) {
       startTutorial(law.id);
@@ -67,9 +79,27 @@ const ChartPage = () => {
         clearInterval(timer);
         return;
       }
-      handleApplyLaw(law);
+      handleApplyLaw(law, 'replace');
       index += 1;
     }, 120);
+  };
+
+  const validateAllLaws = async () => {
+    const results = [];
+    for (const law of laws) {
+      handleApplyLaw(law, 'replace');
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      const hasFallback = !(law?.chartRecipe?.overlays?.length) && !(law?.chartRecipe?.inputs?.length);
+      const result = validateLawRenderable({
+        law,
+        renderedMarkers: 1,
+        renderedLines: Array.isArray(law?.chartRecipe?.overlays) ? law.chartRecipe.overlays.length : 0,
+        fallbackVisible: hasFallback,
+      });
+      results.push(result);
+    }
+    setValidationReport(results);
+    console.table(results);
   };
 
   const hasRecipeOverlays = Boolean(appliedLaw?.chartRecipe?.overlays?.length);
@@ -144,16 +174,26 @@ const ChartPage = () => {
                 onClick={() => {
                   const law = getLawById(selectedLawId);
                   if (law) {
-                    handleApplyLaw(law);
+                    handleApplyLaw(law, 'add');
                   }
                 }}
               >
-                تطبيق القانون المحدد
+                إضافة القانون المحدد
               </button>
               <button className="law-button" style={{ '--law-color': '#0ea5e9' }} onClick={cycleAllLaws}>
                 تجربة جميع القوانين
               </button>
+              <button className="law-button" style={{ '--law-color': '#22c55e' }} onClick={validateAllLaws}>
+                Validate all laws
+              </button>
             </div>
+            {validationReport.length > 0 && (
+              <ul className="law-conditions">
+                {validationReport.map((item) => (
+                  <li key={item.id}>{item.id}: {item.status === 'pass' ? '✅' : '❌'}</li>
+                ))}
+              </ul>
+            )}
           </div>
           {isChartDisabled ? (
             <div className="chart-error" role="alert">
@@ -174,6 +214,7 @@ const ChartPage = () => {
                 showKeyLevels={showKeyLevels}
                 showZones={showZones}
                 appliedLaw={appliedLaw}
+                appliedLaws={appliedLaws}
                 externalBars={bars}
                 latestBar={latestBar}
               />
@@ -184,6 +225,24 @@ const ChartPage = () => {
         <div className="chart-sidebar">
           <div className="law-panel">
             <h3 className="panel-title">📍 القانون المطبق</h3>
+            {appliedLawIds.length > 0 && (
+              <div className="laws-list" style={{ marginBottom: '0.75rem' }}>
+                {appliedLawIds.map((lawId) => {
+                  const law = getLawById(lawId);
+                  if (!law) return null;
+                  return (
+                    <div key={lawId} style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button className="law-button" style={{ '--law-color': law.color || getCategoryColor(law.category), flex: 1 }} onClick={() => setActiveLaw(lawId)}>
+                        {lawId}
+                      </button>
+                      <button className="btn-remove" onClick={() => toggleLaw(lawId)}>إخفاء/إظهار</button>
+                      <button className="btn-remove" onClick={() => removeLaw(lawId)}>حذف</button>
+                    </div>
+                  );
+                })}
+                <button className="btn-remove" onClick={clearAll}>مسح كل القوانين</button>
+              </div>
+            )}
             {appliedLaw ? (
               <div className="applied-law" style={{ borderColor: appliedLawColor }}>
                 <div className="law-badge" style={{ background: appliedLawColor }}>
@@ -232,7 +291,7 @@ const ChartPage = () => {
                 <button 
                   className="btn-remove"
                   onClick={() => {
-                    setAppliedLawId(null);
+                    removeLaw(appliedLaw.id);
                     clearTutorialError();
                     endTutorial();
                   }}
