@@ -5,6 +5,7 @@ import './LightweightChart.css';
 import { resolveRecipeValue } from '../data/parseRecipe';
 import { useAppliedLaw } from '../context/AppliedLawContext';
 import { normalizeBars } from '../lib/ohlcv/normalizeBars';
+import { createOverlayRegistry } from '../lib/chart/overlayRegistry';
 
 const LightweightChart = ({
   height = 500,
@@ -14,6 +15,7 @@ const LightweightChart = ({
   showKeyLevels = false,
   showZones = false,
   appliedLaw = null,
+  appliedLaws = [],
   externalBars = null,
   latestBar = null
 }) => {
@@ -27,6 +29,9 @@ const LightweightChart = ({
   const tutorialMarkersRef = useRef({});
   const clickHandlerRef = useRef(null);
   const markersRef = useRef(null);
+  const zoneLayerRef = useRef(null);
+  const overlayRegistryRef = useRef({ priceLines: [], markers: [], zoneBands: [] });
+  const lawOverlayRegistry = useRef(createOverlayRegistry());
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -57,13 +62,81 @@ const LightweightChart = ({
 
     overlaysRef.current.priceLines = [];
     overlaysRef.current.markers = [];
+    overlayRegistryRef.current.priceLines = [];
+    overlayRegistryRef.current.markers = [];
     tutorialMarkersRef.current = {};
+    if (zoneLayerRef.current && overlayRegistryRef.current.zoneBands.length) {
+      overlayRegistryRef.current.zoneBands.forEach((band) => {
+        band.style.display = 'none';
+      });
+    }
     if (markersRef.current) {
       markersRef.current.setMarkers([]);
     }
+    lawOverlayRegistry.current.clearAll({
+      removePriceLine: (line) => candlestickSeriesRef.current?.removePriceLine(line),
+      hideBand: (band) => {
+        band.style.display = 'none';
+      }
+    });
   };
 
-  const addPriceLine = (price, options = {}) => {
+  const ensureZoneLayer = () => {
+    if (!chartContainerRef.current) return null;
+    if (!zoneLayerRef.current) {
+      const layer = document.createElement('div');
+      layer.style.position = 'absolute';
+      layer.style.inset = '0';
+      layer.style.pointerEvents = 'none';
+      layer.style.zIndex = '2';
+      chartContainerRef.current.appendChild(layer);
+      zoneLayerRef.current = layer;
+    }
+    return zoneLayerRef.current;
+  };
+
+  const addZoneBand = (fromPrice, toPrice, label = '', color = '#facc15') => {
+    if (!candlestickSeriesRef.current) return;
+    const layer = ensureZoneLayer();
+    if (!layer) return;
+    const fromY = candlestickSeriesRef.current.priceToCoordinate(fromPrice);
+    const toY = candlestickSeriesRef.current.priceToCoordinate(toPrice);
+    if (!Number.isFinite(fromY) || !Number.isFinite(toY)) return;
+
+    const band = overlayRegistryRef.current.zoneBands.find((item) => item.style.display === 'none') || document.createElement('div');
+    const top = Math.min(fromY, toY);
+    const heightPx = Math.max(2, Math.abs(toY - fromY));
+    band.style.position = 'absolute';
+    band.style.left = '0';
+    band.style.right = '0';
+    band.style.top = `${top}px`;
+    band.style.height = `${heightPx}px`;
+    band.style.background = `${color}22`;
+    band.style.borderTop = `1px dashed ${color}`;
+    band.style.borderBottom = `1px dashed ${color}`;
+
+    if (label) {
+      const tag = document.createElement('span');
+      tag.textContent = label;
+      tag.style.position = 'absolute';
+      tag.style.right = '4px';
+      tag.style.top = '0';
+      tag.style.fontSize = '11px';
+      tag.style.color = color;
+      tag.style.background = '#0f172aaa';
+      tag.style.padding = '1px 4px';
+      tag.style.borderRadius = '4px';
+      band.appendChild(tag);
+    }
+
+    if (!band.parentNode) {
+      layer.appendChild(band);
+      overlayRegistryRef.current.zoneBands.push(band);
+    }
+    band.style.display = 'block';
+  };
+
+  const addPriceLine = (price, options = {}, lawId = 'global') => {
     if (!candlestickSeriesRef.current || !Number.isFinite(price)) {
       return null;
     }
@@ -93,10 +166,12 @@ const LightweightChart = ({
     });
 
     overlaysRef.current.priceLines.push(line);
+    overlayRegistryRef.current.priceLines.push(line);
+    lawOverlayRegistry.current.addPriceLine(lawId, line);
     return line;
   };
 
-  const addMarker = (time, price, options = {}) => {
+  const addMarker = (time, price, options = {}, lawId = 'global') => {
     if (!candlestickSeriesRef.current || time == null) {
       return null;
     }
@@ -120,6 +195,8 @@ const LightweightChart = ({
     };
 
     overlaysRef.current.markers.push(marker);
+    overlayRegistryRef.current.markers.push(marker);
+    lawOverlayRegistry.current.addMarker(lawId, marker);
     if (markersRef.current) {
       markersRef.current.setMarkers(overlaysRef.current.markers);
     }
@@ -163,7 +240,7 @@ const LightweightChart = ({
     return { shape: 'circle', color: '#60a5fa', position: 'aboveBar' };
   };
 
-  const drawFibLines = (low, high, options = {}) => {
+  const drawFibLines = (low, high, options = {}, lawId = 'global') => {
     if (!Number.isFinite(low) || !Number.isFinite(high) || low === high) {
       return;
     }
@@ -180,10 +257,18 @@ const LightweightChart = ({
       : [0.382, 0.5, 0.618, 0.786];
     const range = high - low;
 
+    const arabicTitles = {
+      0.236: 'حد الأمان',
+      0.382: 'المنطقة الذهبية',
+      0.5: 'الاتزان',
+      0.618: 'حد الأمان الأعلى',
+      0.786: 'امتداد',
+    };
+
     ratios.forEach((ratio) => {
       const price = low + range * ratio;
       const isEquilibrium = ratio === 0.236;
-      const title = isEquilibrium ? '0.236 الاتزان' : ratio.toFixed(3);
+      const title = `${ratio.toFixed(3)} ${arabicTitles[ratio] || ''}`.trim();
 
       addPriceLine(price, {
         color: isEquilibrium ? '#f97316' : color,
@@ -191,8 +276,12 @@ const LightweightChart = ({
         lineWidth: isEquilibrium ? 2 : lineWidth,
         title,
         axisLabelVisible: true
-      });
+      }, lawId);
     });
+
+    const bandLow = low + range * 0.236;
+    const bandHigh = low + range * 0.382;
+    addZoneBand(bandLow, bandHigh, 'منطقة 0.236 - 0.382', '#38bdf8');
   };
 
   const getDataRange = () => {
@@ -230,6 +319,7 @@ const LightweightChart = ({
   };
 
   const applyLawRecipe = (law) => {
+    const lawId = law?.id || 'unknown-law';
     if (!law?.chartRecipe) {
       const lastBar = data[data.length - 1];
       if (lastBar) {
@@ -237,7 +327,7 @@ const LightweightChart = ({
           shape: 'circle',
           color: '#9ca3af',
           text: law.id
-        });
+        }, lawId);
         return true;
       }
       return false;
@@ -269,7 +359,7 @@ const LightweightChart = ({
           lineStyle: overlay.lineStyle || LineStyle.Solid,
           lineWidth: overlay.lineWidth || 1,
           title: overlay.label || overlay.title || ''
-        });
+        }, lawId);
       }
 
       if (overlay.type === 'marker') {
@@ -280,7 +370,7 @@ const LightweightChart = ({
           shape: overlay.shape || 'circle',
           color: overlay.color || '#f59e0b',
           text: overlay.label || overlay.text || ''
-        });
+        }, lawId);
       }
 
       if (overlay.type === 'zone') {
@@ -294,7 +384,7 @@ const LightweightChart = ({
             lineStyle: overlay.lineStyle || 'dashed',
             lineWidth: overlay.lineWidth || 1,
             title: overlay.label || ''
-          });
+          }, lawId);
         }
 
         if (Number.isFinite(toValue)) {
@@ -303,7 +393,7 @@ const LightweightChart = ({
             lineStyle: overlay.lineStyle || 'dashed',
             lineWidth: overlay.lineWidth || 1,
             title: overlay.label || ''
-          });
+          }, lawId);
         }
       }
     });
@@ -315,7 +405,7 @@ const LightweightChart = ({
           shape: 'circle',
           color: '#9ca3af',
           text: law.id
-        });
+        }, lawId);
       }
     }
 
@@ -331,24 +421,38 @@ const LightweightChart = ({
       return;
     }
 
-    if (!appliedLaw) {
+    const activeLaws = Array.isArray(appliedLaws) && appliedLaws.length
+      ? appliedLaws
+      : appliedLaw
+        ? [appliedLaw]
+        : [];
+
+    if (!activeLaws.length) {
       clearOverlays();
-      endTutorial();
+      if (tutorialActive) {
+        endTutorial();
+      }
       return;
     }
 
-    const needsInputs = Boolean(appliedLaw?.chartRecipe?.inputs?.length);
+    const primaryLaw = activeLaws[activeLaws.length - 1];
+    const needsInputs = Boolean(primaryLaw?.chartRecipe?.inputs?.length);
     if (needsInputs) {
       clearOverlays();
-      if (!tutorialActive || tutorialLawId !== appliedLaw.id) {
-        startTutorial(appliedLaw.id);
+      if (!tutorialActive || tutorialLawId !== primaryLaw.id) {
+        startTutorial(primaryLaw.id);
       }
       return;
     }
 
     clearOverlays();
-    applyLawRecipe(appliedLaw);
-  }, [appliedLaw, data, tutorialActive, tutorialLawId, startTutorial, endTutorial]);
+    activeLaws.forEach((law) => {
+      applyLawRecipe(law);
+    });
+    if (markersRef.current) {
+      markersRef.current.setMarkers(lawOverlayRegistry.current.getMarkers());
+    }
+  }, [appliedLaw, appliedLaws, data, tutorialActive, tutorialLawId, startTutorial, endTutorial]);
 
   useEffect(() => {
     const chart = chartRef.current;
@@ -583,6 +687,13 @@ const LightweightChart = ({
 
   useEffect(() => {
     if (!candlestickSeriesRef.current || !latestBar) {
+      return;
+    }
+    const lastDataTime = data[data.length - 1]?.time;
+    if (!Number.isFinite(lastDataTime) || !Number.isFinite(latestBar.time)) {
+      return;
+    }
+    if (latestBar.time < lastDataTime) {
       return;
     }
     const isValidLatest = [latestBar.time, latestBar.open, latestBar.high, latestBar.low, latestBar.close]
