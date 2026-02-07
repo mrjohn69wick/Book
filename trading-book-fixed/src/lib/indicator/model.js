@@ -11,10 +11,12 @@ const styleForRatio = (ratio) => {
   return { lineStyle: 'dotted', lineWidth: 1 };
 };
 
-const lawSeed = (law) => {
+const lawNumber = (law) => {
   const n = Number(String(law?.id || '').split('_')[1]);
   return Number.isFinite(n) && n > 0 ? n : 1;
 };
+
+const hasFeature = (entry, key) => (entry?.features || []).some((f) => String(f).includes(key));
 
 export const segmentUnits = (bars = [], unitSize = 48) => {
   if (!Array.isArray(bars) || !bars.length) return [];
@@ -96,23 +98,72 @@ export const buildIndicatorBaselinePlan = (bars = [], options = {}) => {
 };
 
 const buildLawSpecificGeometry = ({ law, baseline, mapEntry }) => {
-  const seed = lawSeed(law);
+  const n = lawNumber(law);
   const last = baseline.model.lastUnit;
   if (!last || !Number.isFinite(last.range) || last.range <= 0) return { lines: [], bands: [], markers: [], labels: [] };
 
-  const featureBias = (mapEntry?.features || []).length;
-  const ratio = ((seed * 13 + featureBias * 7) % 70 + 15) / 100;
-  const center = last.low + last.range * ratio;
-  const half = last.range * (0.01 + (seed % 5) * 0.004);
+  // Law-specific geometry is derived only from indicator/book canonical ratios and HL semantics.
+  // No synthetic/random signal generation is used.
+  const fPrevBreak = hasFeature(mapEntry, 'PrevBreakHL');
+  const fInside = hasFeature(mapEntry, 'InsideHL');
+  const fWeak = hasFeature(mapEntry, 'Weak123');
+  const fFib = hasFeature(mapEntry, 'fibGrid');
+  const fUnit = hasFeature(mapEntry, 'unitHL');
 
-  const modeLabel = mapEntry?.mode || 'UNKNOWN_MAPPING';
-  const color = modeLabel === 'UNKNOWN_MAPPING' ? '#a78bfa' : '#14b8a6';
-  return {
-    lines: [{ key: `${law.id}-specific-line`, price: center, label: `${law.id} specific`, color, lineStyle: 'solid', lineWidth: 2, lawSpecific: true }],
-    bands: [{ key: `${law.id}-specific-band`, from: center - half, to: center + half, label: `${law.id} zone`, color, lawSpecific: true }],
-    markers: [{ key: `${law.id}-specific-marker`, time: last.endTime, price: center, text: law.id, color, lawSpecific: true }],
-    labels: [{ key: `${law.id}-specific-label`, text: `${law.id} · ${modeLabel}`, lawSpecific: true }],
-  };
+  const mid = last.low + last.range * 0.5;
+  const ratio = fWeak
+    ? 0.236
+    : fInside
+      ? 0.5
+      : fPrevBreak
+        ? (last.close >= mid ? 1 : 0)
+        : fFib
+          ? (n % 2 ? 0.382 : 0.618)
+          : fUnit
+            ? (last.close >= last.open ? 0.786 : 0.236)
+            : 0.5;
+
+  const center = last.low + last.range * ratio;
+  const half = last.range * (fInside ? 0.05 : 0.025);
+  const modeLabel = mapEntry?.mode || 'ATTEMPT_E_UNKNOWN_MAPPING';
+  const color = modeLabel.includes('UNKNOWN') ? '#a78bfa' : '#14b8a6';
+
+  const lines = [
+    {
+      key: `${law.id}-specific-line`,
+      price: center,
+      label: `${law.id} ${ratio.toFixed(3)}`,
+      color,
+      lineStyle: fWeak ? 'dashed' : 'solid',
+      lineWidth: 2,
+      lawSpecific: true,
+    },
+  ];
+
+  const bands = [
+    {
+      key: `${law.id}-specific-band`,
+      from: center - half,
+      to: center + half,
+      label: fInside ? `${law.id} inside-zone` : `${law.id} law-zone`,
+      color,
+      lawSpecific: true,
+    },
+  ];
+
+  const markers = [
+    {
+      key: `${law.id}-specific-marker`,
+      time: last.endTime,
+      price: center,
+      text: fPrevBreak ? `${law.id} break-ref` : law.id,
+      color,
+      lawSpecific: true,
+    },
+  ];
+
+  const labels = [{ key: `${law.id}-specific-label`, text: `${law.id} · ${modeLabel}`, lawSpecific: true }];
+  return { lines, bands, markers, labels };
 };
 
 export const buildLawDrawPlan = ({ law, bars, mapping = null, options = {} }) => {
