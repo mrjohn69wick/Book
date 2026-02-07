@@ -7,8 +7,9 @@ import { useAppliedLaw } from '../context/AppliedLawContext';
 import { normalizeBars } from '../lib/ohlcv/normalizeBars';
 import { createOverlayRegistry } from '../lib/chart/overlayRegistry';
 import { buildLawDrawPlan, buildMergedRenderPlan } from '../lib/indicator/model';
-import { applyBaselineIndicatorOverlay } from '../lib/chart/overlays/baselineOverlay';
-import { applyUnknownMappingFallback } from '../lib/chart/overlays/unknownFallback';
+import { applyBaselineIndicatorOverlay as applyBaselineOverlay } from '../lib/chart/overlays/baselineOverlay';
+import { applyUnknownMappingFallback as applyUnknownFallback } from '../lib/chart/overlays/unknownFallback';
+import { applyLawSpecificPlan as applyLawPlan } from '../lib/chart/overlays/lawSpecificPlan';
 import lawIndicatorMap from '../data/lawIndicatorMap.json';
 
 const LightweightChart = ({
@@ -305,129 +306,11 @@ const LightweightChart = ({
     addZoneBand(bandLow, bandHigh, 'منطقة 0.236 - 0.382', '#38bdf8', lawId);
   };
 
-  const applyUnknownFallbackOverlay = (law) => applyUnknownMappingFallback({ law, data, getDataRange, addPriceLine, drawFibLines, addZoneBand, addMarker });
+  const runUnknownFallbackOverlay = (law) => applyUnknownFallback({ law, data, getDataRange, addPriceLine, drawFibLines, addZoneBand, addMarker });
 
-  const applyBaselineOverlay = (law) => applyBaselineIndicatorOverlay({ law, data, getDataRange, addPriceLine, drawFibLines, addZoneBand, addMarker });
+  const runBaselineOverlay = (law) => applyBaselineOverlay({ law, data, getDataRange, addPriceLine, drawFibLines, addZoneBand, addMarker });
 
-  const applyLawSpecificPlan = (law, plan) => {
-    const lawId = law?.id || 'unknown-law';
-    const lastBar = data[data.length - 1];
-    if (!plan) return;
-
-    (plan.lawSpecific?.lines || []).forEach((line) => {
-      addPriceLine(line.price, {
-        color: line.color || '#14b8a6',
-        lineStyle: line.lineStyle || 'solid',
-        lineWidth: line.lineWidth || 2,
-        title: line.label || `${lawId} specific`
-      }, lawId);
-    });
-
-    (plan.lawSpecific?.bands || []).forEach((band) => {
-      addZoneBand(band.from, band.to, band.label || `${lawId} zone`, band.color || '#14b8a6', lawId);
-    });
-
-    (plan.lawSpecific?.markers || []).forEach((marker) => {
-      addMarker(marker.time || lastBar?.time, marker.price ?? lastBar?.close, {
-        shape: 'square',
-        color: marker.color || '#14b8a6',
-        text: marker.text || lawId,
-      }, lawId);
-    });
-
-    const bandLow = low + range * 0.236;
-    const bandHigh = low + range * 0.382;
-    addZoneBand(bandLow, bandHigh, 'منطقة 0.236 - 0.382', '#38bdf8', lawId);
-  };
-
-  const applyUnknownMappingFallback = (law) => {
-    const lawId = law?.id || 'unknown-law';
-    const range = getDataRange();
-    const lastBar = data[data.length - 1];
-    if (!range || !lastBar) return false;
-
-    // UNKNOWN_MAPPING fallback: TODO(BOOK_V3_COMBINED.md / Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md): add precise mapping when documented.
-    addPriceLine(range.low, { color: '#64748b', lineStyle: 'dashed', title: `${lawId} LOW` }, lawId);
-    addPriceLine(range.high, { color: '#64748b', lineStyle: 'dashed', title: `${lawId} HIGH` }, lawId);
-    drawFibLines(range.low, range.high, { color: '#a78bfa', lineStyle: 'dotted', includeEquilibrium: true }, lawId);
-    addZoneBand(range.low + (range.high - range.low) * 0.236, range.low + (range.high - range.low) * 0.382, `UNKNOWN_MAPPING ${lawId}`, '#a78bfa', lawId);
-    addMarker(lastBar.time, lastBar.close, { shape: 'square', color: '#a78bfa', text: `${lawId} UNKNOWN_MAPPING` }, lawId);
-    return true;
-  };
-
-  const applyBaselineIndicatorOverlay = (law) => {
-    const lawId = law?.id || 'unknown-law';
-    const range = getDataRange();
-    const lastBar = data[data.length - 1];
-    if (!range || !lastBar) return false;
-
-    addPriceLine(range.low, { color: '#334155', lineStyle: 'dashed', title: `${lawId} HL-Low` }, lawId);
-    addPriceLine(range.high, { color: '#334155', lineStyle: 'dashed', title: `${lawId} HL-High` }, lawId);
-    drawFibLines(range.low, range.high, { color: '#60a5fa', lineStyle: 'dotted', includeEquilibrium: true }, lawId);
-    addZoneBand(range.low + (range.high - range.low) * 0.236, range.low + (range.high - range.low) * 0.382, `${lawId} baseline zone`, '#22c55e', lawId);
-    addMarker(lastBar.time, lastBar.close, { shape: 'circle', color: '#22c55e', text: `${lawId}` }, lawId);
-    return true;
-  };
-
-  const applyLawSpecificPlan = (law, plan) => {
-    const lawId = law?.id || 'unknown-law';
-    const lastBar = data[data.length - 1];
-    if (!plan) return;
-
-    (plan.lawSpecific?.lines || []).forEach((line) => {
-      addPriceLine(line.price, {
-        color: line.color || '#14b8a6',
-        lineStyle: line.lineStyle || 'solid',
-        lineWidth: line.lineWidth || 2,
-        title: line.label || `${lawId} specific`
-      }, lawId);
-    });
-
-    (plan.lawSpecific?.bands || []).forEach((band) => {
-      addZoneBand(band.from, band.to, band.label || `${lawId} zone`, band.color || '#14b8a6', lawId);
-    });
-
-    (plan.lawSpecific?.markers || []).forEach((marker) => {
-      addMarker(marker.time || lastBar?.time, marker.price ?? lastBar?.close, {
-        shape: 'square',
-        color: marker.color || '#14b8a6',
-        text: marker.text || lawId,
-      }, lawId);
-    });
-
-    const bandLow = low + range * 0.236;
-    const bandHigh = low + range * 0.382;
-    addZoneBand(bandLow, bandHigh, 'منطقة 0.236 - 0.382', '#38bdf8', lawId);
-  };
-
-  const applyUnknownMappingFallback = (law) => {
-    const lawId = law?.id || 'unknown-law';
-    const range = getDataRange();
-    const lastBar = data[data.length - 1];
-    if (!range || !lastBar) return false;
-
-    // UNKNOWN_MAPPING fallback: TODO(BOOK_V3_COMBINED.md / Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md): add precise mapping when documented.
-    addPriceLine(range.low, { color: '#64748b', lineStyle: 'dashed', title: `${lawId} LOW` }, lawId);
-    addPriceLine(range.high, { color: '#64748b', lineStyle: 'dashed', title: `${lawId} HIGH` }, lawId);
-    drawFibLines(range.low, range.high, { color: '#a78bfa', lineStyle: 'dotted', includeEquilibrium: true }, lawId);
-    addZoneBand(range.low + (range.high - range.low) * 0.236, range.low + (range.high - range.low) * 0.382, `UNKNOWN_MAPPING ${lawId}`, '#a78bfa', lawId);
-    addMarker(lastBar.time, lastBar.close, { shape: 'square', color: '#a78bfa', text: `${lawId} UNKNOWN_MAPPING` }, lawId);
-    return true;
-  };
-
-  const applyBaselineIndicatorOverlay = (law) => {
-    const lawId = law?.id || 'unknown-law';
-    const range = getDataRange();
-    const lastBar = data[data.length - 1];
-    if (!range || !lastBar) return false;
-
-    addPriceLine(range.low, { color: '#334155', lineStyle: 'dashed', title: `${lawId} HL-Low` }, lawId);
-    addPriceLine(range.high, { color: '#334155', lineStyle: 'dashed', title: `${lawId} HL-High` }, lawId);
-    drawFibLines(range.low, range.high, { color: '#60a5fa', lineStyle: 'dotted', includeEquilibrium: true }, lawId);
-    addZoneBand(range.low + (range.high - range.low) * 0.236, range.low + (range.high - range.low) * 0.382, `${lawId} baseline zone`, '#22c55e', lawId);
-    addMarker(lastBar.time, lastBar.close, { shape: 'circle', color: '#22c55e', text: `${lawId}` }, lawId);
-    return true;
-  };
+  const runLawSpecificPlan = (law, plan) => applyLawPlan({ law, plan, data, addPriceLine, addZoneBand, addMarker });
 
   const getDataRange = () => {
     if (!data.length) {
@@ -467,7 +350,7 @@ const LightweightChart = ({
     const lawId = law?.id || 'unknown-law';
     const plan = buildLawDrawPlan({ law, bars: data, mapping: lawIndicatorMap });
     if (!options.skipBaseline) {
-      applyBaselineOverlay(law);
+      runBaselineOverlay(law);
     }
 
     if (!law?.chartRecipe) {
@@ -480,7 +363,7 @@ const LightweightChart = ({
         }, lawId);
         return true;
       }
-      return applyUnknownFallbackOverlay(law);
+      return runUnknownFallbackOverlay(law);
     }
 
     const recipe = law.chartRecipe;
@@ -549,10 +432,10 @@ const LightweightChart = ({
     });
 
     if (!overlays.length) {
-      applyUnknownFallbackOverlay(law);
+      runUnknownFallbackOverlay(law);
     }
 
-    applyLawSpecificPlan(law, plan);
+    runLawSpecificPlan(law, plan);
     return true;
   };
 
@@ -584,7 +467,7 @@ const LightweightChart = ({
     if (needsInputs) {
       clearOverlays();
       activeLaws.forEach((law) => {
-        applyUnknownFallbackOverlay(law);
+        runUnknownFallbackOverlay(law);
       });
       if (markersRef.current) {
         markersRef.current.setMarkers(lawOverlayRegistry.current.getMarkers());
@@ -618,7 +501,7 @@ const LightweightChart = ({
     clearOverlays();
     const merged = buildMergedRenderPlan({ laws: activeLaws, bars: data, mapping: lawIndicatorMap });
     if (merged?.baseline?.lines?.length || merged?.baseline?.bands?.length) {
-      applyBaselineOverlay({ id: 'BASELINE_SHARED' });
+      runBaselineOverlay({ id: 'BASELINE_SHARED' });
     }
     activeLaws.forEach((law) => {
       applyLawRecipe(law, { skipBaseline: true });
