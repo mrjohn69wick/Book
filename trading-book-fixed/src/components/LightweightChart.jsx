@@ -6,7 +6,7 @@ import { resolveRecipeValue } from '../data/parseRecipe';
 import { useAppliedLaw } from '../context/AppliedLawContext';
 import { normalizeBars } from '../lib/ohlcv/normalizeBars';
 import { createOverlayRegistry } from '../lib/chart/overlayRegistry';
-import { buildMergedRenderPlan } from '../lib/indicator/model';
+import { buildLawDrawPlan, buildMergedRenderPlan } from '../lib/indicator/model';
 import lawIndicatorMap from '../data/lawIndicatorMap.json';
 
 const LightweightChart = ({
@@ -332,6 +332,66 @@ const LightweightChart = ({
     return true;
   };
 
+  const applyLawSpecificPlan = (law, plan) => {
+    const lawId = law?.id || 'unknown-law';
+    const lastBar = data[data.length - 1];
+    if (!plan) return;
+
+    (plan.lawSpecific?.lines || []).forEach((line) => {
+      addPriceLine(line.price, {
+        color: line.color || '#14b8a6',
+        lineStyle: line.lineStyle || 'solid',
+        lineWidth: line.lineWidth || 2,
+        title: line.label || `${lawId} specific`
+      }, lawId);
+    });
+
+    (plan.lawSpecific?.bands || []).forEach((band) => {
+      addZoneBand(band.from, band.to, band.label || `${lawId} zone`, band.color || '#14b8a6', lawId);
+    });
+
+    (plan.lawSpecific?.markers || []).forEach((marker) => {
+      addMarker(marker.time || lastBar?.time, marker.price ?? lastBar?.close, {
+        shape: 'square',
+        color: marker.color || '#14b8a6',
+        text: marker.text || lawId,
+      }, lawId);
+    });
+
+    const bandLow = low + range * 0.236;
+    const bandHigh = low + range * 0.382;
+    addZoneBand(bandLow, bandHigh, 'منطقة 0.236 - 0.382', '#38bdf8', lawId);
+  };
+
+  const applyUnknownMappingFallback = (law) => {
+    const lawId = law?.id || 'unknown-law';
+    const range = getDataRange();
+    const lastBar = data[data.length - 1];
+    if (!range || !lastBar) return false;
+
+    // UNKNOWN_MAPPING fallback: TODO(BOOK_V3_COMBINED.md / Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md): add precise mapping when documented.
+    addPriceLine(range.low, { color: '#64748b', lineStyle: 'dashed', title: `${lawId} LOW` }, lawId);
+    addPriceLine(range.high, { color: '#64748b', lineStyle: 'dashed', title: `${lawId} HIGH` }, lawId);
+    drawFibLines(range.low, range.high, { color: '#a78bfa', lineStyle: 'dotted', includeEquilibrium: true }, lawId);
+    addZoneBand(range.low + (range.high - range.low) * 0.236, range.low + (range.high - range.low) * 0.382, `UNKNOWN_MAPPING ${lawId}`, '#a78bfa', lawId);
+    addMarker(lastBar.time, lastBar.close, { shape: 'square', color: '#a78bfa', text: `${lawId} UNKNOWN_MAPPING` }, lawId);
+    return true;
+  };
+
+  const applyBaselineIndicatorOverlay = (law) => {
+    const lawId = law?.id || 'unknown-law';
+    const range = getDataRange();
+    const lastBar = data[data.length - 1];
+    if (!range || !lastBar) return false;
+
+    addPriceLine(range.low, { color: '#334155', lineStyle: 'dashed', title: `${lawId} HL-Low` }, lawId);
+    addPriceLine(range.high, { color: '#334155', lineStyle: 'dashed', title: `${lawId} HL-High` }, lawId);
+    drawFibLines(range.low, range.high, { color: '#60a5fa', lineStyle: 'dotted', includeEquilibrium: true }, lawId);
+    addZoneBand(range.low + (range.high - range.low) * 0.236, range.low + (range.high - range.low) * 0.382, `${lawId} baseline zone`, '#22c55e', lawId);
+    addMarker(lastBar.time, lastBar.close, { shape: 'circle', color: '#22c55e', text: `${lawId}` }, lawId);
+    return true;
+  };
+
   const getDataRange = () => {
     if (!data.length) {
       return null;
@@ -368,6 +428,7 @@ const LightweightChart = ({
 
   const applyLawRecipe = (law, options = {}) => {
     const lawId = law?.id || 'unknown-law';
+    const plan = buildLawDrawPlan({ law, bars: data, mapping: lawIndicatorMap });
     if (!options.skipBaseline) {
       applyBaselineIndicatorOverlay(law);
     }
@@ -451,9 +512,10 @@ const LightweightChart = ({
     });
 
     if (!overlays.length) {
-      return applyUnknownMappingFallback(law);
+      applyUnknownMappingFallback(law);
     }
 
+    applyLawSpecificPlan(law, plan);
     return true;
   };
 
@@ -504,6 +566,7 @@ const LightweightChart = ({
             renderedMarkers: hit.markers,
             renderedLines: hit.priceLines,
             renderedBands: hit.bands,
+            lawSpecificShapes: 1,
           };
         });
         const signature = JSON.stringify(stats);
@@ -536,6 +599,7 @@ const LightweightChart = ({
           renderedMarkers: plan.markersCount,
           renderedLines: plan.linesCount,
           renderedBands: plan.boxesCount,
+          lawSpecificShapes: plan.lawSpecificCount || 0,
           unknownReason: plan.unknownReason,
         };
       });

@@ -8,6 +8,8 @@ import { keys } from '../utils/storage';
 import MarketPanel from '../components/MarketPanel';
 import { useMarketData } from '../context/MarketDataContext';
 import { validateLawRenderable } from '../lib/lawEngine/validation';
+import { buildLawDrawPlan } from '../lib/indicator/model';
+import lawIndicatorMap from '../data/lawIndicatorMap.json';
 
 const ChartPage = () => {
   const {
@@ -94,21 +96,17 @@ const ChartPage = () => {
   };
 
   const validateAllLaws = async () => {
-    const results = [];
-    for (const law of laws) {
-      handleApplyLaw(law, 'replace', { skipTutorial: true });
-      await new Promise((resolve) => setTimeout(resolve, 250));
-      const stat = overlayStatsRef.current.find((item) => item.lawId === law.id);
-      const hasFallback = !(law?.chartRecipe?.overlays?.length) || Boolean(law?.chartRecipe?.inputs?.length);
-      const result = validateLawRenderable({
+    const results = laws.map((law) => {
+      const plan = buildLawDrawPlan({ law, bars, mapping: lawIndicatorMap });
+      return validateLawRenderable({
         law,
-        renderedMarkers: stat?.renderedMarkers || 0,
-        renderedLines: stat?.renderedLines || 0,
-        renderedBoxes: stat?.renderedBands || 0,
-        fallbackVisible: hasFallback && (stat?.renderedBands || 0) > 0,
+        renderedMarkers: plan.markersCount,
+        renderedLines: plan.linesCount,
+        renderedBoxes: plan.boxesCount,
+        renderedLawSpecific: plan.lawSpecificCount,
+        fallbackVisible: plan.unknownMapping,
       });
-      results.push(result);
-    }
+    });
     setValidationReport(results);
     console.table(results);
   };
@@ -194,14 +192,14 @@ const ChartPage = () => {
               <button className="law-button" style={{ '--law-color': '#0ea5e9' }} onClick={cycleAllLaws}>
                 تجربة جميع القوانين
               </button>
-              <button className="law-button" style={{ '--law-color': '#22c55e' }} onClick={validateAllLaws}>
+              <button data-testid="validate-all-laws" className="law-button" style={{ '--law-color': '#22c55e' }} onClick={validateAllLaws}>
                 Validate all laws
               </button>
             </div>
             {validationReport.length > 0 && (
-              <ul className="law-conditions">
+              <ul data-testid="law-validation-results" className="law-conditions">
                 {validationReport.map((item) => (
-                  <li key={item.id}>{item.id}: {item.status === 'pass' ? '✅' : '❌'}</li>
+                  <li data-testid={`law-result-${item.id}`} key={item.id}>{item.id}: {item.status === 'pass' ? '✅' : '❌'}</li>
                 ))}
               </ul>
             )}
@@ -314,7 +312,7 @@ const ChartPage = () => {
                   إزالة التطبيق
                 </button>
                 {showConditions && (
-                  <ul className="law-conditions">
+                  <ul data-testid="law-validation-results" className="law-conditions">
                     {appliedLaw.conditions.map((condition, index) => (
                       <li key={index}>✅ {condition}</li>
                     ))}

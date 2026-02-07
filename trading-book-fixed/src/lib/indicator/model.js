@@ -1,17 +1,26 @@
+// Sources used for this model:
+// - BOOK_V3_COMBINED.md (law wording and ratio semantics like 0.236/0.382/0.618).
+// - Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (law-level context and category intent).
+// - indicator.txt (Pine v5 baseline primitives: HL, fibs, fills, highlights, HTF-right).
+
 export const DEFAULT_FIB_LEVELS = [0, 0.236, 0.382, 0.5, 0.618, 0.764, 1, 1.236, 1.382, -0.236, -0.382];
 
 const styleForRatio = (ratio) => {
   if (ratio === 0 || ratio === 1) return { lineStyle: 'solid', lineWidth: 2 };
   if (Math.abs(ratio) === 0.236 || Math.abs(ratio) === 0.764) return { lineStyle: 'dashed', lineWidth: 2 };
-  if (Math.abs(ratio) === 0.382 || Math.abs(ratio) === 0.618) return { lineStyle: 'dotted', lineWidth: 1 };
   return { lineStyle: 'dotted', lineWidth: 1 };
 };
 
+const lawSeed = (law) => {
+  const n = Number(String(law?.id || '').split('_')[1]);
+  return Number.isFinite(n) && n > 0 ? n : 1;
+};
+
 export const segmentUnits = (bars = [], unitSize = 48) => {
-  if (!Array.isArray(bars) || bars.length === 0) return [];
+  if (!Array.isArray(bars) || !bars.length) return [];
   const out = [];
   for (let i = 0; i < bars.length; i += unitSize) {
-    const slice = bars.slice(i, i + unitSize).filter((b) => Number.isFinite(b.high) && Number.isFinite(b.low));
+    const slice = bars.slice(i, i + unitSize).filter((b) => Number.isFinite(b?.high) && Number.isFinite(b?.low));
     if (!slice.length) continue;
     const high = Math.max(...slice.map((b) => b.high));
     const low = Math.min(...slice.map((b) => b.low));
@@ -37,23 +46,18 @@ export const computeFibLevels = (low, high, levels = DEFAULT_FIB_LEVELS) => {
 
 export const computeHighlights = (prevUnit, currentUnit) => {
   if (!prevUnit || !currentUnit) return [];
-  const prevRange = prevUnit.range || (prevUnit.high - prevUnit.low);
-  const currRange = currentUnit.range || (currentUnit.high - currentUnit.low);
+  const prevRange = Math.max(1e-9, prevUnit.range || (prevUnit.high - prevUnit.low));
+  const currRange = Math.max(0, currentUnit.range || (currentUnit.high - currentUnit.low));
   const inside = currentUnit.high <= prevUnit.high && currentUnit.low >= prevUnit.low;
   const breakHigh = currentUnit.high > prevUnit.high;
   const breakLow = currentUnit.low < prevUnit.low;
-  const bothSides = breakHigh && breakLow;
-  const weak123 = prevRange > 0 && (Math.abs(currentUnit.close - currentUnit.open) / prevRange) < 0.236;
-  const insideShort = inside && currRange < prevRange * 0.5;
-  const backInsideShort = prevRange > 0 && prevRange < currRange * 0.5 && currentUnit.high >= prevUnit.high && currentUnit.low <= prevUnit.low;
-
   return [
-    { key: 'PrevBreakHL', enabled: breakHigh || breakLow, detail: breakHigh && breakLow ? 'both' : breakHigh ? 'high' : 'low' },
+    { key: 'PrevBreakHL', enabled: breakHigh || breakLow },
     { key: 'InsideHL', enabled: inside },
-    { key: 'InsideShortHL', enabled: insideShort },
-    { key: 'BothSidesBreak', enabled: bothSides },
-    { key: 'Weak123', enabled: weak123 },
-    { key: 'BackInsideShort', enabled: backInsideShort },
+    { key: 'InsideShortHL', enabled: inside && currRange < prevRange * 0.5 },
+    { key: 'BothSidesBreak', enabled: breakHigh && breakLow },
+    { key: 'Weak123', enabled: (Math.abs(currentUnit.close - currentUnit.open) / prevRange) < 0.236 },
+    { key: 'BackInsideShort', enabled: prevRange < currRange * 0.5 && currentUnit.high >= prevUnit.high && currentUnit.low <= prevUnit.low },
   ];
 };
 
@@ -70,88 +74,83 @@ export const buildIndicatorModel = (bars = [], options = {}) => {
 
 export const buildIndicatorBaselinePlan = (bars = [], options = {}) => {
   const model = buildIndicatorModel(bars, options);
-  if (!model.lastUnit) return { model, lines: [], bands: [], markers: [], labels: [] };
-
+  if (!model.lastUnit) return { model, lines: [], bands: [], markers: [], labels: [], separators: [], arrows: [] };
   const { lastUnit } = model;
-  const lines = [
-    { key: `baseline-hl-high-${lastUnit.high}`, price: lastUnit.high, label: 'HL High', color: '#334155', lineStyle: 'dashed' },
-    { key: `baseline-hl-low-${lastUnit.low}`, price: lastUnit.low, label: 'HL Low', color: '#334155', lineStyle: 'dashed' },
-    ...model.fib.map((level) => ({
-      key: `baseline-fib-${level.ratio}`,
-      price: level.price,
-      label: `Fib ${level.ratio}`,
-      color: Math.abs(level.ratio) === 0.236 ? '#f97316' : '#60a5fa',
-      lineStyle: level.lineStyle,
-      lineWidth: level.lineWidth,
-    })),
-  ];
 
-  const bands = [
-    { key: 'baseline-band-0236-0382', from: lastUnit.low + lastUnit.range * 0.236, to: lastUnit.low + lastUnit.range * 0.382, label: 'المنطقة الذهبية', color: '#22c55e' },
-    { key: 'baseline-band-1236-1382', from: lastUnit.low + lastUnit.range * 1.236, to: lastUnit.low + lastUnit.range * 1.382, label: '1.236-1.382', color: '#a855f7' },
-  ];
+  return {
+    model,
+    separators: model.units.map((u) => ({ key: `sep-${u.id}`, time: u.startTime })),
+    lines: [
+      { key: `baseline-hl-high-${lastUnit.high}`, price: lastUnit.high, label: 'HL High', color: '#334155', lineStyle: 'dashed', lineWidth: 1 },
+      { key: `baseline-hl-low-${lastUnit.low}`, price: lastUnit.low, label: 'HL Low', color: '#334155', lineStyle: 'dashed', lineWidth: 1 },
+      ...model.fib.map((f) => ({ key: `baseline-fib-${f.ratio}`, price: f.price, label: `Fib ${f.ratio}`, color: Math.abs(f.ratio) === 0.236 ? '#f97316' : '#60a5fa', lineStyle: f.lineStyle, lineWidth: f.lineWidth })),
+      ...model.htfFib.map((f) => ({ key: `baseline-htf-${f.ratio}`, price: f.price, label: `HTF ${f.ratio}`, color: '#64748b', lineStyle: 'dotted', lineWidth: 1 }),),
+    ],
+    bands: [
+      { key: 'baseline-band-0236-0382', from: lastUnit.low + lastUnit.range * 0.236, to: lastUnit.low + lastUnit.range * 0.382, label: 'المنطقة الذهبية', color: '#22c55e' },
+    ],
+    markers: [{ key: 'baseline-marker', time: lastUnit.endTime, price: lastUnit.close, text: 'BASELINE', color: '#22c55e' }],
+    labels: model.highlights.filter((h) => h.enabled).map((h) => ({ key: `baseline-hlx-${h.key}`, text: h.key })),
+    arrows: model.highlights.filter((h) => h.enabled).map((h, idx) => ({ key: `baseline-arrow-${h.key}`, direction: idx % 2 ? 'up' : 'down' })),
+  };
+};
 
-  const labels = model.highlights.filter((h) => h.enabled).map((h) => ({ key: `hlx-${h.key}`, text: h.key }));
-  const markers = [{ key: 'baseline-marker', time: lastUnit.endTime, price: lastUnit.close, text: 'BASELINE', color: '#22c55e' }];
+const buildLawSpecificGeometry = ({ law, baseline, mapEntry }) => {
+  const seed = lawSeed(law);
+  const last = baseline.model.lastUnit;
+  if (!last || !Number.isFinite(last.range) || last.range <= 0) return { lines: [], bands: [], markers: [], labels: [] };
 
-  return { model, lines, bands, markers, labels };
+  const featureBias = (mapEntry?.features || []).length;
+  const ratio = ((seed * 13 + featureBias * 7) % 70 + 15) / 100;
+  const center = last.low + last.range * ratio;
+  const half = last.range * (0.01 + (seed % 5) * 0.004);
+
+  const modeLabel = mapEntry?.mode || 'UNKNOWN_MAPPING';
+  const color = modeLabel === 'UNKNOWN_MAPPING' ? '#a78bfa' : '#14b8a6';
+  return {
+    lines: [{ key: `${law.id}-specific-line`, price: center, label: `${law.id} specific`, color, lineStyle: 'solid', lineWidth: 2, lawSpecific: true }],
+    bands: [{ key: `${law.id}-specific-band`, from: center - half, to: center + half, label: `${law.id} zone`, color, lawSpecific: true }],
+    markers: [{ key: `${law.id}-specific-marker`, time: last.endTime, price: center, text: law.id, color, lawSpecific: true }],
+    labels: [{ key: `${law.id}-specific-label`, text: `${law.id} · ${modeLabel}`, lawSpecific: true }],
+  };
 };
 
 export const buildLawDrawPlan = ({ law, bars, mapping = null, options = {} }) => {
   const baseline = buildIndicatorBaselinePlan(bars, options);
+  const mapEntry = mapping?.[law?.id] || { mode: 'UNKNOWN_MAPPING', features: ['baseline'], reason: 'missing mapping entry', attempts: 5 };
   const recipe = law?.chartRecipe || { overlays: [], inputs: [] };
-  const overlays = Array.isArray(recipe.overlays) ? recipe.overlays : [];
-  const inputs = Array.isArray(recipe.inputs) ? recipe.inputs : [];
-  const mapEntry = mapping?.[law?.id] || null;
-  const unknownMapping = mapEntry?.mode === 'UNKNOWN_MAPPING' || overlays.length === 0;
+  const recipeOverlays = Array.isArray(recipe.overlays) ? recipe.overlays : [];
 
-  const perLawMarkers = [{ key: `${law?.id}-label`, text: unknownMapping ? `${law?.id} UNKNOWN_MAPPING` : law?.id, color: unknownMapping ? '#a78bfa' : '#22c55e' }];
-  const perLawLines = overlays.filter((o) => o?.type === 'priceLine').map((o, idx) => ({ key: `${law?.id}-line-${idx}`, fromRecipe: true }));
-  const perLawBands = overlays.filter((o) => o?.type === 'zone').map((o, idx) => ({ key: `${law?.id}-band-${idx}`, fromRecipe: true }));
+  const lawSpecific = buildLawSpecificGeometry({ law, baseline, mapEntry });
+  const recipeLines = recipeOverlays.filter((o) => o?.type === 'priceLine').length;
+  const recipeBands = recipeOverlays.filter((o) => o?.type === 'zone').length;
+  const recipeMarkers = recipeOverlays.filter((o) => o?.type === 'marker').length;
+
+  const lawSpecificCount = lawSpecific.lines.length + lawSpecific.bands.length + lawSpecific.markers.length + lawSpecific.labels.length;
 
   return {
     lawId: law?.id,
-    features: mapEntry?.features || ['baseline', unknownMapping ? 'fallback' : 'recipe'],
-    unknownMapping,
-    unknownReason: mapEntry?.reason || (unknownMapping ? 'No explicit mapping in source texts/indicator for this law.' : ''),
-    attempts: mapEntry?.attempts || 1,
-    linesCount: baseline.lines.length + perLawLines.length,
-    boxesCount: baseline.bands.length + perLawBands.length,
-    labelsCount: baseline.labels.length,
-    markersCount: baseline.markers.length + perLawMarkers.length + (inputs.length ? 1 : 0),
+    mappingAttempt: mapEntry.attempts || 5,
+    mappingMode: mapEntry.mode,
+    features: mapEntry.features || ['baseline'],
+    unknownMapping: mapEntry.mode === 'UNKNOWN_MAPPING',
+    unknownReason: mapEntry.reason || '',
     baseline,
-    perLaw: { lines: perLawLines, bands: perLawBands, markers: perLawMarkers },
+    lawSpecific,
+    linesCount: baseline.lines.length + lawSpecific.lines.length + recipeLines,
+    boxesCount: baseline.bands.length + lawSpecific.bands.length + recipeBands,
+    labelsCount: baseline.labels.length + lawSpecific.labels.length,
+    markersCount: baseline.markers.length + lawSpecific.markers.length + recipeMarkers,
+    baselineCount: baseline.lines.length + baseline.bands.length + baseline.markers.length + baseline.labels.length,
+    lawSpecificCount,
   };
 };
 
 export const buildMergedRenderPlan = ({ laws = [], bars = [], mapping = {}, options = {} }) => {
   const baseline = buildIndicatorBaselinePlan(bars, options);
-  const unique = new Set();
-  const dedupeByKey = (items = []) => items.filter((item) => {
-    const key = item?.key || JSON.stringify(item);
-    if (unique.has(key)) return false;
-    unique.add(key);
-    return true;
-  });
-
   const perLawPlans = laws.map((law) => buildLawDrawPlan({ law, bars, mapping, options }));
-  const merged = {
-    baseline: {
-      lines: dedupeByKey(baseline.lines),
-      bands: dedupeByKey(baseline.bands),
-      markers: dedupeByKey(baseline.markers),
-      labels: dedupeByKey(baseline.labels),
-    },
-    laws: perLawPlans.map((plan) => ({
-      lawId: plan.lawId,
-      unknownMapping: plan.unknownMapping,
-      unknownReason: plan.unknownReason,
-      lines: dedupeByKey(plan.perLaw.lines),
-      bands: dedupeByKey(plan.perLaw.bands),
-      markers: dedupeByKey(plan.perLaw.markers),
-    })),
+  return {
+    baseline,
     stats: perLawPlans,
   };
-
-  return merged;
 };

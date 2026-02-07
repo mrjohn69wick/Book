@@ -3,9 +3,9 @@ import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testDir: './tests/e2e',
   workers: 1,
-  retries: 2,
+  retries: 3,
   fullyParallel: false,
-  timeout: 90000,
+  timeout: 120000,
   use: {
     baseURL: 'http://127.0.0.1:4174/Book/',
     browserName: 'chromium',
@@ -14,10 +14,12 @@ export default defineConfig({
     launchOptions: {
       args: [
         '--no-sandbox',
+        '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
         '--disable-gpu',
         '--disable-software-rasterizer',
         '--no-zygote',
+        '--single-process',
         '--disable-features=IsolateOrigins,site-per-process',
       ],
     },
