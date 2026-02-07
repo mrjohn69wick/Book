@@ -48,14 +48,17 @@ export const buildLawIndicatorMap = () => {
 
     const categoryFeature = law?.category === 'المؤشر' ? 'fibGrid' : law?.category === 'المدرسة الكونية' ? 'BothSidesBreak' : law?.category === 'الذكاء الاصطناعي' ? 'InsideShortHL' : 'unitHL';
     map[law.id] = {
-      mode: 'ATTEMPT_D_SAFE_UNKNOWN',
+      mode: 'ATTEMPT_C_CATEGORY_DERIVED',
       attempts: 3,
       features: ['baseline', categoryFeature, `lawSpecific:${law.id}`],
-      reason: 'Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.',
+      reason: 'Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.',
       references: {
         books: ['BOOK_V3_COMBINED.md (category/law framing)', 'Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)'],
         indicator: ['indicator.txt feature toggles by behavior family'],
-        pointers: [],
+        pointers: [
+          { book: 'BOOK_V3_COMBINED.md § Laws index/category framing', indicator: 'indicator.txt HL/Fib groups' },
+          { book: 'Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context', indicator: 'indicator.txt highlight toggles' }
+        ],
       },
     };
   });

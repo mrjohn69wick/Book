@@ -1,13 +1,13 @@
 {
   "LAW_001": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_001"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -16,18 +16,27 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_002": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_002"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -36,7 +45,16 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_003": {
@@ -117,14 +135,14 @@
     }
   },
   "LAW_006": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_006"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -133,7 +151,16 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_007": {
@@ -202,14 +229,14 @@
     }
   },
   "LAW_009": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_009"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -218,7 +245,16 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_010": {
@@ -248,14 +284,14 @@
     }
   },
   "LAW_011": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_011"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -264,18 +300,27 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_012": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_012"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -284,18 +329,27 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_013": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_013"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -304,7 +358,16 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_014": {
@@ -368,14 +431,14 @@
     }
   },
   "LAW_016": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_016"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -384,18 +447,27 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_017": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_017"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -404,7 +476,16 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_018": {
@@ -433,14 +514,14 @@
     }
   },
   "LAW_019": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_019"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -449,18 +530,27 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_020": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_020"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -469,7 +559,16 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_021": {
@@ -498,14 +597,14 @@
     }
   },
   "LAW_022": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_022"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -514,18 +613,27 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_023": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_023"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -534,18 +642,27 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_024": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_024"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -554,7 +671,16 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_025": {
@@ -583,14 +709,14 @@
     }
   },
   "LAW_026": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_026"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -599,18 +725,27 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_027": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_027"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -619,7 +754,16 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_028": {
@@ -648,14 +792,14 @@
     }
   },
   "LAW_029": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_029"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -664,7 +808,16 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_030": {
@@ -882,14 +1035,14 @@
     }
   },
   "LAW_038": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_038"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -898,18 +1051,27 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_039": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_039"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -918,7 +1080,16 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_040": {
@@ -947,14 +1118,14 @@
     }
   },
   "LAW_041": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_041"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -963,18 +1134,27 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_042": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_042"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -983,18 +1163,27 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_043": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_043"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -1003,18 +1192,27 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_044": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_044"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -1023,18 +1221,27 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_045": {
-    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "mode": "ATTEMPT_C_CATEGORY_DERIVED",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_045"
     ],
-    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "reason": "Attempt C: category-derived conservative mapping using indicator HL/fib semantics with explicit law-specific overlay; no synthetic signal logic added.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -1043,7 +1250,16 @@
       "indicator": [
         "indicator.txt feature toggles by behavior family"
       ],
-      "pointers": []
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md § Laws index/category framing",
+          "indicator": "indicator.txt HL/Fib groups"
+        },
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md § law category context",
+          "indicator": "indicator.txt highlight toggles"
+        }
+      ]
     }
   },
   "LAW_046": {

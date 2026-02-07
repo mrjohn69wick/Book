@@ -11,12 +11,13 @@ A→E loop per law with deterministic feature assignment and explainable pointer
 ## Summary
 - Canonical map: `src/lib/indicator/law-mapping.json`
 - Runtime map: `src/data/lawIndicatorMap.json`
+- Mirror map: `src/data/law-mapping.json`
 
 | Mode | Count |
 |---|---:|
-| ATTEMPT_D_SAFE_UNKNOWN | 24 |
+| ATTEMPT_C_CATEGORY_DERIVED | 24 |
 | ATTEMPT_A_RECIPE | 8 |
 | ATTEMPT_B_INDICATOR_FEATURE | 16 |
 
 ## Unknown mapping policy
-- `ATTEMPT_D_SAFE_UNKNOWN` entries are conservative and include safe fallback geometry + explicit reasons.
+- If mode contains `UNKNOWN`, conservative fallback geometry and explicit reason are mandatory.

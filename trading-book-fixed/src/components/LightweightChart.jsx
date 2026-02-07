@@ -358,14 +358,6 @@ const LightweightChart = ({
       }, lawId);
     });
 
-    (plan.lawSpecific?.markers || []).forEach((marker) => {
-      addMarker(marker.time || lastBar?.time, marker.price ?? lastBar?.close, {
-        shape: 'square',
-        color: marker.color || '#14b8a6',
-        text: marker.text || lawId,
-      }, lawId);
-    });
-
     const bandLow = low + range * 0.236;
     const bandHigh = low + range * 0.382;
     addZoneBand(bandLow, bandHigh, 'منطقة 0.236 - 0.382', '#38bdf8', lawId);
