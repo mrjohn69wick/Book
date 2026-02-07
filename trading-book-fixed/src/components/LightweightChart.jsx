@@ -7,9 +7,11 @@ import { useAppliedLaw } from '../context/AppliedLawContext';
 import { normalizeBars } from '../lib/ohlcv/normalizeBars';
 import { createOverlayRegistry } from '../lib/chart/overlayRegistry';
 import { buildLawDrawPlan, buildMergedRenderPlan } from '../lib/indicator/model';
-import { applyBaselineIndicatorOverlay as applyBaselineOverlay } from '../lib/chart/overlays/baselineOverlay';
-import { applyUnknownMappingFallback as applyUnknownFallback } from '../lib/chart/overlays/unknownFallback';
-import { applyLawSpecificPlan as applyLawPlan } from '../lib/chart/overlays/lawSpecificPlan';
+import {
+  applyBaselineIndicatorOverlay as runBaselineOverlay,
+  applyUnknownMappingFallback as runUnknownFallbackOverlay,
+  applyLawSpecificPlan as runLawSpecificPlan,
+} from '../lib/chart/overlays';
 import lawIndicatorMap from '../data/lawIndicatorMap.json';
 
 const LightweightChart = ({
@@ -306,6 +308,13 @@ const LightweightChart = ({
     addZoneBand(bandLow, bandHigh, 'منطقة 0.236 - 0.382', '#38bdf8', lawId);
   };
 
+  const applyOverlayContext = (law, plan = null, mode = 'baseline') => {
+    const payload = { law, data, getDataRange, addPriceLine, drawFibLines, addZoneBand, addMarker, plan };
+    if (mode === 'unknown') return runUnknownFallbackOverlay(payload);
+    if (mode === 'lawPlan') return runLawSpecificPlan(payload);
+    return runBaselineOverlay(payload);
+  };
+
   const runUnknownFallbackOverlay = (law) => applyUnknownFallback({ law, data, getDataRange, addPriceLine, drawFibLines, addZoneBand, addMarker });
 
   const runBaselineOverlay = (law) => applyBaselineOverlay({ law, data, getDataRange, addPriceLine, drawFibLines, addZoneBand, addMarker });
@@ -350,7 +359,7 @@ const LightweightChart = ({
     const lawId = law?.id || 'unknown-law';
     const plan = buildLawDrawPlan({ law, bars: data, mapping: lawIndicatorMap });
     if (!options.skipBaseline) {
-      runBaselineOverlay(law);
+      applyOverlayContext(law);
     }
 
     if (!law?.chartRecipe) {
@@ -363,7 +372,7 @@ const LightweightChart = ({
         }, lawId);
         return true;
       }
-      return runUnknownFallbackOverlay(law);
+      return applyOverlayContext(law, null, 'unknown');
     }
 
     const recipe = law.chartRecipe;
@@ -432,10 +441,10 @@ const LightweightChart = ({
     });
 
     if (!overlays.length) {
-      runUnknownFallbackOverlay(law);
+      applyOverlayContext(law, null, 'unknown');
     }
 
-    runLawSpecificPlan(law, plan);
+    applyOverlayContext(law, plan, 'lawPlan');
     return true;
   };
 
@@ -467,7 +476,7 @@ const LightweightChart = ({
     if (needsInputs) {
       clearOverlays();
       activeLaws.forEach((law) => {
-        runUnknownFallbackOverlay(law);
+        applyOverlayContext(law, null, 'unknown');
       });
       if (markersRef.current) {
         markersRef.current.setMarkers(lawOverlayRegistry.current.getMarkers());
@@ -501,7 +510,7 @@ const LightweightChart = ({
     clearOverlays();
     const merged = buildMergedRenderPlan({ laws: activeLaws, bars: data, mapping: lawIndicatorMap });
     if (merged?.baseline?.lines?.length || merged?.baseline?.bands?.length) {
-      runBaselineOverlay({ id: 'BASELINE_SHARED' });
+      applyOverlayContext({ id: 'BASELINE_SHARED' });
     }
     activeLaws.forEach((law) => {
       applyLawRecipe(law, { skipBaseline: true });
