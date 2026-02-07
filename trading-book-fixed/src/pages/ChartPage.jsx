@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import LightweightChart from '../components/LightweightChart';
 import './ChartPage.css';
 import { getLawById, laws } from '../data/laws';
@@ -10,6 +10,9 @@ import { useMarketData } from '../context/MarketDataContext';
 import { validateLawRenderable } from '../lib/lawEngine/validation';
 import { buildLawDrawPlan } from '../lib/indicator/model';
 import lawIndicatorMap from '../data/lawIndicatorMap.json';
+
+const MAX_VISIBLE_LAWS = 8;
+const PREVIEW_INTERVAL_MS = 280;
 
 const ChartPage = () => {
   const {
@@ -39,6 +42,8 @@ const ChartPage = () => {
   const [validationReport, setValidationReport] = useState([]);
   const [overlayStats, setOverlayStats] = useState([]);
   const overlayStatsRef = useRef([]);
+  const cycleTimerRef = useRef(null);
+  const lastStatsAtRef = useRef(0);
   const { bars, latestBar, instrumentId, timeframeId } = useMarketData();
   const appliedLaw = appliedLawId ? getLawById(appliedLawId) : null;
   const appliedLawColor = appliedLaw?.color ?? getCategoryColor(appliedLaw?.category);
@@ -61,8 +66,11 @@ const ChartPage = () => {
     { id: 'LAW_005', name: 'اتزانات الفوضى', color: '#ef4444' }
   ];
 
-  const appliedLaws = appliedLawIds
-    .filter((id) => !hiddenLawIds.includes(id))
+  const visibleLawIds = appliedLawIds.filter((id) => !hiddenLawIds.includes(id));
+  const visibleLawIdsLimited = visibleLawIds.slice(0, MAX_VISIBLE_LAWS);
+  const autoHiddenCount = Math.max(0, visibleLawIds.length - visibleLawIdsLimited.length);
+
+  const appliedLaws = visibleLawIdsLimited
     .map((id) => getLawById(id))
     .filter(Boolean);
 
@@ -82,17 +90,25 @@ const ChartPage = () => {
     }
   };
 
+  const stopPreview = () => {
+    if (cycleTimerRef.current) {
+      clearInterval(cycleTimerRef.current);
+      cycleTimerRef.current = null;
+    }
+  };
+
   const cycleAllLaws = () => {
+    stopPreview();
     let index = 0;
-    const timer = setInterval(() => {
+    cycleTimerRef.current = setInterval(() => {
       const law = laws[index];
       if (!law) {
-        clearInterval(timer);
+        stopPreview();
         return;
       }
       handleApplyLaw(law, 'replace', { skipTutorial: true });
       index += 1;
-    }, 120);
+    }, PREVIEW_INTERVAL_MS);
   };
 
   const validateAllLaws = async () => {
@@ -110,6 +126,8 @@ const ChartPage = () => {
     setValidationReport(results);
     console.table(results);
   };
+
+  useEffect(() => () => stopPreview(), []);
 
   const hasRecipeOverlays = Boolean(appliedLaw?.chartRecipe?.overlays?.length);
   const showConditions = Boolean(appliedLaw && !needsInputs && !hasRecipeOverlays);
@@ -190,12 +208,20 @@ const ChartPage = () => {
                 إضافة القانون المحدد
               </button>
               <button className="law-button" style={{ '--law-color': '#0ea5e9' }} onClick={cycleAllLaws}>
-                تجربة جميع القوانين
+                معاينة كل القوانين (قانون واحد)
+              </button>
+              <button className="law-button" style={{ '--law-color': '#64748b' }} onClick={stopPreview}>
+                إيقاف المعاينة
               </button>
               <button data-testid="validate-all-laws" className="law-button" style={{ '--law-color': '#22c55e' }} onClick={validateAllLaws}>
                 Validate all laws
               </button>
             </div>
+            {autoHiddenCount > 0 && (
+              <div className="chart-error" role="status" style={{ marginTop: '0.5rem' }}>
+                تم إخفاء بعض القوانين لتجنب تعليق الشارت. يمكنك إظهارها تدريجياً. ({autoHiddenCount})
+              </div>
+            )}
             {validationReport.length > 0 && (
               <ul data-testid="law-validation-results" className="law-conditions">
                 {validationReport.map((item) => (
@@ -226,6 +252,9 @@ const ChartPage = () => {
                 appliedLaws={appliedLaws}
                 onOverlayStatsChange={(stats) => {
                   overlayStatsRef.current = stats;
+                  const now = Date.now();
+                  if (now - lastStatsAtRef.current < 250) return;
+                  lastStatsAtRef.current = now;
                   setOverlayStats(stats);
                 }}
                 externalBars={bars}
