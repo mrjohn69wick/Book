@@ -15,7 +15,7 @@ const bars = rows.map((parts) => {
 }).filter((b) => Number.isFinite(b.time) && Number.isFinite(b.open) && Number.isFinite(b.high) && Number.isFinite(b.low) && Number.isFinite(b.close));
 
 const results = laws.map((law) => buildLawDrawPlan({ law, bars, mapping: lawIndicatorMap }));
-const failed = results.filter((r) => !(r.boxesCount >= 1 && r.linesCount >= 2 && (r.labelsCount + r.markersCount) >= 1 && r.lawSpecificCount >= 1));
+const failed = results.filter((r) => !(r.boxesCount >= 1 && r.linesCount >= 2 && (r.labelsCount + r.markersCount) >= 1 && r.lawSpecificCount >= 1) || (r.unknownMapping && !String(r.unknownReason || '').trim()));
 
 const report = results.map((r) => ({
   lawId: r.lawId,

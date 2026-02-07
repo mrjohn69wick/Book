@@ -1,13 +1,13 @@
 {
   "LAW_001": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_001"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -20,14 +20,14 @@
     }
   },
   "LAW_002": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_002"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -117,14 +117,14 @@
     }
   },
   "LAW_006": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_006"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -202,14 +202,14 @@
     }
   },
   "LAW_009": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_009"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -248,14 +248,14 @@
     }
   },
   "LAW_011": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_011"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -268,14 +268,14 @@
     }
   },
   "LAW_012": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_012"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -288,14 +288,14 @@
     }
   },
   "LAW_013": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_013"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -368,14 +368,14 @@
     }
   },
   "LAW_016": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_016"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -388,14 +388,14 @@
     }
   },
   "LAW_017": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_017"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -433,14 +433,14 @@
     }
   },
   "LAW_019": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_019"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -453,14 +453,14 @@
     }
   },
   "LAW_020": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_020"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -498,14 +498,14 @@
     }
   },
   "LAW_022": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_022"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -518,14 +518,14 @@
     }
   },
   "LAW_023": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_023"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -538,14 +538,14 @@
     }
   },
   "LAW_024": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_024"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -583,14 +583,14 @@
     }
   },
   "LAW_026": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_026"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -603,14 +603,14 @@
     }
   },
   "LAW_027": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_027"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -648,14 +648,14 @@
     }
   },
   "LAW_029": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_029"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -882,14 +882,14 @@
     }
   },
   "LAW_038": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_038"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -902,14 +902,14 @@
     }
   },
   "LAW_039": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_039"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -947,14 +947,14 @@
     }
   },
   "LAW_041": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_041"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -967,14 +967,14 @@
     }
   },
   "LAW_042": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_042"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -987,14 +987,14 @@
     }
   },
   "LAW_043": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_043"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -1007,14 +1007,14 @@
     }
   },
   "LAW_044": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_044"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",
@@ -1027,14 +1027,14 @@
     }
   },
   "LAW_045": {
-    "mode": "ATTEMPT_C_CATEGORY_HEURISTIC",
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
     "attempts": 3,
     "features": [
       "baseline",
       "unitHL",
       "lawSpecific:LAW_045"
     ],
-    "reason": "Attempt C: category-driven mapping to closest indicator feature family without inventing trade signal conditions.",
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
     "references": {
       "books": [
         "BOOK_V3_COMBINED.md (category/law framing)",

@@ -184,7 +184,7 @@ export const buildLawDrawPlan = ({ law, bars, mapping = null, options = {} }) =>
     mappingAttempt: mapEntry.attempts || 5,
     mappingMode: mapEntry.mode,
     features: mapEntry.features || ['baseline'],
-    unknownMapping: mapEntry.mode === 'UNKNOWN_MAPPING',
+    unknownMapping: String(mapEntry.mode || '').includes('UNKNOWN'),
     unknownReason: mapEntry.reason || '',
     baseline,
     lawSpecific,

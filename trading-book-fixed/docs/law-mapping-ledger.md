@@ -14,6 +14,9 @@ A→E loop per law with deterministic feature assignment and explainable pointer
 
 | Mode | Count |
 |---|---:|
-| ATTEMPT_C_CATEGORY_HEURISTIC | 24 |
+| ATTEMPT_D_SAFE_UNKNOWN | 24 |
 | ATTEMPT_A_RECIPE | 8 |
 | ATTEMPT_B_INDICATOR_FEATURE | 16 |
+
+## Unknown mapping policy
+- `ATTEMPT_D_SAFE_UNKNOWN` entries are conservative and include safe fallback geometry + explicit reasons.
