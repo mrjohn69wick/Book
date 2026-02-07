@@ -49,11 +49,20 @@ jobs:
         working-directory: trading-book-fixed
         run: pnpm install --frozen-lockfile
 
-      - name: Build Book #1
+      - name: Build Book
         working-directory: trading-book-fixed
         env:
           VITE_BUILD_SHA: ${{ github.sha }}
         run: pnpm run build
+
+      - name: Validate laws (deterministic gate)
+        working-directory: trading-book-fixed
+        run: pnpm run validate:laws
+
+      - name: E2E stable (non-blocking)
+        working-directory: trading-book-fixed
+        continue-on-error: true
+        run: pnpm run e2e:stable
 
       - name: Assemble Pages site (both books)
         run: |
