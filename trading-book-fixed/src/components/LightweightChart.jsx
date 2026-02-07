@@ -357,6 +357,39 @@ const LightweightChart = ({
         text: marker.text || lawId,
       }, lawId);
     });
+
+    const bandLow = low + range * 0.236;
+    const bandHigh = low + range * 0.382;
+    addZoneBand(bandLow, bandHigh, 'منطقة 0.236 - 0.382', '#38bdf8', lawId);
+  };
+
+  const applyUnknownMappingFallback = (law) => {
+    const lawId = law?.id || 'unknown-law';
+    const range = getDataRange();
+    const lastBar = data[data.length - 1];
+    if (!range || !lastBar) return false;
+
+    // UNKNOWN_MAPPING fallback: TODO(BOOK_V3_COMBINED.md / Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md): add precise mapping when documented.
+    addPriceLine(range.low, { color: '#64748b', lineStyle: 'dashed', title: `${lawId} LOW` }, lawId);
+    addPriceLine(range.high, { color: '#64748b', lineStyle: 'dashed', title: `${lawId} HIGH` }, lawId);
+    drawFibLines(range.low, range.high, { color: '#a78bfa', lineStyle: 'dotted', includeEquilibrium: true }, lawId);
+    addZoneBand(range.low + (range.high - range.low) * 0.236, range.low + (range.high - range.low) * 0.382, `UNKNOWN_MAPPING ${lawId}`, '#a78bfa', lawId);
+    addMarker(lastBar.time, lastBar.close, { shape: 'square', color: '#a78bfa', text: `${lawId} UNKNOWN_MAPPING` }, lawId);
+    return true;
+  };
+
+  const applyBaselineIndicatorOverlay = (law) => {
+    const lawId = law?.id || 'unknown-law';
+    const range = getDataRange();
+    const lastBar = data[data.length - 1];
+    if (!range || !lastBar) return false;
+
+    addPriceLine(range.low, { color: '#334155', lineStyle: 'dashed', title: `${lawId} HL-Low` }, lawId);
+    addPriceLine(range.high, { color: '#334155', lineStyle: 'dashed', title: `${lawId} HL-High` }, lawId);
+    drawFibLines(range.low, range.high, { color: '#60a5fa', lineStyle: 'dotted', includeEquilibrium: true }, lawId);
+    addZoneBand(range.low + (range.high - range.low) * 0.236, range.low + (range.high - range.low) * 0.382, `${lawId} baseline zone`, '#22c55e', lawId);
+    addMarker(lastBar.time, lastBar.close, { shape: 'circle', color: '#22c55e', text: `${lawId}` }, lawId);
+    return true;
   };
 
   const getDataRange = () => {
