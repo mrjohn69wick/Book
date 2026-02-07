@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import LightweightChart from '../components/LightweightChart';
 import './ChartPage.css';
 import { getLawById, laws } from '../data/laws';
@@ -7,11 +7,23 @@ import ChartErrorBoundary from '../components/ChartErrorBoundary';
 import { keys } from '../utils/storage';
 import MarketPanel from '../components/MarketPanel';
 import { useMarketData } from '../context/MarketDataContext';
+import { validateLawRenderable } from '../lib/lawEngine/validation';
+import { buildLawDrawPlan } from '../lib/indicator/model';
+import lawIndicatorMap from '../data/lawIndicatorMap.json';
+
+const MAX_VISIBLE_LAWS = 8;
+const PREVIEW_INTERVAL_MS = 280;
 
 const ChartPage = () => {
   const {
     appliedLawId,
-    setAppliedLawId,
+    appliedLawIds,
+    hiddenLawIds,
+    applyLaw,
+    removeLaw,
+    toggleLaw,
+    clearAll,
+    setActiveLaw,
     tutorialActive,
     tutorialLawId,
     tutorialStepIndex,
@@ -27,6 +39,11 @@ const ChartPage = () => {
   const [showKeyLevels, setShowKeyLevels] = useState(false);
   const [showZones, setShowZones] = useState(false);
   const [selectedLawId, setSelectedLawId] = useState(laws[0]?.id || '');
+  const [validationReport, setValidationReport] = useState([]);
+  const [overlayStats, setOverlayStats] = useState([]);
+  const overlayStatsRef = useRef([]);
+  const cycleTimerRef = useRef(null);
+  const lastStatsAtRef = useRef(0);
   const { bars, latestBar, instrumentId, timeframeId } = useMarketData();
   const appliedLaw = appliedLawId ? getLawById(appliedLawId) : null;
   const appliedLawColor = appliedLaw?.color ?? getCategoryColor(appliedLaw?.category);
@@ -49,15 +66,68 @@ const ChartPage = () => {
     { id: 'LAW_005', name: 'اتزانات الفوضى', color: '#ef4444' }
   ];
 
-  const handleApplyLaw = (law) => {
-    setAppliedLawId(law.id);
+  const visibleLawIds = appliedLawIds.filter((id) => !hiddenLawIds.includes(id));
+  const visibleLawIdsLimited = visibleLawIds.slice(0, MAX_VISIBLE_LAWS);
+  const autoHiddenCount = Math.max(0, visibleLawIds.length - visibleLawIdsLimited.length);
+
+  const appliedLaws = visibleLawIdsLimited
+    .map((id) => getLawById(id))
+    .filter(Boolean);
+
+  const handleApplyLaw = (law, mode = 'add', opts = {}) => {
+    const skipTutorial = opts.skipTutorial === true;
+    applyLaw(law.id, mode);
+    setActiveLaw(law.id);
     clearTutorialError();
+    if (skipTutorial) {
+      endTutorial();
+      return;
+    }
     if (law?.chartRecipe?.inputs?.length) {
       startTutorial(law.id);
     } else {
       endTutorial();
     }
   };
+
+  const stopPreview = () => {
+    if (cycleTimerRef.current) {
+      clearInterval(cycleTimerRef.current);
+      cycleTimerRef.current = null;
+    }
+  };
+
+  const cycleAllLaws = () => {
+    stopPreview();
+    let index = 0;
+    cycleTimerRef.current = setInterval(() => {
+      const law = laws[index];
+      if (!law) {
+        stopPreview();
+        return;
+      }
+      handleApplyLaw(law, 'replace', { skipTutorial: true });
+      index += 1;
+    }, PREVIEW_INTERVAL_MS);
+  };
+
+  const validateAllLaws = async () => {
+    const results = laws.map((law) => {
+      const plan = buildLawDrawPlan({ law, bars, mapping: lawIndicatorMap });
+      return validateLawRenderable({
+        law,
+        renderedMarkers: plan.markersCount,
+        renderedLines: plan.linesCount,
+        renderedBoxes: plan.boxesCount,
+        renderedLawSpecific: plan.lawSpecificCount,
+        fallbackVisible: plan.unknownMapping,
+      });
+    });
+    setValidationReport(results);
+    console.table(results);
+  };
+
+  useEffect(() => () => stopPreview(), []);
 
   const hasRecipeOverlays = Boolean(appliedLaw?.chartRecipe?.overlays?.length);
   const showConditions = Boolean(appliedLaw && !needsInputs && !hasRecipeOverlays);
@@ -108,6 +178,58 @@ const ChartPage = () => {
               هذه الخطوط إرشادية للتعلم وليست توصية تداول مباشرة.
             </p>
           </div>
+          <MarketPanel />
+          <div className="quick-laws" style={{ marginBottom: '1rem' }}>
+            <h3 className="panel-title">📚 جميع القوانين</h3>
+            <div className="laws-list">
+              <label className="overlay-option" style={{ width: '100%' }}>
+                <select
+                  value={selectedLawId}
+                  onChange={(event) => setSelectedLawId(event.target.value)}
+                  style={{ width: '100%' }}
+                >
+                  {laws.map((law) => (
+                    <option key={law.id} value={law.id}>
+                      {law.id} — {law.title}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button
+                className="law-button"
+                style={{ '--law-color': getCategoryColor(getLawById(selectedLawId)?.category) }}
+                onClick={() => {
+                  const law = getLawById(selectedLawId);
+                  if (law) {
+                    handleApplyLaw(law, 'add');
+                  }
+                }}
+              >
+                إضافة القانون المحدد
+              </button>
+              <button className="law-button" style={{ '--law-color': '#0ea5e9' }} onClick={cycleAllLaws}>
+                معاينة كل القوانين (قانون واحد)
+              </button>
+              <button className="law-button" style={{ '--law-color': '#64748b' }} onClick={stopPreview}>
+                إيقاف المعاينة
+              </button>
+              <button data-testid="validate-all-laws" className="law-button" style={{ '--law-color': '#22c55e' }} onClick={validateAllLaws}>
+                Validate all laws
+              </button>
+            </div>
+            {autoHiddenCount > 0 && (
+              <div className="chart-error" role="status" style={{ marginTop: '0.5rem' }}>
+                تم إخفاء بعض القوانين لتجنب تعليق الشارت. يمكنك إظهارها تدريجياً. ({autoHiddenCount})
+              </div>
+            )}
+            {validationReport.length > 0 && (
+              <ul data-testid="law-validation-results" className="law-conditions">
+                {validationReport.map((item) => (
+                  <li data-testid={`law-result-${item.id}`} key={item.id}>{item.id}: {item.status === 'pass' ? '✅' : '❌'}</li>
+                ))}
+              </ul>
+            )}
+          </div>
           {isChartDisabled ? (
             <div className="chart-error" role="alert">
               تم تعطيل الشارت مؤقتًا. أزل المفتاح من التخزين المحلي لإعادة التفعيل.
@@ -119,7 +241,6 @@ const ChartPage = () => {
               barsCount={bars.length}
               lastBarTime={bars[bars.length - 1]?.time}
             >
-              <MarketPanel />
               <LightweightChart
                 height={600}
                 showControls={true}
@@ -128,6 +249,14 @@ const ChartPage = () => {
                 showKeyLevels={showKeyLevels}
                 showZones={showZones}
                 appliedLaw={appliedLaw}
+                appliedLaws={appliedLaws}
+                onOverlayStatsChange={(stats) => {
+                  overlayStatsRef.current = stats;
+                  const now = Date.now();
+                  if (now - lastStatsAtRef.current < 250) return;
+                  lastStatsAtRef.current = now;
+                  setOverlayStats(stats);
+                }}
                 externalBars={bars}
                 latestBar={latestBar}
               />
@@ -138,6 +267,24 @@ const ChartPage = () => {
         <div className="chart-sidebar">
           <div className="law-panel">
             <h3 className="panel-title">📍 القانون المطبق</h3>
+            {appliedLawIds.length > 0 && (
+              <div className="laws-list" style={{ marginBottom: '0.75rem' }}>
+                {appliedLawIds.map((lawId) => {
+                  const law = getLawById(lawId);
+                  if (!law) return null;
+                  return (
+                    <div key={lawId} style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button className="law-button" style={{ '--law-color': law.color || getCategoryColor(law.category), flex: 1 }} onClick={() => setActiveLaw(lawId)}>
+                        {lawId}
+                      </button>
+                      <button className="btn-remove" onClick={() => toggleLaw(lawId)}>{hiddenLawIds.includes(lawId) ? 'إظهار' : 'إخفاء'}</button>
+                      <button className="btn-remove" onClick={() => removeLaw(lawId)}>حذف</button>
+                    </div>
+                  );
+                })}
+                <button className="btn-remove" onClick={clearAll}>مسح كل القوانين</button>
+              </div>
+            )}
             {appliedLaw ? (
               <div className="applied-law" style={{ borderColor: appliedLawColor }}>
                 <div className="law-badge" style={{ background: appliedLawColor }}>
@@ -186,7 +333,7 @@ const ChartPage = () => {
                 <button 
                   className="btn-remove"
                   onClick={() => {
-                    setAppliedLawId(null);
+                    removeLaw(appliedLaw.id);
                     clearTutorialError();
                     endTutorial();
                   }}
@@ -194,7 +341,7 @@ const ChartPage = () => {
                   إزالة التطبيق
                 </button>
                 {showConditions && (
-                  <ul className="law-conditions">
+                  <ul data-testid="law-validation-results" className="law-conditions">
                     {appliedLaw.conditions.map((condition, index) => (
                       <li key={index}>✅ {condition}</li>
                     ))}
@@ -223,37 +370,6 @@ const ChartPage = () => {
                   <span className="law-name-short">{law.name}</span>
                 </button>
               ))}
-            </div>
-          </div>
-
-          <div className="quick-laws">
-            <h3 className="panel-title">📚 جميع القوانين</h3>
-            <div className="laws-list">
-              <label className="overlay-option" style={{ width: '100%' }}>
-                <select
-                  value={selectedLawId}
-                  onChange={(event) => setSelectedLawId(event.target.value)}
-                  style={{ width: '100%' }}
-                >
-                  {laws.map((law) => (
-                    <option key={law.id} value={law.id}>
-                      {law.id} — {law.title}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <button
-                className="law-button"
-                style={{ '--law-color': getCategoryColor(getLawById(selectedLawId)?.category) }}
-                onClick={() => {
-                  const law = getLawById(selectedLawId);
-                  if (law) {
-                    handleApplyLaw(law);
-                  }
-                }}
-              >
-                تطبيق القانون المحدد
-              </button>
             </div>
           </div>
 

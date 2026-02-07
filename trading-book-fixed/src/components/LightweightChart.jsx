@@ -5,6 +5,29 @@ import './LightweightChart.css';
 import { resolveRecipeValue } from '../data/parseRecipe';
 import { useAppliedLaw } from '../context/AppliedLawContext';
 import { normalizeBars } from '../lib/ohlcv/normalizeBars';
+import { createOverlayRegistry } from '../lib/chart/overlayRegistry';
+import { buildLawDrawPlan, buildMergedRenderPlan } from '../lib/indicator/model';
+import {
+  applyBaselineIndicatorOverlay as runBaselineOverlay,
+  applyUnknownMappingFallback as runUnknownFallbackOverlay,
+  applyLawSpecificPlan as runLawSpecificPlan,
+} from '../lib/chart/overlays';
+import lawIndicatorMap from '../data/lawIndicatorMap.json';
+
+const OVERLAY_BUDGET = {
+  maxTotalLines: 200,
+  maxTotalBands: 40,
+  maxTotalMarkers: 120,
+  maxTotalBoxes: 30,
+  maxTotalLabels: 200,
+  maxPerLawLines: 12,
+  maxPerLawBands: 3,
+  maxPerLawMarkers: 6,
+  maxPerLawBoxes: 2,
+  maxPerLawLabels: 10,
+};
+
+const STATS_EMIT_INTERVAL_MS = 250;
 
 const LightweightChart = ({
   height = 500,
@@ -14,6 +37,8 @@ const LightweightChart = ({
   showKeyLevels = false,
   showZones = false,
   appliedLaw = null,
+  appliedLaws = [],
+  onOverlayStatsChange,
   externalBars = null,
   latestBar = null
 }) => {
@@ -27,10 +52,77 @@ const LightweightChart = ({
   const tutorialMarkersRef = useRef({});
   const clickHandlerRef = useRef(null);
   const markersRef = useRef(null);
+  const zoneLayerRef = useRef(null);
+  const overlayRegistryRef = useRef({ priceLines: [], markers: [], zoneBands: [] });
+  const lawOverlayRegistry = useRef(createOverlayRegistry());
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [performanceWarning, setPerformanceWarning] = useState('');
   const dataRef = useRef(data);
+  const lastStatsSignatureRef = useRef('');
+  const dedupeSignatureRef = useRef(new Set());
+  const overlayBudgetRef = useRef({ totals: { lines: 0, bands: 0, markers: 0 }, perLaw: new Map(), performanceMode: false });
+  const renderPassRef = useRef(0);
+  const renderRafRef = useRef(null);
+  const lastStatsEmitRef = useRef(0);
+
+  const resetOverlayBudget = () => {
+    overlayBudgetRef.current = { totals: { lines: 0, bands: 0, markers: 0 }, perLaw: new Map(), performanceMode: false };
+    setPerformanceWarning('');
+  };
+
+  const markPerformanceMode = () => {
+    if (!overlayBudgetRef.current.performanceMode) {
+      overlayBudgetRef.current.performanceMode = true;
+      setPerformanceWarning('تم تفعيل وضع الأداء لتجنب تعليق الشارت.');
+    }
+  };
+
+  const canAddPrimitive = (lawId, primitive) => {
+    const b = overlayBudgetRef.current;
+    const totalsKey = primitive;
+    const totalLimit = {
+      lines: OVERLAY_BUDGET.maxTotalLines,
+      bands: OVERLAY_BUDGET.maxTotalBands,
+      markers: OVERLAY_BUDGET.maxTotalMarkers,
+    }[totalsKey] ?? 9999;
+
+    if ((b.totals[totalsKey] || 0) >= totalLimit) {
+      markPerformanceMode();
+      return false;
+    }
+
+    const lawKey = lawId || 'global';
+    if (!b.perLaw.has(lawKey)) b.perLaw.set(lawKey, { lines: 0, bands: 0, markers: 0 });
+    const lawCounts = b.perLaw.get(lawKey);
+    const perLawLimit = {
+      lines: OVERLAY_BUDGET.maxPerLawLines,
+      bands: OVERLAY_BUDGET.maxPerLawBands,
+      markers: OVERLAY_BUDGET.maxPerLawMarkers,
+    }[totalsKey] ?? 9999;
+
+    if ((lawCounts[totalsKey] || 0) >= perLawLimit) {
+      markPerformanceMode();
+      return false;
+    }
+
+    lawCounts[totalsKey] += 1;
+    b.totals[totalsKey] += 1;
+    return true;
+  };
+
+  const emitOverlayStats = (stats) => {
+    if (!onOverlayStatsChange) return;
+    const signature = JSON.stringify(stats);
+    const now = Date.now();
+    if (signature === lastStatsSignatureRef.current) return;
+    if (now - lastStatsEmitRef.current < STATS_EMIT_INTERVAL_MS) return;
+    lastStatsSignatureRef.current = signature;
+    lastStatsEmitRef.current = now;
+    onOverlayStatsChange(stats);
+  };
+
   const {
     tutorialActive,
     tutorialLawId,
@@ -57,13 +149,93 @@ const LightweightChart = ({
 
     overlaysRef.current.priceLines = [];
     overlaysRef.current.markers = [];
+    dedupeSignatureRef.current = new Set();
+    overlayRegistryRef.current.priceLines = [];
+    overlayRegistryRef.current.markers = [];
     tutorialMarkersRef.current = {};
+    if (zoneLayerRef.current && overlayRegistryRef.current.zoneBands.length) {
+      overlayRegistryRef.current.zoneBands.forEach((band) => {
+        band.style.display = 'none';
+      });
+    }
     if (markersRef.current) {
       markersRef.current.setMarkers([]);
     }
+    if (renderRafRef.current) {
+      cancelAnimationFrame(renderRafRef.current);
+      renderRafRef.current = null;
+    }
+    resetOverlayBudget();
+    lawOverlayRegistry.current.clearAll({
+      removePriceLine: (line) => candlestickSeriesRef.current?.removePriceLine(line),
+      hideBand: (band) => {
+        band.style.display = 'none';
+      }
+    });
   };
 
-  const addPriceLine = (price, options = {}) => {
+  const ensureZoneLayer = () => {
+    if (!chartContainerRef.current) return null;
+    if (!zoneLayerRef.current) {
+      const layer = document.createElement('div');
+      layer.style.position = 'absolute';
+      layer.style.inset = '0';
+      layer.style.pointerEvents = 'none';
+      layer.style.zIndex = '2';
+      chartContainerRef.current.appendChild(layer);
+      zoneLayerRef.current = layer;
+    }
+    return zoneLayerRef.current;
+  };
+
+  const addZoneBand = (fromPrice, toPrice, label = '', color = '#facc15', lawId = 'global') => {
+    if (!candlestickSeriesRef.current) return;
+    const layer = ensureZoneLayer();
+    if (!layer) return;
+    const fromY = candlestickSeriesRef.current.priceToCoordinate(fromPrice);
+    const toY = candlestickSeriesRef.current.priceToCoordinate(toPrice);
+    if (!Number.isFinite(fromY) || !Number.isFinite(toY)) return;
+
+    if (!canAddPrimitive(lawId, 'bands')) return;
+    const signature = `band:${lawId}:${fromPrice.toFixed(6)}:${toPrice.toFixed(6)}:${label}:${color}`;
+    if (dedupeSignatureRef.current.has(signature)) return;
+    dedupeSignatureRef.current.add(signature);
+
+    const band = overlayRegistryRef.current.zoneBands.find((item) => item.style.display === 'none') || document.createElement('div');
+    const top = Math.min(fromY, toY);
+    const heightPx = Math.max(2, Math.abs(toY - fromY));
+    band.style.position = 'absolute';
+    band.style.left = '0';
+    band.style.right = '0';
+    band.style.top = `${top}px`;
+    band.style.height = `${heightPx}px`;
+    band.style.background = `${color}22`;
+    band.style.borderTop = `1px dashed ${color}`;
+    band.style.borderBottom = `1px dashed ${color}`;
+
+    if (label) {
+      const tag = document.createElement('span');
+      tag.textContent = label;
+      tag.style.position = 'absolute';
+      tag.style.right = '4px';
+      tag.style.top = '0';
+      tag.style.fontSize = '11px';
+      tag.style.color = color;
+      tag.style.background = '#0f172aaa';
+      tag.style.padding = '1px 4px';
+      tag.style.borderRadius = '4px';
+      band.appendChild(tag);
+    }
+
+    if (!band.parentNode) {
+      layer.appendChild(band);
+      overlayRegistryRef.current.zoneBands.push(band);
+    }
+    band.style.display = 'block';
+    lawOverlayRegistry.current.addHtmlBand(lawId, band);
+  };
+
+  const addPriceLine = (price, options = {}, lawId = 'global') => {
     if (!candlestickSeriesRef.current || !Number.isFinite(price)) {
       return null;
     }
@@ -83,6 +255,11 @@ const LightweightChart = ({
       }[lineStyle] || LineStyle.Solid)
       : lineStyle;
 
+    if (!canAddPrimitive(lawId, 'lines')) return null;
+    const signature = `line:${Number(price).toFixed(6)}:${color}:${resolvedLineStyle}:${lineWidth}:${title}`;
+    if (dedupeSignatureRef.current.has(signature)) return null;
+    dedupeSignatureRef.current.add(signature);
+
     const line = candlestickSeriesRef.current.createPriceLine({
       price,
       color,
@@ -93,10 +270,12 @@ const LightweightChart = ({
     });
 
     overlaysRef.current.priceLines.push(line);
+    overlayRegistryRef.current.priceLines.push(line);
+    lawOverlayRegistry.current.addPriceLine(lawId, line);
     return line;
   };
 
-  const addMarker = (time, price, options = {}) => {
+  const addMarker = (time, price, options = {}, lawId = 'global') => {
     if (!candlestickSeriesRef.current || time == null) {
       return null;
     }
@@ -109,7 +288,12 @@ const LightweightChart = ({
       size = 1
     } = options;
 
+    if (!canAddPrimitive(lawId, 'markers')) return null;
     const resolvedText = text || (Number.isFinite(price) ? price.toFixed(2) : '');
+    const signature = `marker:${lawId}:${time}:${Number(price).toFixed(6)}:${options.shape || 'circle'}:${options.text || ''}`;
+    if (dedupeSignatureRef.current.has(signature)) return null;
+    dedupeSignatureRef.current.add(signature);
+
     const marker = {
       time,
       position,
@@ -120,6 +304,8 @@ const LightweightChart = ({
     };
 
     overlaysRef.current.markers.push(marker);
+    overlayRegistryRef.current.markers.push(marker);
+    lawOverlayRegistry.current.addMarker(lawId, marker);
     if (markersRef.current) {
       markersRef.current.setMarkers(overlaysRef.current.markers);
     }
@@ -163,7 +349,7 @@ const LightweightChart = ({
     return { shape: 'circle', color: '#60a5fa', position: 'aboveBar' };
   };
 
-  const drawFibLines = (low, high, options = {}) => {
+  const drawFibLines = (low, high, options = {}, lawId = 'global') => {
     if (!Number.isFinite(low) || !Number.isFinite(high) || low === high) {
       return;
     }
@@ -180,10 +366,18 @@ const LightweightChart = ({
       : [0.382, 0.5, 0.618, 0.786];
     const range = high - low;
 
+    const arabicTitles = {
+      0.236: 'حد الأمان',
+      0.382: 'المنطقة الذهبية',
+      0.5: 'الاتزان',
+      0.618: 'حد الأمان الأعلى',
+      0.786: 'امتداد',
+    };
+
     ratios.forEach((ratio) => {
       const price = low + range * ratio;
       const isEquilibrium = ratio === 0.236;
-      const title = isEquilibrium ? '0.236 الاتزان' : ratio.toFixed(3);
+      const title = `${ratio.toFixed(3)} ${arabicTitles[ratio] || ''}`.trim();
 
       addPriceLine(price, {
         color: isEquilibrium ? '#f97316' : color,
@@ -191,8 +385,19 @@ const LightweightChart = ({
         lineWidth: isEquilibrium ? 2 : lineWidth,
         title,
         axisLabelVisible: true
-      });
+      }, lawId);
     });
+
+    const bandLow = low + range * 0.236;
+    const bandHigh = low + range * 0.382;
+    addZoneBand(bandLow, bandHigh, 'منطقة 0.236 - 0.382', '#38bdf8', lawId);
+  };
+
+  const applyOverlayContext = (law, plan = null, mode = 'baseline') => {
+    const payload = { law, data, getDataRange, addPriceLine, drawFibLines, addZoneBand, addMarker, plan };
+    if (mode === 'unknown') return runUnknownFallbackOverlay(payload);
+    if (mode === 'lawPlan') return runLawSpecificPlan(payload);
+    return runBaselineOverlay(payload);
   };
 
   const getDataRange = () => {
@@ -229,7 +434,13 @@ const LightweightChart = ({
     return { min, max };
   };
 
-  const applyLawRecipe = (law) => {
+  const applyLawRecipe = (law, options = {}) => {
+    const lawId = law?.id || 'unknown-law';
+    const plan = buildLawDrawPlan({ law, bars: data, mapping: lawIndicatorMap });
+    if (!options.skipBaseline) {
+      applyOverlayContext(law);
+    }
+
     if (!law?.chartRecipe) {
       const lastBar = data[data.length - 1];
       if (lastBar) {
@@ -237,10 +448,10 @@ const LightweightChart = ({
           shape: 'circle',
           color: '#9ca3af',
           text: law.id
-        });
+        }, lawId);
         return true;
       }
-      return false;
+      return applyOverlayContext(law, null, 'unknown');
     }
 
     const recipe = law.chartRecipe;
@@ -269,7 +480,7 @@ const LightweightChart = ({
           lineStyle: overlay.lineStyle || LineStyle.Solid,
           lineWidth: overlay.lineWidth || 1,
           title: overlay.label || overlay.title || ''
-        });
+        }, lawId);
       }
 
       if (overlay.type === 'marker') {
@@ -280,7 +491,7 @@ const LightweightChart = ({
           shape: overlay.shape || 'circle',
           color: overlay.color || '#f59e0b',
           text: overlay.label || overlay.text || ''
-        });
+        }, lawId);
       }
 
       if (overlay.type === 'zone') {
@@ -294,7 +505,7 @@ const LightweightChart = ({
             lineStyle: overlay.lineStyle || 'dashed',
             lineWidth: overlay.lineWidth || 1,
             title: overlay.label || ''
-          });
+          }, lawId);
         }
 
         if (Number.isFinite(toValue)) {
@@ -303,22 +514,16 @@ const LightweightChart = ({
             lineStyle: overlay.lineStyle || 'dashed',
             lineWidth: overlay.lineWidth || 1,
             title: overlay.label || ''
-          });
+          }, lawId);
         }
       }
     });
 
     if (!overlays.length) {
-      const lastBar = data[data.length - 1];
-      if (lastBar) {
-        addMarker(lastBar.time, lastBar.close, {
-          shape: 'circle',
-          color: '#9ca3af',
-          text: law.id
-        });
-      }
+      applyOverlayContext(law, null, 'unknown');
     }
 
+    applyOverlayContext(law, plan, 'lawPlan');
     return true;
   };
 
@@ -331,24 +536,117 @@ const LightweightChart = ({
       return;
     }
 
-    if (!appliedLaw) {
-      clearOverlays();
-      endTutorial();
-      return;
-    }
+    const activeLaws = Array.isArray(appliedLaws) && appliedLaws.length
+      ? appliedLaws
+      : appliedLaw
+        ? [appliedLaw]
+        : [];
 
-    const needsInputs = Boolean(appliedLaw?.chartRecipe?.inputs?.length);
-    if (needsInputs) {
+    if (!activeLaws.length) {
       clearOverlays();
-      if (!tutorialActive || tutorialLawId !== appliedLaw.id) {
-        startTutorial(appliedLaw.id);
+      if (tutorialActive) {
+        endTutorial();
       }
       return;
     }
 
+    const primaryLaw = activeLaws[activeLaws.length - 1];
+    const needsInputs = Boolean(primaryLaw?.chartRecipe?.inputs?.length);
+    if (needsInputs) {
+      clearOverlays();
+      activeLaws.forEach((law) => {
+        applyOverlayContext(law, null, 'unknown');
+      });
+      if (markersRef.current) {
+        markersRef.current.setMarkers(lawOverlayRegistry.current.getMarkers());
+      }
+      if (!tutorialActive || tutorialLawId !== primaryLaw.id) {
+        startTutorial(primaryLaw.id);
+      }
+      const rawStats = lawOverlayRegistry.current.getStats();
+      const stats = activeLaws.map((law) => {
+        const hit = rawStats.find((item) => item.lawId === law.id) || { priceLines: 0, markers: 0, bands: 0 };
+        return {
+          lawId: law.id,
+          hasRecipeOverlays: Boolean(law?.chartRecipe?.overlays?.length),
+          hasInputs: Boolean(law?.chartRecipe?.inputs?.length),
+          renderedMarkers: hit.markers,
+          renderedLines: hit.priceLines,
+          renderedBands: hit.bands,
+          lawSpecificShapes: 1,
+        };
+      });
+      emitOverlayStats(stats);
+      return;
+    }
+
     clearOverlays();
-    applyLawRecipe(appliedLaw);
-  }, [appliedLaw, data, tutorialActive, tutorialLawId, startTutorial, endTutorial]);
+    resetOverlayBudget();
+    const renderPass = ++renderPassRef.current;
+    console.time('computePlan');
+    const merged = buildMergedRenderPlan({ laws: activeLaws, bars: data, mapping: lawIndicatorMap });
+    console.timeEnd('computePlan');
+
+    const workItems = [];
+    if (merged?.baseline?.lines?.length || merged?.baseline?.bands?.length) {
+      workItems.push(() => applyOverlayContext({ id: 'BASELINE_SHARED' }));
+    }
+    activeLaws.forEach((law) => {
+      workItems.push(() => applyLawRecipe(law, { skipBaseline: true }));
+    });
+
+    let index = 0;
+    console.time('applyOverlays');
+    const runBatch = () => {
+      if (renderPass !== renderPassRef.current) return;
+      const batchSize = 3;
+      for (let i = 0; i < batchSize && index < workItems.length; i += 1) {
+        try {
+          workItems[index]();
+        } catch (error) {
+          console.error('Overlay apply failed:', error);
+          setErrorMessage('تعذر عرض الشارت. يمكنك تعطيل التراكبات أو إعادة المحاولة.');
+        }
+        index += 1;
+      }
+
+      if (index < workItems.length) {
+        renderRafRef.current = requestAnimationFrame(runBatch);
+        return;
+      }
+
+      console.timeEnd('applyOverlays');
+      const totals = overlayBudgetRef.current.totals;
+      console.log({
+        lawsActive: activeLaws.length,
+        totalLines: totals.lines,
+        totalBands: totals.bands,
+        totalMarkers: totals.markers,
+        totalBoxes: 0,
+        totalLabels: 0,
+      });
+
+      if (markersRef.current) {
+        markersRef.current.setMarkers(lawOverlayRegistry.current.getMarkers());
+      }
+      const stats = activeLaws.map((law) => {
+        const plan = merged.stats.find((item) => item.lawId === law.id) || { markersCount: 0, linesCount: 0, boxesCount: 0 };
+        return {
+          lawId: law.id,
+          hasRecipeOverlays: Boolean(law?.chartRecipe?.overlays?.length),
+          hasInputs: Boolean(law?.chartRecipe?.inputs?.length),
+          renderedMarkers: plan.markersCount,
+          renderedLines: plan.linesCount,
+          renderedBands: plan.boxesCount,
+          lawSpecificShapes: plan.lawSpecificCount || 0,
+          unknownReason: plan.unknownReason,
+        };
+      });
+      emitOverlayStats(stats);
+    };
+
+    renderRafRef.current = requestAnimationFrame(runBatch);
+  }, [appliedLaw, appliedLaws, data, tutorialActive, tutorialLawId, startTutorial, endTutorial, onOverlayStatsChange]);
 
   useEffect(() => {
     const chart = chartRef.current;
@@ -583,6 +881,13 @@ const LightweightChart = ({
 
   useEffect(() => {
     if (!candlestickSeriesRef.current || !latestBar) {
+      return;
+    }
+    const lastDataTime = data[data.length - 1]?.time;
+    if (!Number.isFinite(lastDataTime) || !Number.isFinite(latestBar.time)) {
+      return;
+    }
+    if (latestBar.time < lastDataTime) {
       return;
     }
     const isValidLatest = [latestBar.time, latestBar.open, latestBar.high, latestBar.low, latestBar.close]
@@ -950,6 +1255,12 @@ const LightweightChart = ({
         <div className="chart-loading">
           <div className="spinner"></div>
           <p>جاري التحميل...</p>
+        </div>
+      )}
+
+      {performanceWarning && !isLoading && !errorMessage && (
+        <div className="chart-error" role="status">
+          {performanceWarning}
         </div>
       )}
 
