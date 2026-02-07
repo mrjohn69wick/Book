@@ -400,6 +400,12 @@ const LightweightChart = ({
     return runBaselineOverlay(payload);
   };
 
+  const runUnknownFallbackOverlay = (law) => applyUnknownFallback({ law, data, getDataRange, addPriceLine, drawFibLines, addZoneBand, addMarker });
+
+  const runBaselineOverlay = (law) => applyBaselineOverlay({ law, data, getDataRange, addPriceLine, drawFibLines, addZoneBand, addMarker });
+
+  const runLawSpecificPlan = (law, plan) => applyLawPlan({ law, plan, data, addPriceLine, addZoneBand, addMarker });
+
   const getDataRange = () => {
     if (!data.length) {
       return null;
@@ -713,7 +719,11 @@ const LightweightChart = ({
       clearTutorialError();
 
       const { shape, color, position } = getMarkerStyleForInput(assigns);
-      const marker = {
+      const signature = `marker:${lawId}:${time}:${Number(price).toFixed(6)}:${options.shape || 'circle'}:${options.text || ''}`;
+    if (dedupeSignatureRef.current.has(signature)) return null;
+    dedupeSignatureRef.current.add(signature);
+
+    const marker = {
         time: param.time,
         position,
         shape,
