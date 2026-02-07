@@ -315,6 +315,12 @@ const LightweightChart = ({
     return runBaselineOverlay(payload);
   };
 
+  const runUnknownFallbackOverlay = (law) => applyUnknownFallback({ law, data, getDataRange, addPriceLine, drawFibLines, addZoneBand, addMarker });
+
+  const runBaselineOverlay = (law) => applyBaselineOverlay({ law, data, getDataRange, addPriceLine, drawFibLines, addZoneBand, addMarker });
+
+  const runLawSpecificPlan = (law, plan) => applyLawPlan({ law, plan, data, addPriceLine, addZoneBand, addMarker });
+
   const getDataRange = () => {
     if (!data.length) {
       return null;
