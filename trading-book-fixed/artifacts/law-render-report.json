@@ -1,0 +1,737 @@
+[
+  {
+    "lawId": "LAW_001",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_001"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_002",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_002"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_003",
+    "totalShapes": 30,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 1,
+    "mappingMode": "ATTEMPT_A_RECIPE",
+    "unknownReason": "Attempt A: direct recipe mapping exists; merged with indicator baseline and law-specific geometry.",
+    "features": [
+      "baseline",
+      "PrevBreakHL",
+      "recipeOverlay",
+      "lawSpecific:LAW_003"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_004",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 2,
+    "mappingMode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "unknownReason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "features": [
+      "baseline",
+      "fibGrid",
+      "lawSpecific:LAW_004"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_005",
+    "totalShapes": 28,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 1,
+    "mappingMode": "ATTEMPT_A_RECIPE",
+    "unknownReason": "Attempt A: direct recipe mapping exists; merged with indicator baseline and law-specific geometry.",
+    "features": [
+      "baseline",
+      "fibGrid",
+      "recipeOverlay",
+      "lawSpecific:LAW_005"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_006",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_006"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_007",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 2,
+    "mappingMode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "unknownReason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "features": [
+      "baseline",
+      "PrevBreakHL",
+      "fibGrid",
+      "lawSpecific:LAW_007"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_008",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 2,
+    "mappingMode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "unknownReason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "features": [
+      "baseline",
+      "PrevBreakHL",
+      "InsideHL",
+      "fibGrid",
+      "lawSpecific:LAW_008"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_009",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_009"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_010",
+    "totalShapes": 29,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 1,
+    "mappingMode": "ATTEMPT_A_RECIPE",
+    "unknownReason": "Attempt A: direct recipe mapping exists; merged with indicator baseline and law-specific geometry.",
+    "features": [
+      "baseline",
+      "fibGrid",
+      "recipeOverlay",
+      "lawSpecific:LAW_010"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_011",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_011"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_012",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_012"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_013",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_013"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_014",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 2,
+    "mappingMode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "unknownReason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "features": [
+      "baseline",
+      "PrevBreakHL",
+      "fibGrid",
+      "lawSpecific:LAW_014"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_015",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 2,
+    "mappingMode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "unknownReason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "features": [
+      "baseline",
+      "PrevBreakHL",
+      "fibGrid",
+      "lawSpecific:LAW_015"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_016",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_016"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_017",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_017"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_018",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 2,
+    "mappingMode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "unknownReason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "features": [
+      "baseline",
+      "InsideHL",
+      "lawSpecific:LAW_018"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_019",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_019"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_020",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_020"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_021",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 2,
+    "mappingMode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "unknownReason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "features": [
+      "baseline",
+      "fibGrid",
+      "lawSpecific:LAW_021"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_022",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_022"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_023",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_023"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_024",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_024"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_025",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 2,
+    "mappingMode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "unknownReason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "features": [
+      "baseline",
+      "fibGrid",
+      "lawSpecific:LAW_025"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_026",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_026"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_027",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_027"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_028",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 2,
+    "mappingMode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "unknownReason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "features": [
+      "baseline",
+      "fibGrid",
+      "lawSpecific:LAW_028"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_029",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_029"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_030",
+    "totalShapes": 29,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 1,
+    "mappingMode": "ATTEMPT_A_RECIPE",
+    "unknownReason": "Attempt A: direct recipe mapping exists; merged with indicator baseline and law-specific geometry.",
+    "features": [
+      "baseline",
+      "fibGrid",
+      "recipeOverlay",
+      "lawSpecific:LAW_030"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_031",
+    "totalShapes": 37,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 1,
+    "mappingMode": "ATTEMPT_A_RECIPE",
+    "unknownReason": "Attempt A: direct recipe mapping exists; merged with indicator baseline and law-specific geometry.",
+    "features": [
+      "baseline",
+      "fibGrid",
+      "recipeOverlay",
+      "lawSpecific:LAW_031"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_032",
+    "totalShapes": 29,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 1,
+    "mappingMode": "ATTEMPT_A_RECIPE",
+    "unknownReason": "Attempt A: direct recipe mapping exists; merged with indicator baseline and law-specific geometry.",
+    "features": [
+      "baseline",
+      "fibGrid",
+      "recipeOverlay",
+      "lawSpecific:LAW_032"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_033",
+    "totalShapes": 33,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 1,
+    "mappingMode": "ATTEMPT_A_RECIPE",
+    "unknownReason": "Attempt A: direct recipe mapping exists; merged with indicator baseline and law-specific geometry.",
+    "features": [
+      "baseline",
+      "InsideHL",
+      "fibGrid",
+      "recipeOverlay",
+      "lawSpecific:LAW_033"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_034",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 2,
+    "mappingMode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "unknownReason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "features": [
+      "baseline",
+      "Weak123",
+      "lawSpecific:LAW_034"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_035",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 2,
+    "mappingMode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "unknownReason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "features": [
+      "baseline",
+      "fibGrid",
+      "lawSpecific:LAW_035"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_036",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 2,
+    "mappingMode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "unknownReason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "features": [
+      "baseline",
+      "PrevBreakHL",
+      "fibGrid",
+      "lawSpecific:LAW_036"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_037",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 2,
+    "mappingMode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "unknownReason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "features": [
+      "baseline",
+      "fibGrid",
+      "lawSpecific:LAW_037"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_038",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_038"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_039",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_039"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_040",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 2,
+    "mappingMode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "unknownReason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "features": [
+      "baseline",
+      "InsideHL",
+      "lawSpecific:LAW_040"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_041",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_041"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_042",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_042"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_043",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_043"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_044",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_044"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_045",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 3,
+    "mappingMode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "unknownReason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_045"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_046",
+    "totalShapes": 28,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 1,
+    "mappingMode": "ATTEMPT_A_RECIPE",
+    "unknownReason": "Attempt A: direct recipe mapping exists; merged with indicator baseline and law-specific geometry.",
+    "features": [
+      "baseline",
+      "fibGrid",
+      "recipeOverlay",
+      "lawSpecific:LAW_046"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_047",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 2,
+    "mappingMode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "unknownReason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "features": [
+      "baseline",
+      "fibGrid",
+      "lawSpecific:LAW_047"
+    ],
+    "pass": true
+  },
+  {
+    "lawId": "LAW_048",
+    "totalShapes": 27,
+    "baselineShapes": 23,
+    "lawSpecificShapes": 4,
+    "mappingAttempt": 2,
+    "mappingMode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "unknownReason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "features": [
+      "baseline",
+      "fibGrid",
+      "lawSpecific:LAW_048"
+    ],
+    "pass": true
+  }
+]

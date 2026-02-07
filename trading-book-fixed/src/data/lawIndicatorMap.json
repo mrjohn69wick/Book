@@ -1,0 +1,1125 @@
+{
+  "LAW_001": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_001"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_002": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_002"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_003": {
+    "mode": "ATTEMPT_A_RECIPE",
+    "attempts": 1,
+    "features": [
+      "baseline",
+      "PrevBreakHL",
+      "recipeOverlay",
+      "lawSpecific:LAW_003"
+    ],
+    "reason": "Attempt A: direct recipe mapping exists; merged with indicator baseline and law-specific geometry.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt: HL/Fib/Fill blocks"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: تداخل/كسر",
+          "indicator": "indicator.txt: enablePrevBreakHL"
+        }
+      ]
+    }
+  },
+  "LAW_004": {
+    "mode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "attempts": 2,
+    "features": [
+      "baseline",
+      "fibGrid",
+      "lawSpecific:LAW_004"
+    ],
+    "reason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  },
+  "LAW_005": {
+    "mode": "ATTEMPT_A_RECIPE",
+    "attempts": 1,
+    "features": [
+      "baseline",
+      "fibGrid",
+      "recipeOverlay",
+      "lawSpecific:LAW_005"
+    ],
+    "reason": "Attempt A: direct recipe mapping exists; merged with indicator baseline and law-specific geometry.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt: HL/Fib/Fill blocks"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  },
+  "LAW_006": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_006"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_007": {
+    "mode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "attempts": 2,
+    "features": [
+      "baseline",
+      "PrevBreakHL",
+      "fibGrid",
+      "lawSpecific:LAW_007"
+    ],
+    "reason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: تداخل/كسر",
+          "indicator": "indicator.txt: enablePrevBreakHL"
+        },
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  },
+  "LAW_008": {
+    "mode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "attempts": 2,
+    "features": [
+      "baseline",
+      "PrevBreakHL",
+      "InsideHL",
+      "fibGrid",
+      "lawSpecific:LAW_008"
+    ],
+    "reason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: تداخل/كسر",
+          "indicator": "indicator.txt: enablePrevBreakHL"
+        },
+        {
+          "book": "BOOK_V3_COMBINED.md: قانون التداخل",
+          "indicator": "indicator.txt: enablePrevInsideHL"
+        },
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  },
+  "LAW_009": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_009"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_010": {
+    "mode": "ATTEMPT_A_RECIPE",
+    "attempts": 1,
+    "features": [
+      "baseline",
+      "fibGrid",
+      "recipeOverlay",
+      "lawSpecific:LAW_010"
+    ],
+    "reason": "Attempt A: direct recipe mapping exists; merged with indicator baseline and law-specific geometry.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt: HL/Fib/Fill blocks"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  },
+  "LAW_011": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_011"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_012": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_012"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_013": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_013"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_014": {
+    "mode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "attempts": 2,
+    "features": [
+      "baseline",
+      "PrevBreakHL",
+      "fibGrid",
+      "lawSpecific:LAW_014"
+    ],
+    "reason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: تداخل/كسر",
+          "indicator": "indicator.txt: enablePrevBreakHL"
+        },
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  },
+  "LAW_015": {
+    "mode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "attempts": 2,
+    "features": [
+      "baseline",
+      "PrevBreakHL",
+      "fibGrid",
+      "lawSpecific:LAW_015"
+    ],
+    "reason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: تداخل/كسر",
+          "indicator": "indicator.txt: enablePrevBreakHL"
+        },
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  },
+  "LAW_016": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_016"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_017": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_017"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_018": {
+    "mode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "attempts": 2,
+    "features": [
+      "baseline",
+      "InsideHL",
+      "lawSpecific:LAW_018"
+    ],
+    "reason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: قانون التداخل",
+          "indicator": "indicator.txt: enablePrevInsideHL"
+        }
+      ]
+    }
+  },
+  "LAW_019": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_019"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_020": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_020"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_021": {
+    "mode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "attempts": 2,
+    "features": [
+      "baseline",
+      "fibGrid",
+      "lawSpecific:LAW_021"
+    ],
+    "reason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  },
+  "LAW_022": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_022"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_023": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_023"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_024": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_024"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_025": {
+    "mode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "attempts": 2,
+    "features": [
+      "baseline",
+      "fibGrid",
+      "lawSpecific:LAW_025"
+    ],
+    "reason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  },
+  "LAW_026": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_026"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_027": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_027"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_028": {
+    "mode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "attempts": 2,
+    "features": [
+      "baseline",
+      "fibGrid",
+      "lawSpecific:LAW_028"
+    ],
+    "reason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  },
+  "LAW_029": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_029"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_030": {
+    "mode": "ATTEMPT_A_RECIPE",
+    "attempts": 1,
+    "features": [
+      "baseline",
+      "fibGrid",
+      "recipeOverlay",
+      "lawSpecific:LAW_030"
+    ],
+    "reason": "Attempt A: direct recipe mapping exists; merged with indicator baseline and law-specific geometry.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt: HL/Fib/Fill blocks"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  },
+  "LAW_031": {
+    "mode": "ATTEMPT_A_RECIPE",
+    "attempts": 1,
+    "features": [
+      "baseline",
+      "fibGrid",
+      "recipeOverlay",
+      "lawSpecific:LAW_031"
+    ],
+    "reason": "Attempt A: direct recipe mapping exists; merged with indicator baseline and law-specific geometry.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt: HL/Fib/Fill blocks"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  },
+  "LAW_032": {
+    "mode": "ATTEMPT_A_RECIPE",
+    "attempts": 1,
+    "features": [
+      "baseline",
+      "fibGrid",
+      "recipeOverlay",
+      "lawSpecific:LAW_032"
+    ],
+    "reason": "Attempt A: direct recipe mapping exists; merged with indicator baseline and law-specific geometry.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt: HL/Fib/Fill blocks"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  },
+  "LAW_033": {
+    "mode": "ATTEMPT_A_RECIPE",
+    "attempts": 1,
+    "features": [
+      "baseline",
+      "InsideHL",
+      "fibGrid",
+      "recipeOverlay",
+      "lawSpecific:LAW_033"
+    ],
+    "reason": "Attempt A: direct recipe mapping exists; merged with indicator baseline and law-specific geometry.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt: HL/Fib/Fill blocks"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: قانون التداخل",
+          "indicator": "indicator.txt: enablePrevInsideHL"
+        },
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  },
+  "LAW_034": {
+    "mode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "attempts": 2,
+    "features": [
+      "baseline",
+      "Weak123",
+      "lawSpecific:LAW_034"
+    ],
+    "reason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt"
+      ],
+      "pointers": [
+        {
+          "book": "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md: weak wording",
+          "indicator": "indicator.txt: enablePrevWeak123HL"
+        }
+      ]
+    }
+  },
+  "LAW_035": {
+    "mode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "attempts": 2,
+    "features": [
+      "baseline",
+      "fibGrid",
+      "lawSpecific:LAW_035"
+    ],
+    "reason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  },
+  "LAW_036": {
+    "mode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "attempts": 2,
+    "features": [
+      "baseline",
+      "PrevBreakHL",
+      "fibGrid",
+      "lawSpecific:LAW_036"
+    ],
+    "reason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: تداخل/كسر",
+          "indicator": "indicator.txt: enablePrevBreakHL"
+        },
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  },
+  "LAW_037": {
+    "mode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "attempts": 2,
+    "features": [
+      "baseline",
+      "fibGrid",
+      "lawSpecific:LAW_037"
+    ],
+    "reason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  },
+  "LAW_038": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_038"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_039": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_039"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_040": {
+    "mode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "attempts": 2,
+    "features": [
+      "baseline",
+      "InsideHL",
+      "lawSpecific:LAW_040"
+    ],
+    "reason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: قانون التداخل",
+          "indicator": "indicator.txt: enablePrevInsideHL"
+        }
+      ]
+    }
+  },
+  "LAW_041": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_041"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_042": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_042"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_043": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_043"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_044": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_044"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_045": {
+    "mode": "ATTEMPT_D_SAFE_UNKNOWN",
+    "attempts": 3,
+    "features": [
+      "baseline",
+      "unitHL",
+      "lawSpecific:LAW_045"
+    ],
+    "reason": "Attempt D: no explicit indicator/book trigger could be resolved; using safe non-misleading fallback geometry plus law-specific highlight and TODO ledger pointers.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md (category/law framing)",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md (category context)"
+      ],
+      "indicator": [
+        "indicator.txt feature toggles by behavior family"
+      ],
+      "pointers": []
+    }
+  },
+  "LAW_046": {
+    "mode": "ATTEMPT_A_RECIPE",
+    "attempts": 1,
+    "features": [
+      "baseline",
+      "fibGrid",
+      "recipeOverlay",
+      "lawSpecific:LAW_046"
+    ],
+    "reason": "Attempt A: direct recipe mapping exists; merged with indicator baseline and law-specific geometry.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt: HL/Fib/Fill blocks"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  },
+  "LAW_047": {
+    "mode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "attempts": 2,
+    "features": [
+      "baseline",
+      "fibGrid",
+      "lawSpecific:LAW_047"
+    ],
+    "reason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  },
+  "LAW_048": {
+    "mode": "ATTEMPT_B_INDICATOR_FEATURE",
+    "attempts": 2,
+    "features": [
+      "baseline",
+      "fibGrid",
+      "lawSpecific:LAW_048"
+    ],
+    "reason": "Attempt B: mapped to indicator features by keyword semantics; no invented signal trigger added.",
+    "references": {
+      "books": [
+        "BOOK_V3_COMBINED.md",
+        "Ziad_Ikailan_236_FULL_CONTEXT_BOOK_V3.md"
+      ],
+      "indicator": [
+        "indicator.txt"
+      ],
+      "pointers": [
+        {
+          "book": "BOOK_V3_COMBINED.md: 0.236/zone sections",
+          "indicator": "indicator.txt: baseDefault + fillBand"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,1 @@
+export const DEFAULT_TWELVE_DATA_KEY = 'a59d19b5e0934001a96c87f9b8bb0ba5';
