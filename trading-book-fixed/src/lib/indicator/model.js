@@ -63,6 +63,29 @@ export const computeHighlights = (prevUnit, currentUnit) => {
   ];
 };
 
+
+
+const GLOBAL_BLOCK_WINDOWS = [
+  [0, 0.236],
+  [0.236, 0.382],
+  [0.382, 0.5],
+  [0.5, 0.618],
+  [0.618, 0.764],
+  [0.764, 1],
+];
+
+const buildGlobalFibBlocks = (unit, unitKey = 'U') => {
+  if (!unit || !Number.isFinite(unit.range) || unit.range <= 0) return [];
+  return GLOBAL_BLOCK_WINDOWS.map(([fromRatio, toRatio], index) => ({
+    key: `global-block-${unitKey}-${index + 1}`,
+    from: unit.low + unit.range * fromRatio,
+    to: unit.low + unit.range * toRatio,
+    label: `Block ${unitKey}-${index + 1} (${fromRatio}→${toRatio})`,
+    color: index % 2 === 0 ? '#0ea5e9' : '#22c55e',
+    lawSpecific: false,
+  }));
+};
+
 export const buildIndicatorModel = (bars = [], options = {}) => {
   const units = segmentUnits(bars, options.unitSize || 48);
   const lastUnit = units[units.length - 1] || null;
@@ -90,6 +113,13 @@ export const buildIndicatorBaselinePlan = (bars = [], options = {}) => {
     ],
     bands: [
       { key: 'baseline-band-0236-0382', from: lastUnit.low + lastUnit.range * 0.236, to: lastUnit.low + lastUnit.range * 0.382, label: 'المنطقة الذهبية', color: '#22c55e' },
+      ...buildGlobalFibBlocks(lastUnit, lastUnit.id || 'CURR'),
+      ...buildGlobalFibBlocks(model.htfUnit, model.htfUnit?.id || 'HTF').map((band) => ({
+        ...band,
+        key: `${band.key}-htf`,
+        label: `${band.label} HTF`,
+        color: '#94a3b8',
+      })),
     ],
     markers: [{ key: 'baseline-marker', time: lastUnit.endTime, price: lastUnit.close, text: 'BASELINE', color: '#22c55e' }],
     labels: model.highlights.filter((h) => h.enabled).map((h) => ({ key: `baseline-hlx-${h.key}`, text: h.key })),
