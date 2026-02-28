@@ -204,14 +204,16 @@ const LightweightChart = ({
     const band = overlayRegistryRef.current.zoneBands.find((item) => item.style.display === 'none') || document.createElement('div');
     const top = Math.min(fromY, toY);
     const heightPx = Math.max(2, Math.abs(toY - fromY));
+    const isRgba = typeof color === 'string' && color.trim().startsWith('rgba');
+    band.innerHTML = '';
     band.style.position = 'absolute';
     band.style.left = '0';
     band.style.right = '0';
     band.style.top = `${top}px`;
     band.style.height = `${heightPx}px`;
-    band.style.background = `${color}22`;
-    band.style.borderTop = `1px dashed ${color}`;
-    band.style.borderBottom = `1px dashed ${color}`;
+    band.style.background = isRgba ? color : `${color}22`;
+    band.style.borderTop = `1px dashed ${isRgba ? '#94a3b8' : color}`;
+    band.style.borderBottom = `1px dashed ${isRgba ? '#94a3b8' : color}`;
 
     if (label) {
       const tag = document.createElement('span');
@@ -440,6 +442,33 @@ const LightweightChart = ({
     return { min, max };
   };
 
+  const normalizeDirection = (value) => {
+    const raw = String(value || '').trim().toLowerCase();
+    if (raw === 'sell' || raw === 'short' || raw === 'bearish') return 'sell';
+    return 'buy';
+  };
+
+  const buildRecipeContext = (inputValues = {}) => {
+    const range = getDataRange();
+    const lastBar = data[data.length - 1];
+    const span = range ? Math.max(1e-9, range.high - range.low) : 0;
+    const defaults = {
+      entryPrice: lastBar?.close,
+      stopPrice: Number.isFinite(lastBar?.close) ? lastBar.close - span * 0.236 : null,
+      direction: normalizeDirection(lastBar?.close >= lastBar?.open ? 'buy' : 'sell'),
+      rangeLow: range?.low,
+      rangeHigh: range?.high,
+    };
+
+    return {
+      low: range?.low,
+      high: range?.high,
+      inputs: inputValues,
+      defaults,
+      lastBar,
+    };
+  };
+
   const applyLawRecipe = (law, options = {}) => {
     const lawId = law?.id || 'unknown-law';
     const plan = buildLawDrawPlan({ law, bars: data, mapping: lawIndicatorMap });
@@ -455,25 +484,14 @@ const LightweightChart = ({
           color: '#9ca3af',
           text: law.id
         }, lawId);
-        return true;
       }
-      return applyOverlayContext(law, null, 'unknown');
+      applyOverlayContext(law, plan, 'lawPlan');
+      return true;
     }
 
     const recipe = law.chartRecipe;
-    const needsInputs = Array.isArray(recipe.inputs) && recipe.inputs.length > 0;
-
-    if (needsInputs) {
-      return false;
-    }
-
-    const range = getDataRange();
-    const context = range ? { low: range.low, high: range.high } : {};
     const overlays = Array.isArray(recipe.overlays) ? recipe.overlays : [];
-
-    if (!range && overlays.length) {
-      return false;
-    }
+    const context = buildRecipeContext(options.inputValues || {});
 
     overlays.forEach((overlay) => {
       if (!overlay || !overlay.type) return;
@@ -481,47 +499,51 @@ const LightweightChart = ({
       if (overlay.type === 'priceLine') {
         const rawValue = overlay.value ?? overlay.price;
         const price = resolveRecipeValue(rawValue, context);
+        if (!Number.isFinite(price)) return;
         addPriceLine(price, {
           color: overlay.color || '#ffffff',
           lineStyle: overlay.lineStyle || LineStyle.Solid,
           lineWidth: overlay.lineWidth || 1,
           title: overlay.label || overlay.title || ''
         }, lawId);
+        return;
       }
 
       if (overlay.type === 'marker') {
         const rawValue = overlay.value ?? overlay.price;
         const price = resolveRecipeValue(rawValue, context);
-        const markerTime = overlay.time || data[data.length - 1]?.time;
+        const markerTime = overlay.time || context.lastBar?.time;
+        if (!Number.isFinite(price) || markerTime == null) return;
+        const direction = normalizeDirection(resolveRecipeValue(overlay.direction, context));
+        const explicitShape = overlay.shape === 'arrow' ? (direction === 'sell' ? 'arrowDown' : 'arrowUp') : overlay.shape;
         addMarker(markerTime, price, {
-          shape: overlay.shape || 'circle',
+          shape: explicitShape || 'circle',
+          position: direction === 'sell' ? 'aboveBar' : 'belowBar',
           color: overlay.color || '#f59e0b',
           text: overlay.label || overlay.text || ''
         }, lawId);
+        return;
       }
 
       if (overlay.type === 'zone') {
         const fromValue = resolveRecipeValue(overlay.from, context);
         const toValue = resolveRecipeValue(overlay.to, context);
         const zoneColor = overlay.color || '#facc15';
+        if (!Number.isFinite(fromValue) || !Number.isFinite(toValue)) return;
 
-        if (Number.isFinite(fromValue)) {
-          addPriceLine(fromValue, {
-            color: zoneColor,
-            lineStyle: overlay.lineStyle || 'dashed',
-            lineWidth: overlay.lineWidth || 1,
-            title: overlay.label || ''
-          }, lawId);
-        }
-
-        if (Number.isFinite(toValue)) {
-          addPriceLine(toValue, {
-            color: zoneColor,
-            lineStyle: overlay.lineStyle || 'dashed',
-            lineWidth: overlay.lineWidth || 1,
-            title: overlay.label || ''
-          }, lawId);
-        }
+        addZoneBand(fromValue, toValue, overlay.label || '', zoneColor, lawId);
+        addPriceLine(fromValue, {
+          color: zoneColor,
+          lineStyle: overlay.lineStyle || 'dashed',
+          lineWidth: overlay.lineWidth || 1,
+          title: `${overlay.label || 'zone'} ↓`
+        }, lawId);
+        addPriceLine(toValue, {
+          color: zoneColor,
+          lineStyle: overlay.lineStyle || 'dashed',
+          lineWidth: overlay.lineWidth || 1,
+          title: `${overlay.label || 'zone'} ↑`
+        }, lawId);
       }
     });
 
@@ -560,8 +582,12 @@ const LightweightChart = ({
     const needsInputs = Boolean(primaryLaw?.chartRecipe?.inputs?.length);
     if (needsInputs) {
       clearOverlays();
+      resetOverlayBudget();
       activeLaws.forEach((law) => {
-        applyOverlayContext(law, null, 'unknown');
+        applyLawRecipe(law, {
+          skipBaseline: true,
+          inputValues: law.id === primaryLaw.id ? tutorialInputs : {},
+        });
       });
       if (markersRef.current) {
         markersRef.current.setMarkers(lawOverlayRegistry.current.getMarkers());
@@ -579,7 +605,7 @@ const LightweightChart = ({
           renderedMarkers: hit.markers,
           renderedLines: hit.priceLines,
           renderedBands: hit.bands,
-          lawSpecificShapes: 1,
+          lawSpecificShapes: hit.priceLines + hit.markers + hit.bands,
         };
       });
       emitOverlayStats(stats);

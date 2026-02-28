@@ -89,3 +89,47 @@
 - Build status: PASS (0 errors, 0 warnings)
 - UI/Chart files reviewed in inventory: 41 files
 - Feature theories integrated in chart map: 7 core groups (incl. global blocks)
+
+## Cycle 2 — Rendering Completion for All Laws
+
+### Facts
+1. مسار `needsInputs` كان يرسم fallback فقط ولا يمرّر القانون إلى `applyLawRecipe`، ما ينتج تمثيلًا ناقصًا لبعض القوانين.
+2. `resolveRecipeValue` لم يكن يدعم `input(...)`، لذلك قيم recipe التفاعلية لا تُحل برمجياً.
+3. zone overlays كانت ترسم حدودًا فقط في بعض الحالات بدون band مرئي متسق خصوصًا مع ألوان `rgba(...)`.
+
+### Mechanism
+- دعم `input(...)` + defaults في `parseRecipe` عبر `INPUT_EXPR_RE` و`readInputValue`.
+- توسيع `applyLawRecipe` لبناء context ديناميكي (range + defaults + tutorial inputs) ورسم جميع overlays حتى مع قوانين الإدخال.
+- تحويل marker `shape: arrow` إلى `arrowUp/arrowDown` حسب الاتجاه.
+- تفعيل رسم zone band الفعلي عبر `addZoneBand` مع معالجة `rgba` آمنة ومسح محتوى band المعاد استخدامه.
+- تعديل فرع `needsInputs` ليستخدم `applyLawRecipe` بدل unknown fallback.
+
+### Consequence
+- كل قانون أصبح يُرسم فعليًا على الشارت (ليس اسم القانون فقط) بما يشمل القوانين ذات recipe inputs.
+- مناطق الـ zone أصبحت مرئية كـ fill + حدود.
+- نتائج التحقق الشامل للقوانين: 48/48 PASS أثناء اختبار المتصفح.
+
+### Action Ledger
+#### Item-05: Input-aware Recipe Resolution
+- Before: `input(...)` غير مدعوم.
+- Action: إضافة parser + defaults resolution.
+- Gate Check: `pnpm build` PASS.
+- After: قيم قوانين الإدخال تُحل وتُرسم.
+- Performance Delta: لا أخطاء وقت تشغيل، ثبات أعلى في overlay render.
+- Status=Closed.
+
+#### Item-06: NeedsInputs Rendering Gap
+- Before: fallback unknown فقط أثناء tutorial.
+- Action: استدعاء `applyLawRecipe` فعليًا في فرع `needsInputs`.
+- Gate Check: Playwright validation results = 48 laws, fails=0.
+- After: التمثيل الكامل للقوانين أثناء التفاعل.
+- Performance Delta: overlays مرئية فورًا مع الإبقاء على tutorial flow.
+- Status=Closed.
+
+#### Item-07: Zone Fill/Color Robustness
+- Before: ألوان rgba كانت غير متسقة بسبب تركيب suffix ثابت + band reuse بوسوم متراكمة.
+- Action: تحسين `addZoneBand` (RGBA-aware background + reset band innerHTML).
+- Gate Check: screenshots before/after LAW_033 تظهر zones بوضوح.
+- After: zone rendering موحّد بصريًا.
+- Performance Delta: خفض artifacts البصرية الناتجة عن إعادة الاستخدام.
+- Status=Closed.
