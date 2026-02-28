@@ -28,7 +28,7 @@ Reference baseline: `indicator.txt` (Pine v5) + books.
    - Web module: `htfUnit` + `htfFib` levels appended to baseline.
 7. **Global fib grid blocks**
    - Indicator pointer: block-based fib options.
-   - Current status: partially represented by baseline+law-specific bands; full block tiling remains TODO.
+   - Current status: implemented via `buildGlobalFibBlocks` في `src/lib/indicator/model.js` مع بلاطات للوحدة الحالية + HTF لضمان تغطية متدرجة لكل نطاقات الفايبو.
 
 ## Notes
 - Rendering uses hybrid primitives in `LightweightChart`:
