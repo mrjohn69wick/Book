@@ -719,11 +719,13 @@ const LightweightChart = ({
       clearTutorialError();
 
       const { shape, color, position } = getMarkerStyleForInput(assigns);
-      const signature = `marker:${lawId}:${time}:${Number(price).toFixed(6)}:${options.shape || 'circle'}:${options.text || ''}`;
-    if (dedupeSignatureRef.current.has(signature)) return null;
-    dedupeSignatureRef.current.add(signature);
+      const signature = `tutorial-marker:${tutorialLawId || 'unknown'}:${param.time}:${Number(price).toFixed(6)}:${shape}:${assigns}`;
+      if (dedupeSignatureRef.current.has(signature)) {
+        return;
+      }
+      dedupeSignatureRef.current.add(signature);
 
-    const marker = {
+      const marker = {
         time: param.time,
         position,
         shape,
